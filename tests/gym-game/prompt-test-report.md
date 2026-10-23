@@ -2,7 +2,7 @@
 
 Date: 23 October 2026. Prompt tested: `prompt-v1.md`. Idea: a gym game that keeps people consistent, with ranks and stats for lifting, fitness and size. Full output: `plan.md`. Arithmetic: `money.py`.
 
-**Verdict:** the prompt works. It produced all 13 sections and the checklist, forced real citations, and its compliance rule changed the plan in a useful way. It has 7 gaps, all fixed in `prompt-v2.md`.
+**Verdict:** the prompt works. It produced all 13 sections and the checklist, forced real citations, and its compliance rule changed the plan in a useful way. It has 10 gaps, all fixed in `prompt-v2.md`.
 
 ## Tests run
 
@@ -18,6 +18,8 @@ Date: 23 October 2026. Prompt tested: `prompt-v1.md`. Idea: a gym game that keep
 | 8 | Public business details only | Owners' names were public on CrossFit.com; I left them out, but the prompt does not say whether names of people count | Partial |
 | 9 | Data rules for the app itself | The prompt only asks about outreach rules. Body measurements are likely health data, which has stricter rules. I caught it under Risks, but the prompt did not ask | Partial |
 | 10 | "First 10 clients" in 4 weeks with a 6-week pilot | These conflict: nobody can pay before week 7. I redefined it as 10 gyms on a free tool or pilot | Fail (prompt contradiction) |
+| 11 | Follow-up answers: Josh in Gqeberha, Cam in Aberdeen, not registered, demo exists | The prompt assumed both partners share one "area". The answers changed the cities, prospect list, channels, laws, payment providers, pilot dates and money split. v1 has no instruction to redo affected sections, so it depended on judgement | Partial |
+| 12 | Seasons | Not in v1. A 6-week SA pilot from November would run into the December holidays and measure people going away. Caught only because the plan worked out real dates | Partial |
 
 ## Gaps found and the fix in v2
 
@@ -28,10 +30,14 @@ Date: 23 October 2026. Prompt tested: `prompt-v1.md`. Idea: a gym game that keep
 5. **Budget check:** v2 says to flag any cost over budget and give the cheapest version under it, and to show costs before and after the first paying client.
 6. **Data the users put in:** v2 adds health data, children's data and a data agreement with the client to the rules check.
 7. **People's names:** v2 says no individuals' names or personal contact details.
+8. **Partners in different countries:** v2 asks where each partner lives and splits the 4-week plan by city.
+9. **Answers that change earlier assumptions:** v2 says to redo every section they affect.
+10. **Real dates and seasons:** v2 asks for real dates in the 4-week plan and a flag for holidays that would distort a pilot.
 
 Smaller changes in v2: a 5-line summary at the top (v1 says "lead with the answer" but 13 long sections bury it), state the exchange rate and its date, name verified competitors in section 4, show our hours per month in section 10, and "(B2B ideas only)" reworded to "(only if the client is a business)".
 
 ## Worth knowing
 
-- The run used about 30 web searches. On a tight usage budget, expect each full run to be heavy. If that matters, run sections 1 to 4 first, then 5 to 13 in a second message.
-- Drafts still contain `[studio name]` and `[your city]` because the prompt never asks for them. v2's extra questions would fill most of these.
+- The two rounds used about 45 web searches. On a tight usage budget, expect each full run to be heavy. If that matters, run sections 1 to 4 first, then 5 to 13 in a second message.
+- After the follow-up answers, drafts only keep per-gym blanks such as `[gym name]`, which is right for messages sent to many gyms.
+- Biggest business finding from the second round: Gqeberha has only 2 CrossFit affiliates listed, while Aberdeen gyms charge around £99 a month, so Aberdeen is the stronger first market.
