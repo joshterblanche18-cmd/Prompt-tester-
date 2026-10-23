@@ -81,7 +81,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  .pitch { display: grid; gap: 22px; align-content: center; }
+  .pitch { display: grid; gap: 20px; align-content: center; }
   .device {
     width: 390px; height: 844px; padding: 12px; border-radius: 58px;
     background: var(--bezel);
@@ -102,10 +102,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .wordmark svg { width: 64px; height: 64px; margin-bottom: 6px; }
 .pitch h1 { margin: 0; font-size: 22px; line-height: 1.25; font-weight: 600; text-wrap: balance; max-width: 30ch; }
 .pitch p { margin: 0; color: var(--muted); max-width: 46ch; }
-.tour { display: grid; gap: 8px; }
+.tour { display: grid; gap: 7px; }
 .tour button {
   display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; text-align: left;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px;
 }
 .tour button[aria-current="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .tour b { display: block; font-weight: 600; }
@@ -124,15 +124,16 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   scrollbar-width: none;
 }
 .view::-webkit-scrollbar { display: none; }
+.view > * { flex-shrink: 0; }
 .view[hidden] { display: none !important; }
 
 .tabbar {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   border-top: 1px solid var(--line); background: var(--surface);
   padding-top: 6px;
   padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(8px, env(safe-area-inset-left, 0px));
-  padding-right: max(8px, env(safe-area-inset-right, 0px));
+  padding-left: max(6px, env(safe-area-inset-left, 0px));
+  padding-right: max(6px, env(safe-area-inset-right, 0px));
 }
 @media (min-width: 900px) { .tabbar { padding-bottom: 26px; } }
 .tab { background: none; border: 0; display: grid; justify-items: center; gap: 2px; padding: 6px 0; font-size: 11px; font-weight: 600; color: var(--muted); }
@@ -150,11 +151,38 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .title { font-size: 40px; }
 .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin: 0; }
 .card { background: var(--surface); border-radius: 20px; padding: 16px; border: 1px solid var(--line); min-width: 0; }
+.stack { display: grid; gap: 12px; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .muted { color: var(--muted); }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border-radius: 12px; padding: 3px; }
 .seg button { border: 0; background: none; border-radius: 9px; padding: 8px 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.rule { font-size: 12.5px; color: var(--muted); margin: 0; }
+.pill { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 5px 10px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+.ghost { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 7px 10px; font-size: 12.5px; font-weight: 600; }
+.primary { border: 0; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 14px 18px; width: 100%; }
+.secondary { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); font-weight: 700; padding: 13px 18px; width: 100%; }
+.chip { justify-self: start; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.chip.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
+.chip.risk { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.chip.info { background: var(--accent-soft); color: var(--accent); }
+.up { color: var(--good); }
+.down { color: var(--bad); }
+.face { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; border: 2px solid var(--surface); margin-left: -8px; flex: none; }
+.face:first-child { margin-left: 0; }
+
+/* points split: consistency, strength, personal bests */
+.split { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-2); gap: 2px; }
+.split i { display: block; height: 100%; }
+.c-con { background: var(--p-blue); }
+.c-str { background: var(--p-red); }
+.c-pb { background: var(--p-yellow); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
 
 /* ---------- home ---------- */
 .rankcard { background: var(--ink); color: var(--bg); border: 0; display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center; padding: 18px; }
@@ -183,15 +211,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .class-card { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; }
 .class-time { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; text-align: center; }
 .class-time small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 3px; }
-.pill { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 5px 10px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
 .team-faces { display: flex; }
-.face { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; border: 2px solid var(--surface); margin-left: -8px; }
-.face:first-child { margin-left: 0; }
-.rule { font-size: 12.5px; color: var(--muted); }
 
 /* ---------- league ---------- */
 .board { list-style: none; margin: 0; padding: 0; display: grid; }
-.board li { display: grid; grid-template-columns: 26px 34px 1fr auto; gap: 10px; align-items: center; padding: 11px 4px; border-bottom: 1px solid var(--line); }
+.board li { display: grid; grid-template-columns: 26px 34px 1fr auto; gap: 4px 10px; align-items: center; padding: 11px 4px; border-bottom: 1px solid var(--line); }
 .board li:last-child { border-bottom: 0; }
 .board .pos { font-family: var(--font-display); font-weight: 800; font-size: 20px; text-align: center; color: var(--muted); }
 .board li.me { background: var(--accent-soft); border-radius: 12px; border-bottom-color: transparent; padding-inline: 8px; margin-inline: -4px; }
@@ -201,13 +225,48 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .board .who small { color: var(--muted); font-size: 12px; }
 .board .pts { text-align: right; font-weight: 600; }
 .board .pts small { display: block; font-size: 11px; color: var(--muted); font-family: var(--font-body); font-weight: 500; }
-.up { color: var(--good); }
-.down { color: var(--bad); }
+.board .split { grid-column: 3 / 5; height: 5px; }
 .podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; align-items: end; }
-.podium div { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.podium div { display: grid; justify-items: center; gap: 6px; text-align: center; min-width: 0; }
 .podium .block { width: 100%; border-radius: 12px 12px 4px 4px; background: var(--surface-2); display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: 26px; color: var(--muted); }
 .podium b { font-size: 13px; }
 .podium small { font-size: 11.5px; color: var(--muted); }
+.mypts { display: grid; gap: 10px; }
+.mypts .split { height: 12px; }
+.ptsrow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ptsrow div { display: grid; gap: 2px; }
+.ptsrow b { font-family: var(--font-data); font-size: 15px; }
+.ptsrow small { font-size: 11.5px; color: var(--muted); }
+.howto { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.howto li { display: grid; grid-template-columns: 12px 1fr; gap: 10px; font-size: 13.5px; }
+.howto li i { width: 12px; height: 12px; border-radius: 4px; margin-top: 4px; }
+.howto b { font-weight: 600; }
+
+/* ---------- card ---------- */
+.pass {
+  border-radius: 22px; padding: 18px; color: #f4f5f1; position: relative; overflow: hidden;
+  background: #14171c; display: grid; gap: 16px;
+  box-shadow: 0 18px 40px -22px rgba(0,0,0,.6);
+}
+.pass::after { content: ""; position: absolute; right: -43px; top: -43px; width: 140px; height: 140px; border-radius: 50%; background: var(--p-blue); }
+.pass::before { content: ""; position: absolute; right: 18px; top: 18px; width: 18px; height: 18px; border-radius: 50%; background: #0c0e11; z-index: 1; box-shadow: 0 0 0 5px #9aa0a8, 0 0 0 11px #0c0e11; }
+.pass > * { position: relative; z-index: 2; }
+.pass .brand { display: flex; gap: 10px; align-items: center; padding-right: 64px; }
+.pass .brand .gymlogo { background: #f4f5f1; color: #14171c; }
+.pass .brand small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #aab1ba; font-weight: 700; }
+.pass .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.pass .fields small { display: block; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #aab1ba; font-weight: 700; }
+.pass .fields b { font-size: 15px; font-weight: 600; }
+.pass .code { background: #f4f5f1; border-radius: 14px; padding: 12px; display: grid; justify-items: center; gap: 6px; color: #14171c; }
+.pass .code svg { width: 150px; height: 150px; max-width: 100%; }
+.pass .code small { font-family: var(--font-data); font-size: 12px; }
+.info-list { display: grid; }
+.info-list > div { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.info-list > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.info-list svg { width: 22px; height: 22px; color: var(--accent); }
+.wallet-btn { display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 14px; background: #000; color: #fff; font-weight: 700; padding: 14px 18px; width: 100%; }
+.wallet-btn svg { width: 22px; height: 22px; }
+.wallet-btn.added { background: var(--surface); color: var(--good); border: 1px solid var(--line); }
 
 /* ---------- progress ---------- */
 .heat { display: grid; grid-template-columns: 22px repeat(12, minmax(0, 1fr)); gap: 4px; min-width: 0; }
@@ -223,6 +282,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .pbs .val { text-align: right; font-weight: 600; font-size: 16px; }
 .pbs small { color: var(--muted); font-size: 12px; }
 .pbs .delta { text-align: right; font-size: 12px; }
+.pbs .total { background: var(--accent-soft); border-radius: 12px; padding: 12px; margin-top: 10px; border-bottom: 0; }
 .badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .badge { display: grid; justify-items: center; gap: 6px; text-align: center; font-size: 11.5px; font-weight: 600; }
 .badge svg { width: 58px; height: 58px; }
@@ -233,13 +293,27 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .owner-banner { background: var(--ink); color: var(--bg); border-radius: 14px; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; }
 .owner-banner svg { width: 18px; height: 18px; flex: none; }
 .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; }
-.kpi .bignum { font-size: 32px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
+.kpi .bignum { font-size: 30px; }
 .kpi small { font-size: 12px; color: var(--muted); }
-.kpi .chip { justify-self: start; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-top: 4px; }
-.chip.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
-.chip.risk { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.kpi .chip { margin-top: 4px; }
+.hero-num { display: grid; gap: 4px; }
+.hero-num .bignum { font-size: 52px; }
 .chart svg { width: 100%; height: auto; display: block; }
+.breakdown { display: grid; gap: 12px; }
+.bd { display: grid; gap: 6px; }
+.bd .row span { font-size: 13.5px; }
+.bd .row small { color: var(--muted); font-size: 12px; display: block; }
+.hbar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.hbar i { display: block; height: 100%; border-radius: 99px; }
+.freq { display: grid; gap: 9px; }
+.freq > div { display: grid; grid-template-columns: 74px 1fr 34px; gap: 10px; align-items: center; font-size: 13px; }
+.freq .hbar { height: 14px; border-radius: 5px; }
+.freq .hbar i { border-radius: 5px; }
+.freq b { text-align: right; font-family: var(--font-data); font-weight: 600; }
+.cur { display: inline-grid; grid-auto-flow: column; background: var(--surface-2); border-radius: 99px; padding: 2px; }
+.cur button { border: 0; background: none; border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.cur button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 .passmark { display: grid; gap: 12px; }
 .pm { display: grid; gap: 6px; }
 .pm .row span { font-size: 13px; }
@@ -252,7 +326,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .risk-list .face { width: 38px; height: 38px; font-size: 13px; margin: 0; border: 0; }
 .risk-list b { display: block; font-weight: 600; }
 .risk-list small { color: var(--muted); font-size: 12px; }
-.ghost { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 7px 10px; font-size: 12.5px; font-weight: 600; }
+.ownerpane[hidden] { display: none !important; }
+.ownerpane { display: grid; gap: 14px; }
 
 /* ---------- overlays ---------- */
 .overlay { position: absolute; inset: 0; z-index: 20; display: grid; }
@@ -270,6 +345,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .scanner p { margin: 0; color: #b8bec6; font-size: 14px; }
 .scanner .h-display { font-size: 28px; margin-bottom: 6px; color: #fff; }
 
+.gate-art { width: 230px; height: 230px; margin: 0 auto 24px; }
+.gate-art .wave { fill: none; stroke: #6683ff; stroke-width: 3; stroke-linecap: round; opacity: 0; animation: wave 1.2s ease-out infinite; }
+.gate-art .wave:nth-of-type(2) { animation-delay: .2s; }
+.gate-art .wave:nth-of-type(3) { animation-delay: .4s; }
+@keyframes wave { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.gate-art .phone { animation: approach 1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes approach { from { transform: translateY(60px); } }
+.scanner .h-display.gate-ok { color: #4cc27c; }
+
 .success { background: var(--bg); place-items: center; padding: 28px 22px; text-align: center; align-content: center; gap: 18px; }
 .stamp { width: 168px; height: 168px; margin: 0 auto; animation: stamp .55s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes stamp { from { transform: scale(1.6) rotate(-14deg); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -277,7 +361,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .gains { display: grid; gap: 8px; text-align: left; width: 100%; max-width: 320px; margin: 0 auto; }
 .gains div { display: flex; justify-content: space-between; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .gains b { font-family: var(--font-data); font-weight: 600; }
-.primary { border: 0; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 14px 18px; width: 100%; max-width: 320px; margin: 0 auto; }
+.success .primary { max-width: 320px; margin: 0 auto; }
 
 .sheet-wrap { background: rgba(8,9,11,.45); align-items: end; }
 .sheet { background: var(--surface); border-radius: 22px 22px 0 0; padding: 10px 18px 26px; display: grid; gap: 12px; animation: rise .3s ease-out both; }
@@ -287,9 +371,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .message { background: var(--surface-2); border-radius: 16px 16px 16px 4px; padding: 12px 14px; font-size: 14.5px; white-space: pre-line; user-select: text; }
 .sheet .note { font-size: 12.5px; color: var(--muted); margin: 0; }
 .sheet .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.sheet .actions .primary { max-width: none; }
+.wallet-stack { position: relative; height: 170px; margin: 4px 0; }
+.wallet-stack > div { position: absolute; left: 0; right: 0; height: 120px; border-radius: 16px; padding: 12px 14px; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.wallet-stack .w1 { top: 0; background: #4a5563; }
+.wallet-stack .w2 { top: 22px; background: #0f8a8a; }
+.wallet-stack .w3 { top: 48px; background: #14171c; display: flex; justify-content: space-between; align-items: flex-start; animation: slidein .6s cubic-bezier(.2,.9,.2,1) both; box-shadow: 0 -6px 16px -8px rgba(0,0,0,.5); }
+.wallet-stack .w3 span { color: #aab1ba; font-weight: 600; }
+@keyframes slidein { from { transform: translateY(70px); opacity: .2; } }
 
-.toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; z-index: 30; white-space: nowrap; }
+.toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; z-index: 30; white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -302,15 +392,16 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M10 8v48M22 8v48M34 8v48M46 8v48"/><path d="M4 46 56 16" stroke="var(--accent)"/></g></svg>
       Tally
     </div>
-    <h1>The gym game that rewards showing up, not who lifts the heaviest.</h1>
-    <p>Members scan in at the door, keep weekly streaks, climb plate-colour ranks and compete in teams of three. Owners see who is drifting away before they cancel.</p>
+    <h1>The gym game that rewards showing up, and ranks you against people your size.</h1>
+    <p>Members tap in with a card in their phone's wallet, keep weekly streaks and climb plate-colour ranks within their gender and weight class. Owners see money, footfall and who is drifting away.</p>
     <div class="tour" id="tour">
       <button data-go="home"><i>1</i><div><b>Member home</b><span>Check in, streak, rank, tonight's class</span></div></button>
-      <button data-go="league"><i>2</i><div><b>League</b><span>Team, gym and city leaderboards</span></div></button>
-      <button data-go="progress"><i>3</i><div><b>Progress</b><span>Attendance, personal bests, milestones</span></div></button>
-      <button data-go="owner"><i>4</i><div><b>Owner view</b><span>Who is at risk, and the pilot pass mark</span></div></button>
+      <button data-go="league"><i>2</i><div><b>League</b><span>Weight classes, women's and men's boards, teams</span></div></button>
+      <button data-go="card"><i>3</i><div><b>Membership card</b><span>Wallet pass that opens the gate</span></div></button>
+      <button data-go="progress"><i>4</i><div><b>Progress</b><span>Attendance, lifts, milestones</span></div></button>
+      <button data-go="owner"><i>5</i><div><b>Owner view</b><span>Revenue, people through the door, pilot results</span></div></button>
     </div>
-    <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members and its rival gyms are made up. Tap "Check in" on the phone to try the main loop.</p>
+    <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members, money and rival gyms are made up. Try "Check in" or "Tap at the gate" on the phone.</p>
   </section>
 
   <div class="device">
@@ -323,22 +414,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         <!-- HOME -->
         <main class="view" id="v-home" aria-label="Member home">
           <div class="topbar">
-            <div class="gymchip"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Saltworks Barbell Club</small><strong>Morning, Thandi</strong></div></div>
+            <div class="gymchip"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Saltworks Barbell Club</small><strong>Morning, Josh</strong></div></div>
             <span class="demo-pill">Demo</span>
           </div>
 
           <div class="card rankcard">
             <div id="rankPlate"></div>
             <div>
-              <p class="eyebrow">Rank · 1 to 2 years</p>
+              <p class="eyebrow">Men · 83 kg class</p>
               <h2 class="h-display" id="rankName">Blue Plate</h2>
               <div class="bar"><span id="rankBar" style="width:0"></span></div>
-              <div class="small"><span class="num" id="rankPts">1,840</span> pts · <span class="num" id="rankToGo">160</span> to Red Plate</div>
+              <div class="small"><span class="num" id="rankPts">1,840</span> pts · <span class="num" id="rankToGo">160</span> to Red Plate · 3rd in class</div>
             </div>
           </div>
 
           <button class="checkin" id="checkinBtn">
-            <div><strong id="checkinTitle">Check in</strong><span id="checkinSub">Scan the QR poster at the door</span></div>
+            <div><strong id="checkinTitle">Check in</strong><span id="checkinSub">Scan the QR poster, or tap your card at the gate</span></div>
             <svg id="checkinIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="8" width="3" height="3"/><rect x="8" y="13" width="3" height="3"/><path d="M13 13h3v3"/></svg>
           </button>
 
@@ -367,24 +458,76 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
             <div class="row"><p class="eyebrow">Your team this week</p><span class="pill">2nd of 14</span></div>
             <div class="row">
               <div><b>Team Tidal</b><div class="muted" style="font-size:13px"><span class="num" id="teamSessions">8</span> sessions · Team Anchor has 9</div></div>
-              <div class="team-faces"><span class="face" style="background:#2b54e0">TM</span><span class="face" style="background:#d93a2b">IR</span><span class="face" style="background:#2e9a55">FD</span></div>
+              <div class="team-faces"><span class="face" style="background:#2b54e0">JT</span><span class="face" style="background:#d93a2b">IR</span><span class="face" style="background:#2e9a55">FD</span></div>
             </div>
           </div>
-
-          <p class="rule">Points: 10 per session, 25 for hitting your weekly goal, 40 for beating your own best. Nothing for the heaviest lift in the room.</p>
         </main>
 
         <!-- LEAGUE -->
         <main class="view" id="v-league" aria-label="League" hidden>
           <div class="topbar"><h2 class="h-display title">League</h2><span class="demo-pill">October</span></div>
           <div class="seg" role="group" aria-label="Leaderboard">
+            <button data-board="gym" aria-pressed="true">Rank</button>
             <button data-board="team" aria-pressed="false">Teams</button>
-            <button data-board="gym" aria-pressed="true">Gym</button>
             <button data-board="city" aria-pressed="false">City league</button>
+          </div>
+          <div class="chips" id="divChips" role="group" aria-label="Division">
+            <button data-div="men83" aria-pressed="true">Men · 83 kg</button>
+            <button data-div="women63" aria-pressed="false">Women · 63 kg</button>
+            <button data-div="open" aria-pressed="false">Open</button>
+          </div>
+          <div class="card mypts" id="myPts">
+            <div class="row"><p class="eyebrow">Your points this season</p><span class="num" style="font-weight:600" id="myTotal">1,840</span></div>
+            <div class="split" id="mySplit"></div>
+            <div class="ptsrow">
+              <div><b id="myCon">1,100</b><small>Consistency</small></div>
+              <div><b id="myStr">520</b><small>Strength for your class</small></div>
+              <div><b id="myPb">220</b><small>Personal bests</small></div>
+            </div>
           </div>
           <div class="card" id="podiumCard"><div class="podium" id="podium"></div></div>
           <div class="card" style="padding-block:6px"><ol class="board" id="board"></ol></div>
+          <div class="legend" id="boardLegend"><span><i class="c-con"></i>Consistency</span><span><i class="c-str"></i>Strength</span><span><i class="c-pb"></i>Personal bests</span></div>
           <p class="rule" id="boardNote"></p>
+          <div class="card stack" id="howCard">
+            <p class="eyebrow">How rank points work</p>
+            <ul class="howto">
+              <li><i class="c-con"></i><span><b>Consistency, about 60%.</b> 10 per session, 25 for hitting your weekly goal, 50 for every 4 weeks in a row.</span></li>
+              <li><i class="c-str"></i><span><b>Strength, about 30%.</b> Your squat, bench and deadlift total divided by body weight, scored only against people in your weight class.</span></li>
+              <li><i class="c-pb"></i><span><b>Personal bests, about 10%.</b> 40 each time you beat your own best, verified by a coach.</span></li>
+            </ul>
+            <p class="rule">Weight classes. Women: 57, 63, 72, 84 and 84+ kg. Men: 66, 74, 83, 93, 105 and 105+ kg. A coach does a weigh-in once a month. Anyone can pick Open instead, which ranks on consistency only.</p>
+          </div>
+        </main>
+
+        <!-- CARD -->
+        <main class="view" id="v-card" aria-label="Membership card" hidden>
+          <div class="topbar"><h2 class="h-display title">Card</h2><span class="demo-pill">Member</span></div>
+          <div class="pass" aria-label="Membership pass">
+            <div class="brand"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Membership</small><b>Saltworks Barbell Club</b></div></div>
+            <div class="fields">
+              <div><small>Member</small><b>Josh T.</b></div>
+              <div><small>Plan</small><b>Unlimited</b></div>
+              <div><small>Rank</small><b id="passRank">Blue Plate</b></div>
+              <div><small>Valid until</small><b>31 Dec 2026</b></div>
+            </div>
+            <div class="code">
+              <svg viewBox="0 0 25 25" id="passQr" aria-label="Member QR code" fill="#14171c"></svg>
+              <small>SBC-0417</small>
+            </div>
+          </div>
+          <button class="wallet-btn" id="walletBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/><path d="M6 6V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>
+            <span id="walletLabel">Add to Wallet</span>
+          </button>
+          <button class="secondary" id="gateBtn">Tap at the gate</button>
+          <div class="card info-list">
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0"/><circle cx="12" cy="12" r="1.5"/></svg><span>Hold your phone near the reader at the gate. No plastic card to carry or lose.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.6 6.6l2.1 2.1M17.3 15.3l2.1 2.1M3 12h3M18 12h3"/></svg><span>Your card appears on your lock screen when you arrive at the gym.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Lost your phone? The gym switches the card off in one tap and sends a new one.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Day-pass visitors get a card that stops working at midnight.</span></div>
+          </div>
+          <p class="rule">Every tap counts as a check-in for your streak and points, so you never have to remember to log a session.</p>
         </main>
 
         <!-- PROGRESS -->
@@ -396,12 +539,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
             <div class="row muted" style="font-size:12px"><span>Aug</span><span>Sep</span><span>Oct</span></div>
           </div>
           <div class="card">
-            <div class="row" style="margin-bottom:4px"><p class="eyebrow">Personal bests</p><span class="muted" style="font-size:12px">Body weight 75 kg</span></div>
+            <div class="row" style="margin-bottom:4px"><p class="eyebrow">Lifts</p><span class="muted" style="font-size:12px">81.6 kg · 83 kg class</span></div>
             <div class="pbs">
-              <div><b>Back squat</b><span class="val num">110 kg</span><small>1.47 × body weight</small><span class="delta up num">+7.5 kg since Aug</span></div>
-              <div><b>Deadlift</b><span class="val num">140 kg</span><small>1.87 × body weight</small><span class="delta up num">+10 kg since Aug</span></div>
-              <div><b>Power clean</b><span class="val num">72.5 kg</span><small>Coach verified, 14 Oct</small><span class="delta up num">+5 kg since Sep</span></div>
-              <div><b>2 km row</b><span class="val num">7:48</span><small>Damper 5</small><span class="delta up num">−0:11 since Aug</span></div>
+              <div><b>Back squat</b><span class="val num">140 kg</span><small>1.72 × body weight</small><span class="delta up num">+7.5 kg since Aug</span></div>
+              <div><b>Bench press</b><span class="val num">100 kg</span><small>1.23 × body weight</small><span class="delta up num">+5 kg since Sep</span></div>
+              <div><b>Deadlift</b><span class="val num">180 kg</span><small>2.21 × body weight, coach verified</small><span class="delta up num">+10 kg since Aug</span></div>
+              <div class="total"><b>Big three total</b><span class="val num">420 kg</span><small>5.15 × body weight · 4th of 11 in class</small><span class="delta num" style="color:var(--accent)">520 strength pts</span></div>
             </div>
           </div>
           <div class="card" style="display:grid; gap:14px">
@@ -412,40 +555,107 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
         <!-- OWNER -->
         <main class="view" id="v-owner" aria-label="Owner view" hidden>
-          <div class="topbar"><h2 class="h-display title">Owner</h2><span class="demo-pill">Pilot week 5</span></div>
-          <div class="owner-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>This is what the gym owner sees. Members never see this screen.</div>
-          <div class="kpis">
-            <div class="kpi"><small>Active members</small><span class="bignum num">142</span><span class="chip ok">+6 this month</span></div>
-            <div class="kpi"><small>In this week</small><span class="bignum num">96</span><span class="chip ok">68% of members</span></div>
-            <div class="kpi"><small>Visits per member a week</small><span class="bignum num">2.6</span><span class="chip ok">+13% on baseline</span></div>
-            <div class="kpi"><small>Not in for 14+ days</small><span class="bignum num">9</span><span class="chip risk">Nudge them</span></div>
+          <div class="topbar"><h2 class="h-display title">Owner</h2>
+            <div class="cur" role="group" aria-label="Currency"><button data-cur="gbp" aria-pressed="true">£</button><button data-cur="zar" aria-pressed="false">R</button></div>
           </div>
-          <div class="card chart">
-            <div class="row" style="margin-bottom:8px"><p class="eyebrow">Visits per member a week</p><span class="muted" style="font-size:12px">Before vs pilot</span></div>
-            <svg id="chart" viewBox="0 0 330 170" role="img" aria-label="Bar chart: about 2.3 visits per member a week before the pilot, rising to 2.7 during it"></svg>
+          <div class="owner-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Only the gym owner sees this. Week of 19 to 25 October, pilot week 5.</div>
+          <div class="seg" role="group" aria-label="Owner section">
+            <button data-pane="money" aria-pressed="true">Money</button>
+            <button data-pane="door" aria-pressed="false">The door</button>
+            <button data-pane="pilot" aria-pressed="false">Pilot</button>
           </div>
-          <div class="card passmark">
-            <div class="row"><p class="eyebrow">Pilot pass mark</p><span class="chip ok" style="font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px">On track: 3 of 3</span></div>
-            <div class="pm"><div class="row"><span>Members who joined</span><span class="num">71% <span class="muted">/ 40%</span></span></div><div class="track"><span class="fill" style="width:71%"></span><span class="target" style="left:40%"></span></div></div>
-            <div class="pm"><div class="row"><span>Checked in this week</span><span class="num">54% <span class="muted">/ 25%</span></span></div><div class="track"><span class="fill" style="width:54%"></span><span class="target" style="left:25%"></span></div></div>
-            <div class="pm"><div class="row"><span>More visits than before</span><span class="num">+13% <span class="muted">/ +10%</span></span></div><div class="track"><span class="fill" style="width:65%"></span><span class="target" style="left:50%"></span></div></div>
-            <p class="rule" style="margin:0">Targets agreed and signed before the pilot started. Bar scale for visits: 0% to +20%.</p>
+
+          <!-- money -->
+          <div class="ownerpane" id="p-money">
+            <div class="card hero-num">
+              <p class="eyebrow">Revenue this week</p>
+              <span class="bignum num" data-money="2794">£2,794</span>
+              <span class="chip ok">+6% on last week</span>
+            </div>
+            <div class="card breakdown">
+              <p class="eyebrow">Where it came from</p>
+              <div class="bd"><div class="row"><span>Memberships<small>142 members, average <span data-money="64.80" data-dp="2">£64.80</span> a month</small></span><b class="num" data-money="2124">£2,124</b></div><div class="hbar"><i class="c-con" style="width:76%"></i></div></div>
+              <div class="bd"><div class="row"><span>Day passes<small>38 passes at <span data-money="12">£12</span></small></span><b class="num" data-money="456">£456</b></div><div class="hbar"><i class="c-str" style="width:16%"></i></div></div>
+              <div class="bd"><div class="row"><span>Shop and extras<small>Shakes, chalk, T-shirts</small></span><b class="num" data-money="214">£214</b></div><div class="hbar"><i class="c-pb" style="width:8%"></i></div></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Weekly revenue</p><span class="muted" style="font-size:12px">Last 8 weeks</span></div>
+              <svg id="revChart" viewBox="0 0 330 170" role="img" aria-label="Weekly revenue for the last 8 weeks, rising from about 2,410 to 2,794 pounds"></svg>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><small>Projected October</small><span class="bignum num" data-money="12170">£12,170</span><span class="chip info">On pace</span></div>
+              <div class="kpi"><small>Day-pass visitors who joined</small><span class="bignum num">4</span><span class="chip ok"><span data-money="259">£259</span> a month added</span></div>
+            </div>
+            <p class="rule" id="curNote">Shown in pounds. Tap R to see rand at £1 = R21.72.</p>
           </div>
-          <div class="card">
-            <div class="row" style="margin-bottom:2px"><p class="eyebrow">Drifting away</p><span class="muted" style="font-size:12px">Opted in to messages</span></div>
-            <div class="risk-list" id="riskList"></div>
+
+          <!-- door -->
+          <div class="ownerpane" id="p-door" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Taps at the gate</small><span class="bignum num">288</span><span class="chip ok">+9% on last week</span></div>
+              <div class="kpi"><small>Different people</small><span class="bignum num">127</span><span class="chip info">96 members, 31 day pass</span></div>
+              <div class="kpi"><small>Average a day</small><span class="bignum num">41</span><span class="chip info">Busiest: Monday</span></div>
+              <div class="kpi"><small>Average week, last 8</small><span class="bignum num">274</span><span class="chip info">taps a week</span></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Taps each day</p><span class="muted" style="font-size:12px">This week</span></div>
+              <svg id="dayChart" viewBox="0 0 330 170" role="img" aria-label="Taps each day this week: Monday 52, Tuesday 38, Wednesday 49, Thursday 35, Friday 47, Saturday 46, Sunday 21"></svg>
+            </div>
+            <div class="card breakdown">
+              <p class="eyebrow">Members and day passes</p>
+              <div class="split" style="height:14px"><i class="c-con" style="width:86.8%"></i><i class="c-str" style="width:13.2%"></i></div>
+              <div class="row" style="font-size:13px"><span><b class="num">250</b> member taps · 96 people</span><span><b class="num">38</b> day-pass taps · 31 people</span></div>
+            </div>
+            <div class="card stack">
+              <div class="row"><p class="eyebrow">How often members came</p><span class="muted" style="font-size:12px">This week, 96 members</span></div>
+              <div class="freq" id="freq"></div>
+              <p class="rule">6 members tapped in twice on the same day. Both visits are counted here, but only one counts for points.</p>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Loyal members</p>
+              <div class="bd"><div class="row"><span>Came every week for the last 4 weeks</span><b class="num">61%</b></div><div class="hbar"><i class="c-con" style="width:61%"></i></div></div>
+              <div class="bd"><div class="row"><span>Members of 6+ months still coming weekly</span><b class="num">78%</b></div><div class="hbar"><i class="c-con" style="width:78%"></i></div></div>
+              <div class="bd"><div class="row"><span>Cancellations this month<small>Was 5 a month (3.5%) before Tally</small></span><b class="num">3 (2.1%)</b></div><div class="hbar"><i class="c-str" style="width:21%"></i></div></div>
+              <p class="rule">Bar scale for cancellations: 0% to 10% a month.</p>
+            </div>
+          </div>
+
+          <!-- pilot -->
+          <div class="ownerpane" id="p-pilot" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Active members</small><span class="bignum num">142</span><span class="chip ok">+6 this month</span></div>
+              <div class="kpi"><small>In this week</small><span class="bignum num">96</span><span class="chip ok">68% of members</span></div>
+              <div class="kpi"><small>Visits per member a week</small><span class="bignum num">2.6</span><span class="chip ok">+13% on baseline</span></div>
+              <div class="kpi"><small>Not in for 14+ days</small><span class="bignum num">9</span><span class="chip risk">Nudge them</span></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Visits per member a week</p><span class="muted" style="font-size:12px">Before vs pilot</span></div>
+              <svg id="chart" viewBox="0 0 330 170" role="img" aria-label="Bar chart: about 2.3 visits per member a week before the pilot, rising to 2.7 during it"></svg>
+            </div>
+            <div class="card passmark">
+              <div class="row"><p class="eyebrow">Pilot pass mark</p><span class="chip ok">On track: 3 of 3</span></div>
+              <div class="pm"><div class="row"><span>Members who joined</span><span class="num">71% <span class="muted">/ 40%</span></span></div><div class="track"><span class="fill" style="width:71%"></span><span class="target" style="left:40%"></span></div></div>
+              <div class="pm"><div class="row"><span>Checked in this week</span><span class="num">54% <span class="muted">/ 25%</span></span></div><div class="track"><span class="fill" style="width:54%"></span><span class="target" style="left:25%"></span></div></div>
+              <div class="pm"><div class="row"><span>More visits than before</span><span class="num">+13% <span class="muted">/ +10%</span></span></div><div class="track"><span class="fill" style="width:65%"></span><span class="target" style="left:50%"></span></div></div>
+              <p class="rule">Targets agreed and signed before the pilot started. Bar scale for visits: 0% to +20%.</p>
+            </div>
+            <div class="card">
+              <div class="row" style="margin-bottom:2px"><p class="eyebrow">Drifting away</p><span class="muted" style="font-size:12px">Opted in to messages</span></div>
+              <div class="risk-list" id="riskList"></div>
+            </div>
           </div>
         </main>
 
         <nav class="tabbar" role="tablist" aria-label="App sections">
           <button class="tab" role="tab" data-go="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Home</button>
           <button class="tab" role="tab" data-go="league" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>League</button>
+          <button class="tab" role="tab" data-go="card" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/></svg>Card</button>
           <button class="tab" role="tab" data-go="progress" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</button>
           <button class="tab" role="tab" data-go="owner" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15l3-3 3 2 4-5"/></svg>Owner</button>
         </nav>
       </div>
 
-      <!-- scanner -->
+      <!-- QR scanner -->
       <div class="overlay scanner" id="scanner" hidden>
         <div>
           <div class="finder"><i></i><i></i><i></i><i></i>
@@ -457,11 +667,27 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         </div>
       </div>
 
+      <!-- gate tap -->
+      <div class="overlay scanner" id="gate" hidden>
+        <div>
+          <svg class="gate-art" viewBox="0 0 230 230" aria-hidden="true">
+            <rect x="65" y="132" width="100" height="78" rx="12" fill="#22262c" stroke="#3a3f47"/>
+            <circle cx="115" cy="171" r="14" fill="none" stroke="#6683ff" stroke-width="3"/>
+            <path class="wave" d="M92 118a32 32 0 0 1 46 0"/>
+            <path class="wave" d="M82 104a46 46 0 0 1 66 0"/>
+            <path class="wave" d="M72 90a60 60 0 0 1 86 0"/>
+            <g class="phone"><rect x="88" y="14" width="54" height="96" rx="11" fill="#14171c" stroke="#f2f3ef" stroke-width="2.5"/><rect x="95" y="26" width="40" height="26" rx="5" fill="#2b54e0"/><rect x="95" y="58" width="40" height="40" rx="5" fill="#f2f3ef"/></g>
+          </svg>
+          <h3 class="h-display" id="gateTitle">Hold near the reader</h3>
+          <p id="gateSub">Your Saltworks card is ready</p>
+        </div>
+      </div>
+
       <!-- success -->
       <div class="overlay success" id="success" hidden>
         <svg class="stamp" id="stamp" viewBox="0 0 168 168" aria-hidden="true"></svg>
         <div>
-          <p class="eyebrow">Checked in · <span class="num">06:42</span></p>
+          <p class="eyebrow" id="successHow">Checked in · <span class="num">06:42</span></p>
           <h3 class="h-display">Week done</h3>
         </div>
         <div class="gains">
@@ -480,8 +706,26 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
           <div class="message" id="sheetMsg"></div>
           <p class="note">Tally writes the draft. The gym sends it from its own WhatsApp, and only to members who said yes to messages.</p>
           <div class="actions">
-            <button class="ghost" id="sheetClose" style="padding:13px">Close</button>
+            <button class="secondary" id="sheetClose">Close</button>
             <button class="primary" id="sheetCopy">Copy message</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- wallet sheet -->
+      <div class="overlay sheet-wrap" id="walletWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="walletTitle">
+          <span class="grabber"></span>
+          <h3 id="walletTitle">Add your card to Wallet</h3>
+          <div class="wallet-stack" aria-hidden="true">
+            <div class="w1">DEBIT CARD ···· 4821</div>
+            <div class="w2">LIBRARY CARD</div>
+            <div class="w3"><span style="color:#fff">SALTWORKS BARBELL CLUB</span><span>JOSH T.</span></div>
+          </div>
+          <p class="note">Your membership card sits next to your bank cards. It works at the gate even with no signal.</p>
+          <div class="actions">
+            <button class="secondary" id="walletCancel">Cancel</button>
+            <button class="primary" id="walletAdd">Add</button>
           </div>
         </div>
       </div>
@@ -496,6 +740,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const fmt = n => n.toLocaleString("en-GB");
+  const ZAR_PER_GBP = 21.72;
 
   const PLATES = {
     white:  { name: "White Plate",  kg: "5",  col: "var(--p-white)",  ink: "#1b1e23", min: 0 },
@@ -505,7 +750,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     red:    { name: "Red Plate",    kg: "25", col: "var(--p-red)",    ink: "#ffffff", min: 2000 }
   };
 
-  // A bumper plate drawn to scale: rim, face, hub and the kilo number
+  // A bumper plate: rim, face, hub and the kilo number (KG only on real plate weights)
   function plate(key, size = 96, label) {
     const p = PLATES[key];
     const t = label || p.kg;
@@ -521,14 +766,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   }
 
   // ---------- state ----------
-  const state = { points: 1840, week: 2, streak: 11, sessions: 47, team: 8, checkedIn: false, board: "gym" };
+  const state = { con: 1100, str: 520, pb: 220, week: 2, streak: 11, sessions: 47, team: 8, checkedIn: false, board: "gym", div: "men83", pane: "money", cur: "gbp", wallet: false };
+  const total = () => state.con + state.str + state.pb;
 
   function rankFor(pts) {
     const keys = Object.keys(PLATES);
     let cur = "white";
     keys.forEach(k => { if (pts >= PLATES[k].min) cur = k; });
-    const next = keys[keys.indexOf(cur) + 1];
-    return { cur, next };
+    return { cur, next: keys[keys.indexOf(cur) + 1] };
   }
 
   function tally(n) {
@@ -536,8 +781,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     const gap = 6, groupGap = 12, h = 30;
     let x = 2, out = "";
     for (let i = 0; i < n; i++) {
-      const inGroup = i % 5;
-      if (inGroup === 4) {
+      if (i % 5 === 4) {
         const gx = x - (gap * 4) - 2;
         out += `<line x1="${gx}" y1="${h - 4}" x2="${x - 2}" y2="6" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/>`;
         x += groupGap - gap;
@@ -551,16 +795,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     svg.innerHTML = out;
   }
 
+  function splitBar(c, s, p) {
+    const t = c + s + p;
+    return `<i class="c-con" style="width:${(c / t * 100).toFixed(1)}%"></i><i class="c-str" style="width:${(s / t * 100).toFixed(1)}%"></i><i class="c-pb" style="width:${(p / t * 100).toFixed(1)}%"></i>`;
+  }
+
   function renderHome() {
-    const { cur, next } = rankFor(state.points);
+    const pts = total();
+    const { cur, next } = rankFor(pts);
     $("#rankPlate").innerHTML = plate(cur, 96);
     $("#rankName").textContent = PLATES[cur].name;
-    $("#rankPts").textContent = fmt(state.points);
+    $("#passRank").textContent = PLATES[cur].name;
+    $("#rankPts").textContent = fmt(pts);
     if (next) {
       const span = PLATES[next].min - PLATES[cur].min;
-      const pct = ((state.points - PLATES[cur].min) / span) * 100;
+      const pct = ((pts - PLATES[cur].min) / span) * 100;
       requestAnimationFrame(() => { $("#rankBar").style.width = pct.toFixed(1) + "%"; });
-      $("#rankToGo").textContent = fmt(PLATES[next].min - state.points);
+      $("#rankToGo").textContent = fmt(PLATES[next].min - pts);
     }
     $("#weekDone").textContent = state.week;
     const c = 163.4;
@@ -569,8 +820,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     $("#teamSessions").textContent = state.team;
     tally(state.streak);
     $("#sessTotal").textContent = state.sessions;
-    const btn = $("#checkinBtn");
+    $("#myTotal").textContent = fmt(pts);
+    $("#myCon").textContent = fmt(state.con);
+    $("#myStr").textContent = fmt(state.str);
+    $("#myPb").textContent = fmt(state.pb);
+    $("#mySplit").innerHTML = splitBar(state.con, state.str, state.pb);
     if (state.checkedIn) {
+      const btn = $("#checkinBtn");
       btn.classList.add("done");
       btn.setAttribute("aria-disabled", "true");
       $("#checkinTitle").textContent = "You're in";
@@ -581,72 +837,113 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
   // ---------- league ----------
   const FACE = ["#2b54e0", "#d93a2b", "#2e9a55", "#a8701a", "#6b4fd8", "#0f8a8a", "#c2477a", "#4a5563"];
-  const boards = {
-    gym: {
-      unit: "pts",
-      note: "1 to 2 years division, October. Ranked on points from showing up and beating your own bests.",
+  const divisions = {
+    men83: {
+      note: "Men, 83 kg class, October. Points from showing up, strength for your size and beating your own bests.",
       rows: [
-        { n: "Isla R.", s: "Red Plate · 13 sessions", v: 2140, d: 0 },
-        { n: "Kabir S.", s: "Red Plate · 12 sessions", v: 2055, d: 1 },
-        { n: "Thandi M. (you)", s: "Blue Plate · 11 sessions", v: 1840, d: 2, me: true },
-        { n: "Callum F.", s: "Blue Plate · 11 sessions", v: 1790, d: -1 },
-        { n: "Ruan V.", s: "Blue Plate · 10 sessions", v: 1705, d: -2 },
-        { n: "Aisha N.", s: "Yellow Plate · 10 sessions", v: 1460, d: 3 },
-        { n: "Fraser D.", s: "Yellow Plate · 9 sessions", v: 1395, d: 0 },
-        { n: "Naledi K.", s: "Yellow Plate · 8 sessions", v: 1310, d: -1 }
+        { n: "Kabir S.", s: "82.4 kg · 13 sessions", c: 1240, st: 610, p: 240, d: 1 },
+        { n: "Ruan V.", s: "80.9 kg · 12 sessions", c: 1180, st: 590, p: 230, d: -1 },
+        { n: "Josh T. (you)", s: "81.6 kg · 11 sessions", me: true, d: 2 },
+        { n: "Sipho M.", s: "79.8 kg · 11 sessions", c: 1050, st: 560, p: 150, d: -1 },
+        { n: "Fraser D.", s: "82.7 kg · 12 sessions", c: 1120, st: 400, p: 180, d: 0 },
+        { n: "Callum F.", s: "77.5 kg · 8 sessions", c: 960, st: 520, p: 170, d: -2 },
+        { n: "Liam K.", s: "80.2 kg · 9 sessions", c: 900, st: 430, p: 120, d: 1 },
+        { n: "Rory B.", s: "75.1 kg · 7 sessions", c: 700, st: 380, p: 160, d: 0 }
       ]
     },
-    team: {
-      unit: "sessions",
-      note: "Teams of three, mixed by experience. Weekly reset every Monday at 00:00.",
+    women63: {
+      note: "Women, 63 kg class, October. Same points rules as every class.",
       rows: [
-        { n: "Team Anchor", s: "Kabir, Aisha, Ruan", v: 9, d: 0 },
-        { n: "Team Tidal (you)", s: "Thandi, Isla, Fraser", v: 8, d: 1, me: true },
-        { n: "Team Brine", s: "Callum, Naledi, Mia", v: 8, d: -1 },
-        { n: "Team Keel", s: "Sipho, Rory, Ellie", v: 7, d: 2 },
-        { n: "Team Jetty", s: "Ayesha, Liam, Zola", v: 6, d: 0 },
-        { n: "Team Breakwater", s: "Hamish, Lindiwe, Josh", v: 5, d: -2 }
+        { n: "Isla R.", s: "62.1 kg · 13 sessions", c: 1300, st: 560, p: 280, d: 0 },
+        { n: "Aisha N.", s: "60.4 kg · 12 sessions", c: 1150, st: 480, p: 210, d: 2 },
+        { n: "Naledi K.", s: "61.8 kg · 11 sessions", c: 1080, st: 420, p: 190, d: -1 },
+        { n: "Lindiwe P.", s: "59.7 kg · 10 sessions", c: 980, st: 410, p: 160, d: -1 },
+        { n: "Ellie W.", s: "62.9 kg · 9 sessions", c: 900, st: 380, p: 150, d: 1 },
+        { n: "Zola M.", s: "58.3 kg · 8 sessions", c: 760, st: 300, p: 120, d: 0 }
       ]
     },
-    city: {
-      unit: "visits",
-      note: "Gym against gym: average visits per member a week. All gyms here are fictional.",
+    open: {
+      note: "Open ranks everyone on consistency only, with no gender or weight class. Anyone can choose it.",
       rows: [
-        { n: "Saltworks Barbell Club (you)", s: "142 members", v: 2.7, d: 1, me: true },
-        { n: "Northgate Strength", s: "118 members", v: 2.6, d: -1 },
-        { n: "Quarry Athletic", s: "201 members", v: 2.4, d: 0 },
-        { n: "Lowtide Fitness", s: "87 members", v: 2.2, d: 1 },
-        { n: "Ironbark Gym", s: "164 members", v: 2.0, d: -1 }
+        { n: "Isla R.", s: "13 sessions", c: 1300, st: 0, p: 0, d: 0 },
+        { n: "Kabir S.", s: "13 sessions", c: 1240, st: 0, p: 0, d: 1 },
+        { n: "Ruan V.", s: "12 sessions", c: 1180, st: 0, p: 0, d: -1 },
+        { n: "Aisha N.", s: "12 sessions", c: 1150, st: 0, p: 0, d: 2 },
+        { n: "Fraser D.", s: "12 sessions", c: 1120, st: 0, p: 0, d: 0 },
+        { n: "Josh T. (you)", s: "11 sessions", me: true, conOnly: true, d: 1 },
+        { n: "Naledi K.", s: "11 sessions", c: 1080, st: 0, p: 0, d: -2 },
+        { n: "Sipho M.", s: "11 sessions", c: 1050, st: 0, p: 0, d: 0 }
       ]
     }
   };
+  const teams = {
+    unit: "sessions",
+    note: "Teams of three, mixed by gender and experience. Weekly reset every Monday at 00:00.",
+    rows: [
+      { n: "Team Anchor", s: "Kabir, Aisha, Ruan", v: 9, d: 0 },
+      { n: "Team Tidal (you)", s: "Josh, Isla, Fraser", v: 8, d: 1, me: true },
+      { n: "Team Brine", s: "Callum, Naledi, Mia", v: 8, d: -1 },
+      { n: "Team Keel", s: "Sipho, Rory, Ellie", v: 7, d: 2 },
+      { n: "Team Jetty", s: "Ayesha, Liam, Zola", v: 6, d: 0 },
+      { n: "Team Breakwater", s: "Hamish, Lindiwe, Kyle", v: 5, d: -2 }
+    ]
+  };
+  const city = {
+    unit: "visits",
+    note: "Gym against gym: average visits per member a week. All gyms here are made up.",
+    rows: [
+      { n: "Saltworks Barbell Club (you)", s: "142 members", v: 2.7, d: 1, me: true },
+      { n: "Northgate Strength", s: "118 members", v: 2.6, d: -1 },
+      { n: "Quarry Athletic", s: "201 members", v: 2.4, d: 0 },
+      { n: "Lowtide Fitness", s: "87 members", v: 2.2, d: 1 },
+      { n: "Ironbark Gym", s: "164 members", v: 2.0, d: -1 }
+    ]
+  };
   const initials = n => n.replace(/\(.*\)/, "").replace(/^Team /, "").split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
-  const val = (v, unit) => unit === "visits" ? v.toFixed(1) : fmt(v);
+  const delta = d => d > 0 ? `<span class="up">▲ ${d}</span>` : d < 0 ? `<span class="down">▼ ${-d}</span>` : "no change";
+
+  function rowsFor() {
+    if (state.board === "team") return { unit: "sessions", note: teams.note, rows: teams.rows.map(r => ({ ...r })) };
+    if (state.board === "city") return { unit: "visits", note: city.note, rows: city.rows.map(r => ({ ...r })) };
+    const dv = divisions[state.div];
+    const rows = dv.rows.map(r => {
+      const x = { ...r };
+      if (r.me) { x.c = state.con; x.st = r.conOnly ? 0 : state.str; x.p = r.conOnly ? 0 : state.pb; }
+      x.v = x.c + x.st + x.p;
+      return x;
+    }).sort((a, b) => b.v - a.v);
+    return { unit: "pts", note: dv.note, rows, split: state.div !== "open" };
+  }
 
   function renderBoard() {
-    const b = boards[state.board];
-    $$(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.board === state.board)));
+    const gym = state.board === "gym";
+    $$(".seg[aria-label='Leaderboard'] button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.board === state.board)));
+    $$("#divChips button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.div === state.div)));
+    $("#divChips").hidden = !gym;
+    $("#myPts").hidden = !gym || state.div !== "men83";
+    $("#howCard").hidden = !gym;
+    const b = rowsFor();
+    $("#boardLegend").hidden = !b.split;
+    const val = v => b.unit === "visits" ? v.toFixed(1) : fmt(v);
     const top = b.rows.slice(0, 3);
-    const order = [1, 0, 2];
-    const heights = [92, 118, 74];
-    const medal = ["blue", "red", "yellow"];
+    const order = [1, 0, 2], heights = [92, 118, 74], medal = ["blue", "red", "yellow"];
     $("#podium").innerHTML = order.map((i, k) => {
       const r = top[i];
-      return `<div>${plate(medal[k], 46, String(i + 1))}<b>${r.n.replace(" (you)", "")}</b><small class="num">${val(r.v, b.unit)} ${b.unit}</small><span class="block" style="height:${heights[k]}px">${i + 1}</span></div>`;
+      return `<div>${plate(medal[k], 46, String(i + 1))}<b>${r.n.replace(" (you)", "")}</b><small class="num">${val(r.v)} ${b.unit}</small><span class="block" style="height:${heights[k]}px">${i + 1}</span></div>`;
     }).join("");
     $("#board").innerHTML = b.rows.map((r, i) => `
       <li class="${r.me ? "me" : ""}">
         <span class="pos">${i + 1}</span>
         <span class="face" style="background:${FACE[i % FACE.length]};width:34px;height:34px;margin:0;border:0">${initials(r.n)}</span>
-        <span class="who"><b>${r.n}</b><small>${r.s}</small></span>
-        <span class="pts num">${val(r.v, b.unit)}<small>${r.d > 0 ? `<span class="up">▲ ${r.d}</span>` : r.d < 0 ? `<span class="down">▼ ${-r.d}</span>` : "no change"}</small></span>
+        <span class="who"><b>${r.n}</b><small>${b.split ? PLATES[rankFor(r.v).cur].name + " · " : ""}${r.s}</small></span>
+        <span class="pts num">${val(r.v)}<small>${delta(r.d)}</small></span>
+        ${b.split ? `<span class="split">${splitBar(r.c, r.st, r.p)}</span>` : ""}
       </li>`).join("");
     $("#boardNote").textContent = b.note;
   }
 
   // ---------- progress ----------
   function renderHeat() {
-    // 12 weeks x 7 days, Monday first. Fixed pattern so the demo looks the same every time.
     const pattern = "1010100 1001010 0110100 1010010 1000100 1010100 0101010 1010101 1010100 0110010 1010100 1100000";
     const weeks = pattern.split(" ");
     const days = ["M", "T", "W", "T", "F", "S", "S"];
@@ -672,7 +969,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       { k: "white", t: "↺", name: "Comeback", sub: "Back after 14 days", got: true },
       { k: "blue", t: "PB", name: "First PB", sub: "Back squat", got: true },
       { k: "green", t: "12", name: "12-week streak", sub: state.streak >= 12 ? "Today" : `${state.streak} of 12`, got: state.streak >= 12 },
-      { k: "yellow", t: "3", name: "Team week won", sub: "3 times", got: true }
+      { k: "red", t: "2×", name: "Double body weight", sub: "Deadlift", got: true }
     ];
     $("#badges").innerHTML = items.map(b => `
       <div class="badge ${b.got ? "" : "locked"}">
@@ -681,38 +978,76 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       </div>`).join("");
   }
 
-  // ---------- owner ----------
-  function renderChart() {
-    const data = [2.3, 2.2, 2.4, 2.3, 2.1, 2.3, 2.4, 2.4, 2.5, 2.6, 2.6, 2.7, 2.7];
-    const W = 330, H = 170, L = 26, R = 6, T = 10, B = 26;
-    const max = 3;
-    const iw = W - L - R, ih = H - T - B;
-    const bw = iw / data.length;
-    const y = v => T + ih - (v / max) * ih;
+  // ---------- charts ----------
+  // Bars drawn to one scale; optional divider and labels under each bar
+  function bars(svg, data, o) {
+    const W = 330, H = 170, L = 34, R = 6, T = 14, B = o.labels ? 30 : 26;
+    const iw = W - L - R, ih = H - T - B, bw = iw / data.length;
+    const y = v => T + ih - (v / o.max) * ih;
     let s = "";
-    [0, 1, 2, 3].forEach(t => {
+    o.ticks.forEach(t => {
       s += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/>`;
-      s += `<text x="${L - 6}" y="${y(t) + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${t}</text>`;
+      s += `<text x="${L - 6}" y="${y(t) + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${o.tickFmt ? o.tickFmt(t) : t}</text>`;
     });
     data.forEach((v, i) => {
-      const pilot = i >= 8;
+      const hot = o.hot(i);
       const x = L + i * bw + bw * 0.18;
-      s += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${(bw * 0.64).toFixed(1)}" height="${(y(0) - y(v)).toFixed(1)}" rx="3" fill="${pilot ? "var(--accent)" : "var(--surface-2)"}" stroke="${pilot ? "none" : "var(--line)"}"/>`;
+      s += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${(bw * 0.64).toFixed(1)}" height="${(y(0) - y(v)).toFixed(1)}" rx="3" fill="${hot ? "var(--accent)" : "var(--surface-2)"}" stroke="${hot ? "none" : "var(--line)"}"/>`;
+      if (o.labels) s += `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 12}" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="Figtree, sans-serif">${o.labels[i]}</text>`;
     });
-    const last = data.length - 1;
-    const lx = L + last * bw + bw / 2;
-    s += `<text x="${lx}" y="${y(data[last]) - 6}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">2.7</text>`;
-    const div = L + 8 * bw;
-    s += `<line x1="${div}" x2="${div}" y1="${T}" y2="${y(0)}" stroke="var(--ink)" stroke-dasharray="3 3" stroke-width="1"/>`;
-    s += `<text x="${L + 4 * bw}" y="${H - 8}" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="Figtree, sans-serif">8 weeks before</text>`;
-    s += `<text x="${L + 8 * bw + 2.5 * bw}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--accent)" font-family="Figtree, sans-serif">Pilot, week 1 to 5</text>`;
-    $("#chart").innerHTML = s;
+    if (o.endLabel) {
+      const i = o.endIndex != null ? o.endIndex : data.length - 1;
+      s += `<text x="${L + i * bw + bw / 2}" y="${y(data[i]) - 6}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${o.endLabel}</text>`;
+    }
+    if (o.divider != null) {
+      const dx = L + o.divider * bw;
+      s += `<line x1="${dx}" x2="${dx}" y1="${T}" y2="${y(0)}" stroke="var(--ink)" stroke-dasharray="3 3" stroke-width="1"/>`;
+      o.under.forEach(u => { s += `<text x="${L + u.at * bw}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-weight="${u.bold ? 600 : 400}" fill="${u.bold ? "var(--accent)" : "var(--muted)"}" font-family="Figtree, sans-serif">${u.t}</text>`; });
+    }
+    svg.innerHTML = s;
+  }
+
+  const money = v => state.cur === "gbp"
+    ? "£" + v.toLocaleString("en-GB", { maximumFractionDigits: 0 })
+    : "R" + Math.round(v * ZAR_PER_GBP).toLocaleString("en-GB");
+
+  function renderOwner() {
+    $$(".seg[aria-label='Owner section'] button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pane === state.pane)));
+    ["money", "door", "pilot"].forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
+    $$(".cur button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cur === state.cur)));
+    $$("[data-money]").forEach(el => {
+      const v = Number(el.dataset.money);
+      el.textContent = el.dataset.dp && state.cur === "gbp" ? "£" + v.toFixed(2) : money(v);
+    });
+    $("#curNote").textContent = state.cur === "gbp" ? "Shown in pounds. Tap R to see rand at £1 = R21.72." : "Shown in rand at £1 = R21.72. Tap £ for pounds.";
+    const rev = [2410, 2380, 2520, 2460, 2590, 2610, 2640, 2794];
+    const scale = state.cur === "gbp" ? 1 : ZAR_PER_GBP;
+    const revMax = state.cur === "gbp" ? 3000 : 65000;
+    const revTicks = state.cur === "gbp" ? [0, 1000, 2000, 3000] : [0, 20000, 40000, 60000];
+    bars($("#revChart"), rev.map(v => v * scale), {
+      max: revMax, ticks: revTicks, tickFmt: t => t === 0 ? "0" : (state.cur === "gbp" ? "£" : "R") + (t / 1000) + "k",
+      hot: i => i >= 3, divider: 3, endLabel: money(rev[7]),
+      under: [{ t: "Before", at: 1.5 }, { t: "Pilot, week 1 to 5", at: 5.5, bold: true }]
+    });
+  }
+
+  function renderStaticCharts() {
+    bars($("#chart"), [2.3, 2.2, 2.4, 2.3, 2.1, 2.3, 2.4, 2.4, 2.5, 2.6, 2.6, 2.7, 2.7], {
+      max: 3, ticks: [0, 1, 2, 3], hot: i => i >= 8, divider: 8, endLabel: "2.7",
+      under: [{ t: "8 weeks before", at: 4 }, { t: "Pilot, week 1 to 5", at: 10.5, bold: true }]
+    });
+    bars($("#dayChart"), [52, 38, 49, 35, 47, 46, 21], {
+      max: 60, ticks: [0, 20, 40, 60], hot: i => i === 0, endLabel: "52", endIndex: 0,
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    });
+    const freq = [["1 visit", 18], ["2 visits", 27], ["3 visits", 33], ["4 or more", 18]];
+    $("#freq").innerHTML = freq.map(([l, n]) => `<div><span>${l}</span><span class="hbar"><i class="c-con" style="width:${(n / 40 * 100).toFixed(1)}%"></i></span><b>${n}</b></div>`).join("");
   }
 
   const risk = [
     { n: "Callum F.", d: 16, s: "Blue Plate · usually Mon, Wed, Fri at 06:00", cls: "06:00 Engine class tomorrow has 7 spots" },
-    { n: "Lindiwe P.", d: 15, s: "Yellow Plate · usually Tue and Thu evenings", cls: "Barbell Strength at 17:30 tonight has 7 spots" },
-    { n: "Rory B.", d: 21, s: "Green Plate · joined 7 weeks ago", cls: "Saturday's 09:00 team workout is a good one to come back to" },
+    { n: "Lindiwe P.", d: 15, s: "Blue Plate · usually Tue and Thu evenings", cls: "Barbell Strength at 17:30 tonight has 7 spots" },
+    { n: "Rory B.", d: 21, s: "Yellow Plate · joined 7 weeks ago", cls: "Saturday's 09:00 team workout is a good one to come back to" },
     { n: "Ellie W.", d: 14, s: "Yellow Plate · usually lunchtime", cls: "the 12:15 Express class on Thursday has space" }
   ];
   function renderRisk() {
@@ -725,7 +1060,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   }
 
   // ---------- navigation ----------
-  const VIEWS = ["home", "league", "progress", "owner"];
+  const VIEWS = ["home", "league", "card", "progress", "owner"];
   function go(v, push = true) {
     if (!VIEWS.includes(v)) v = "home";
     VIEWS.forEach(x => { $("#v-" + x).hidden = x !== v; });
@@ -735,17 +1070,28 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     if (push) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
   }
   $$("[data-go]").forEach(b => b.addEventListener("click", () => go(b.dataset.go)));
-  $$(".seg button").forEach(b => b.addEventListener("click", () => { state.board = b.dataset.board; renderBoard(); }));
+  $$("[data-board]").forEach(b => b.addEventListener("click", () => { state.board = b.dataset.board; renderBoard(); }));
+  $$("[data-div]").forEach(b => b.addEventListener("click", () => { state.div = b.dataset.div; renderBoard(); }));
+  $$("[data-pane]").forEach(b => b.addEventListener("click", () => { state.pane = b.dataset.pane; renderOwner(); }));
+  $$("[data-cur]").forEach(b => b.addEventListener("click", () => { state.cur = b.dataset.cur; renderOwner(); }));
 
-  // ---------- check-in flow ----------
-  function drawQR() {
-    // Decorative QR-like pattern: three finder squares plus a fixed scatter
+  // ---------- check-in ----------
+  function drawCode(el, size, dots) {
     let s = "";
-    const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#07080a"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
-    s += finder(0, 0) + finder(14, 0) + finder(0, 14);
-    const dots = [[9,1],[10,3],[8,5],[11,6],[9,8],[12,9],[8,10],[10,11],[13,12],[15,9],[17,10],[19,8],[16,12],[18,13],[9,14],[11,15],[13,16],[15,15],[17,16],[19,17],[9,18],[12,19],[14,18],[16,19],[18,20],[20,15],[3,9],[5,10],[1,11],[6,12]];
+    const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="${el.id === "qr" ? "#07080a" : "#f4f5f1"}"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
+    s += finder(0, 0) + finder(size - 7, 0) + finder(0, size - 7);
     dots.forEach(([x, y]) => { s += `<rect x="${x}" y="${y}" width="1" height="1"/>`; });
-    $("#qr").innerHTML = s;
+    el.innerHTML = s;
+  }
+  function scatter(size, seed) {
+    // Fixed pseudo-random fill so the code looks the same every load
+    const out = [];
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const inFinder = (x < 8 && y < 8) || (x > size - 9 && y < 8) || (x < 8 && y > size - 9);
+      const r = Math.abs(Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453) % 1;
+      if (!inFinder && r < 0.46) out.push([x, y]);
+    }
+    return out;
   }
 
   function stamp() {
@@ -762,22 +1108,56 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   }
 
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function complete(how) {
+    state.checkedIn = true;
+    state.con += 35; state.week = 3; state.streak = 12; state.sessions += 1; state.team += 1;
+    stamp();
+    $("#successHow").innerHTML = `${how} · <span class="num">06:42</span>`;
+    $("#success").hidden = false;
+    $("#successClose").focus();
+  }
   $("#checkinBtn").addEventListener("click", () => {
     if (state.checkedIn) return;
     $("#scanner").hidden = false;
+    setTimeout(() => { $("#scanner").hidden = true; complete("Checked in with QR"); }, reduce ? 300 : 1700);
+  });
+  $("#gateBtn").addEventListener("click", () => {
+    $("#gateTitle").textContent = "Hold near the reader";
+    $("#gateTitle").classList.remove("gate-ok");
+    $("#gateSub").textContent = "Your Saltworks card is ready";
+    $("#gate").hidden = false;
     setTimeout(() => {
-      $("#scanner").hidden = true;
-      state.checkedIn = true;
-      state.points += 35; state.week = 3; state.streak = 12; state.sessions += 1; state.team += 1;
-      stamp();
-      $("#success").hidden = false;
-      $("#successClose").focus();
-    }, reduce ? 300 : 1700);
+      $("#gateTitle").textContent = "Gate open";
+      $("#gateTitle").classList.add("gate-ok");
+      $("#gateSub").textContent = state.checkedIn ? "Welcome back, Josh. Already counted today." : "Welcome in, Josh";
+      setTimeout(() => {
+        $("#gate").hidden = true;
+        if (!state.checkedIn) complete("Tapped in at the gate");
+        else toast("Second visit today: counted once for points");
+      }, reduce ? 200 : 900);
+    }, reduce ? 300 : 1500);
   });
   $("#successClose").addEventListener("click", () => {
     $("#success").hidden = true;
-    renderHome(); renderHeat(); renderBadges();
+    renderHome(); renderHeat(); renderBadges(); renderBoard();
+    go("home");
     toast("Team Tidal is level with Team Anchor");
+  });
+
+  // ---------- wallet ----------
+  $("#walletBtn").addEventListener("click", () => {
+    if (state.wallet) { toast("Already in your Wallet"); return; }
+    $("#walletWrap").hidden = false;
+    $("#walletAdd").focus();
+  });
+  $("#walletCancel").addEventListener("click", () => { $("#walletWrap").hidden = true; });
+  $("#walletWrap").addEventListener("click", e => { if (e.target.id === "walletWrap") $("#walletWrap").hidden = true; });
+  $("#walletAdd").addEventListener("click", () => {
+    state.wallet = true;
+    $("#walletWrap").hidden = true;
+    $("#walletBtn").classList.add("added");
+    $("#walletLabel").textContent = "In your Wallet";
+    toast("Added. Try Tap at the gate");
   });
 
   // ---------- nudge sheet ----------
@@ -810,7 +1190,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
   }
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { $("#sheetWrap").hidden = true; if (!$("#success").hidden) $("#successClose").click(); }
+    if (e.key !== "Escape") return;
+    $("#sheetWrap").hidden = true; $("#walletWrap").hidden = true;
+    if (!$("#success").hidden) $("#successClose").click();
   });
 
   let toastTimer;
@@ -822,8 +1204,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   }
 
   // ---------- boot ----------
-  drawQR();
-  renderHome(); renderBoard(); renderHeat(); renderBadges(); renderChart(); renderRisk();
+  drawCode($("#qr"), 21, [[9,1],[10,3],[8,5],[11,6],[9,8],[12,9],[8,10],[10,11],[13,12],[15,9],[17,10],[19,8],[16,12],[18,13],[9,14],[11,15],[13,16],[15,15],[17,16],[19,17],[9,18],[12,19],[14,18],[16,19],[18,20],[20,15],[3,9],[5,10],[1,11],[6,12]]);
+  drawCode($("#passQr"), 25, scatter(25, 417));
+  renderHome(); renderBoard(); renderHeat(); renderBadges(); renderStaticCharts(); renderOwner(); renderRisk();
   const start = (location.hash || "").replace("#", "");
   go(VIEWS.includes(start) ? start : "home", false);
 })();
