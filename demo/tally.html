@@ -292,6 +292,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 /* ---------- owner ---------- */
 .owner-banner { background: var(--ink); color: var(--bg); border-radius: 14px; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; }
 .owner-banner svg { width: 18px; height: 18px; flex: none; }
+.owner-banner .ghost { color: var(--ink); }
 .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
 .kpi .bignum { font-size: 30px; }
@@ -467,6 +468,38 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
 .routine .num { font-size: 12.5px; color: var(--muted); }
 .routine .chev, .chev { color: var(--muted); font-size: 20px; line-height: 1; }
 
+/* ---------- home card strip, owner set up ---------- */
+.wallet-strip { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.mini-pass { width: 58px; height: 40px; border-radius: 8px; background: #14171c; position: relative; overflow: hidden; display: grid; align-items: end; padding: 4px 6px; }
+.mini-pass::after { content: ""; position: absolute; right: -12px; top: -12px; width: 30px; height: 30px; border-radius: 50%; background: var(--p-blue); }
+.mini-pass span { font-family: var(--font-display); font-weight: 900; font-size: 11px; color: #f4f5f1; position: relative; z-index: 1; }
+.wallet-strip b { display: block; font-weight: 600; }
+.wallet-strip .muted { font-size: 13px; display: block; }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 11px 12px; width: 100%; }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt .box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--line); display: grid; place-items: center; margin-top: 1px; background: var(--surface); }
+.opt[aria-pressed="true"] .box { background: var(--accent); border-color: var(--accent); }
+.opt .box svg { width: 14px; height: 14px; color: var(--accent-ink); visibility: hidden; }
+.opt[aria-pressed="true"] .box svg { visibility: visible; }
+.opt b { display: block; font-weight: 600; font-size: 14.5px; }
+.opt span span { display: block; font-size: 12.5px; color: var(--muted); }
+.opt em { display: block; font-style: normal; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.toggles { display: grid; }
+.toggle { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; width: 100%; }
+.toggle:last-child { border-bottom: 0; padding-bottom: 0; }
+.toggle b, .sys b { display: block; font-weight: 600; font-size: 14.5px; }
+.toggle small, .sys small { display: block; font-size: 12.5px; color: var(--muted); }
+.switch { width: 46px; height: 28px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); position: relative; transition: background .2s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.toggle[aria-checked="true"] .switch { background: var(--good); border-color: var(--good); }
+.toggle[aria-checked="true"] .switch::after { transform: translateX(18px); }
+.sys { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.sys:last-child { border-bottom: 0; padding-bottom: 0; }
+.sys button[aria-pressed="true"] { color: var(--good); border-color: var(--good); }
+.guest-card { display: grid; gap: 6px; background: var(--surface-2); border-radius: 16px; padding: 14px; }
+.guest-card b { font-size: 17px; }
+
 /* ---------- overlays ---------- */
 .overlay { position: absolute; inset: 0; z-index: 20; display: grid; }
 .overlay[hidden] { display: none !important; }
@@ -540,7 +573,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
       <button data-go="league"><i>4</i><div><b>League</b><span>Weight classes; tap anyone for their stats</span></div></button>
       <button data-go="progress"><i>5</i><div><b>Progress</b><span>Tap a lift for its history and class rank</span></div></button>
       <button data-go="card"><i>6</i><div><b>Membership card</b><span>Wallet pass that opens the gate</span></div></button>
-      <button data-go="owner"><i>7</i><div><b>Owner view</b><span>Revenue, the door, classes, pilot results</span></div></button>
+      <button data-go="owner"><i>7</i><div><b>Owner view</b><span>Money, footfall, classes, and set-up for any type of gym</span></div></button>
     </div>
     <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members, classes, money and rival gyms are made up. Try booking a class, "Check in" or "Tap at the gate".</p>
   </section>
@@ -573,6 +606,12 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
             <div><strong id="checkinTitle">Check in</strong><span id="checkinSub">Scan the QR poster, or tap your card at the gate</span></div>
             <svg id="checkinIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="8" width="3" height="3"/><rect x="8" y="13" width="3" height="3"/><path d="M13 13h3v3"/></svg>
           </button>
+
+          <div class="card wallet-strip" data-go="card" id="homeWallet">
+            <span class="mini-pass" aria-hidden="true"><span>SBC</span></span>
+            <span><b>Your membership card</b><span class="muted" id="homeWalletSub">Add it to your phone's Wallet and tap in at the gate</span></span>
+            <span class="chev" aria-hidden="true">›</span>
+          </div>
 
           <div class="pair">
             <div class="card" data-go="progress">
@@ -697,6 +736,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
             <span id="walletLabel">Add to Wallet</span>
           </button>
           <button class="secondary" id="gateBtn">Tap at the gate</button>
+          <button class="secondary" id="guestBtn">Send a friend a free guest pass</button>
           <div class="card info-list">
             <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0"/><circle cx="12" cy="12" r="1.5"/></svg><span>Hold your phone near the reader at the gate. No plastic card to carry or lose.</span></div>
             <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.6 6.6l2.1 2.1M17.3 15.3l2.1 2.1M3 12h3M18 12h3"/></svg><span>Your card appears on your lock screen when you arrive at the gym.</span></div>
@@ -741,6 +781,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
             <button data-pane="door" aria-pressed="false">The door</button>
             <button data-pane="classes" aria-pressed="false">Classes</button>
             <button data-pane="pilot" aria-pressed="false">Pilot</button>
+            <button data-pane="setup" aria-pressed="false">Set up</button>
           </div>
 
           <!-- money -->
@@ -785,6 +826,15 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
               <div class="row" style="font-size:13px"><span><b class="num">250</b> member taps · 96 people</span><span><b class="num">38</b> day-pass taps · 31 people</span></div>
             </div>
             <div class="card stack">
+              <div class="row"><p class="eyebrow">Guest passes from members</p><span class="muted" style="font-size:12px">This month</span></div>
+              <div class="statgrid">
+                <div class="stat"><small>Sent</small><b id="guestSent">12</b><span>by members</span></div>
+                <div class="stat"><small>Visited</small><b>7</b><span>came in</span></div>
+                <div class="stat"><small>Joined</small><b>3</b><span>now members</span></div>
+              </div>
+              <p class="rule">Members invite friends from their card. When a guest joins, both of them get 100 points.</p>
+            </div>
+            <div class="card stack">
               <div class="row"><p class="eyebrow">How often members came</p><span class="muted" style="font-size:12px">This week, 96 members</span></div>
               <div class="freq" id="freq"></div>
               <p class="rule">6 members tapped in twice on the same day. Both visits are counted here, but only one counts for points.</p>
@@ -811,6 +861,29 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
               <div class="row" style="margin-bottom:2px"><p class="eyebrow">Today's classes</p><span class="muted" style="font-size:12px">Friday 23 October</span></div>
               <div id="oToday"></div>
             </div>
+          </div>
+
+          <!-- set up -->
+          <div class="ownerpane" id="p-setup" hidden>
+            <div class="card stack">
+              <p class="eyebrow">What kind of gym is this?</p>
+              <div class="chips" id="gymType" role="group" aria-label="Gym type"></div>
+              <p class="rule" id="gymTypeNote"></p>
+            </div>
+            <div class="card stack">
+              <div class="row"><p class="eyebrow">How members check in</p><span class="muted" style="font-size:12px">Pick any</span></div>
+              <div class="opts" id="checkinOpts"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">What members see</p>
+              <div class="toggles" id="modToggles"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Systems you already use</p>
+              <div id="sysList"></div>
+              <p class="rule">Tally sits alongside your booking software and door system. Nothing gets replaced.</p>
+            </div>
+            <p class="rule">Changes here update the member app straight away. Try turning off class booking, then tap Member app.</p>
           </div>
 
           <!-- pilot -->
@@ -921,6 +994,24 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
           <div class="actions">
             <button class="secondary" id="walletCancel">Cancel</button>
             <button class="primary" id="walletAdd">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- guest pass sheet -->
+      <div class="overlay sheet-wrap" id="guestWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="guestTitle">
+          <span class="grabber"></span>
+          <h3 id="guestTitle">Free guest pass</h3>
+          <div class="guest-card">
+            <p class="eyebrow">Saltworks Barbell Club · Guest</p>
+            <b>One free visit for a friend</b>
+            <span class="muted" style="font-size:13px">Any day this week. It works at the gate like your card and stops working at midnight.</span>
+          </div>
+          <p class="note">If your friend joins, you both get 100 points. You have 2 guest passes left this month.</p>
+          <div class="actions">
+            <button class="secondary" id="guestCancel">Cancel</button>
+            <button class="primary" id="guestSend">Send pass</button>
           </div>
         </div>
       </div>
@@ -1164,7 +1255,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
     const gym = state.board === "gym";
     $$(".seg[aria-label='Leaderboard'] button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.board === state.board)));
     $$("#divChips button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.div === state.div)));
-    $("#divChips").hidden = !gym;
+    $("#divChips").hidden = !gym || !setup.mods.strength;
     $("#myPts").hidden = !gym || state.div !== "men83";
     $("#howCard").hidden = !gym;
     const b = rowsFor();
@@ -1262,7 +1353,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
 
   function renderOwner() {
     $$(".seg[aria-label='Owner section'] button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pane === state.pane)));
-    ["money", "door", "classes", "pilot"].forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
+    ["money", "door", "classes", "pilot", "setup"].forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
     $$(".cur button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cur === state.cur)));
     $$("[data-money]").forEach(el => {
       const v = Number(el.dataset.money);
@@ -1970,7 +2061,106 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
     $("#walletWrap").hidden = true;
     $("#walletBtn").classList.add("added");
     $("#walletLabel").textContent = "In your Wallet";
+    $("#homeWalletSub").textContent = "In your Wallet. Hold your phone to the reader at the gate";
     toast("Added. Try Tap at the gate");
+  });
+
+  // ---------- guest pass ----------
+  let guestsSent = 12;
+  $("#guestBtn").addEventListener("click", () => { $("#guestWrap").hidden = false; $("#guestSend").focus(); });
+  $("#guestCancel").addEventListener("click", () => { $("#guestWrap").hidden = true; });
+  $("#guestWrap").addEventListener("click", e => { if (e.target.id === "guestWrap") $("#guestWrap").hidden = true; });
+  $("#guestSend").addEventListener("click", () => {
+    $("#guestWrap").hidden = true;
+    guestsSent += 1;
+    $("#guestSent").textContent = guestsSent;
+    toast("Pass ready. The real app opens WhatsApp so you can send it");
+  });
+
+  // ---------- owner set up: fit Tally to any type of gym ----------
+  const GYM_TYPES = {
+    box: { label: "Class gym or box", note: "Classes, teams and strength ranks are all on. Members check in with the poster or their card.", mods: { classes: true, strength: true, teams: true, city: true, wallet: true, learn: true } },
+    floor: { label: "Open-floor gym", note: "No class timetable. Members tap their card at the gate and rank on attendance and strength.", mods: { classes: false, strength: true, teams: true, city: true, wallet: true, learn: true } },
+    studio: { label: "Yoga or pilates studio", note: "Classes on, strength ranks off, so everyone ranks on consistency only.", mods: { classes: true, strength: false, teams: true, city: false, wallet: true, learn: true } },
+    pt: { label: "Personal training studio", note: "Small and personal: no timetable, teams or city league. Clients rank on consistency and their own lifts.", mods: { classes: false, strength: true, teams: false, city: false, wallet: false, learn: true } }
+  };
+  const CHECKINS = {
+    poster: { t: "QR poster at the door", d: "Members scan a printed poster with the app.", need: "Needs a printed poster. Works in any gym." },
+    desk: { t: "Code on a front-desk tablet", d: "The code changes every hour, so it only works inside the building.", need: "Needs any tablet or spare phone." },
+    card: { t: "Wallet card at the desk or gate", d: "Members show the card in their phone's Wallet app.", need: "Needs a QR scanner at reception, or a gate that reads QR codes." },
+    door: { t: "Your existing door system", d: "Every door entry counts as a check-in automatically.", need: "Needs a door or turnstile system that can share entries." }
+  };
+  const MODS = {
+    classes: ["Class booking", "Timetable, bookings and waitlists"],
+    strength: ["Strength ranks by weight class", "Off: everyone ranks on consistency only"],
+    teams: ["Teams of three", "Weekly team leaderboard"],
+    city: ["City league", "Compete with other gyms on visits per member"],
+    wallet: ["Membership card in Wallet", "The card in the phone's Wallet app"],
+    learn: ["Learn guides", "Lifting technique and stretches"]
+  };
+  const setup = { type: "box", checkin: new Set(["poster", "card"]), mods: { ...GYM_TYPES.box.mods }, sys: { booking: false, door: false } };
+  const TICK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`;
+
+  function renderSetup() {
+    $("#gymType").innerHTML = Object.entries(GYM_TYPES).map(([k, g]) => `<button data-gtype="${k}" aria-pressed="${k === setup.type}">${g.label}</button>`).join("");
+    $("#gymTypeNote").textContent = GYM_TYPES[setup.type].note;
+    $("#checkinOpts").innerHTML = Object.entries(CHECKINS).map(([k, c]) => `<button class="opt" data-checkin="${k}" aria-pressed="${setup.checkin.has(k)}"><span class="box">${TICK}</span><span><b>${c.t}</b><span>${c.d}</span><em>${c.need}</em></span></button>`).join("");
+    $("#modToggles").innerHTML = Object.entries(MODS).map(([k, [t, d]]) => `<button class="toggle" role="switch" data-mod="${k}" aria-checked="${setup.mods[k]}"><span><b>${t}</b><small>${d}</small></span><span class="switch" aria-hidden="true"></span></button>`).join("");
+    const sys = [["booking", "Booking and billing software", "Tally reads members, bookings and payments from it, so staff never enter anything twice."], ["door", "Door or turnstile system", "Door entries count as check-ins, and frozen memberships stop earning points."]];
+    $("#sysList").innerHTML = sys.map(([k, t, d]) => `<div class="sys"><span><b>${t}</b><small>${d}</small></span><button class="ghost" data-sys="${k}" aria-pressed="${setup.sys[k]}">${setup.sys[k] ? "Connected" : "Connect"}</button></div>`).join("");
+  }
+
+  function applySetup() {
+    const m = setup.mods;
+    const show = (sel, on) => $$(sel).forEach(el => { el.hidden = !on; });
+    show('.tab[data-tab="classes"], #tour [data-go="classes"], #homeClass, [data-pane="classes"]', m.classes);
+    show('.tab[data-tab="learn"], #tour [data-go="learn"]', m.learn);
+    show('[data-board="team"], #v-home [data-open="team:1"]', m.teams);
+    show('[data-board="city"]', m.city);
+    show('#homeWallet, .meseg, #tour [data-go="card"]', m.wallet);
+    if ((state.board === "team" && !m.teams) || (state.board === "city" && !m.city)) state.board = "gym";
+    if (!m.strength) state.div = "open";
+    else if (state.div === "open") state.div = "men83";
+    if (state.pane === "classes" && !m.classes) state.pane = "setup";
+    $(".rankcard .eyebrow").textContent = m.strength ? "Men · 83 kg class" : "Open division · consistency";
+    const tabs = $$(".tab").filter(t => !t.hidden).length;
+    $(".tabbar").style.gridTemplateColumns = `repeat(${tabs}, 1fr)`;
+    const ways = [];
+    if (setup.checkin.has("poster")) ways.push("scan the QR poster");
+    if (setup.checkin.has("desk")) ways.push("scan the code at the front desk");
+    if (setup.checkin.has("card") && m.wallet) ways.push("tap your card at the gate");
+    if (!state.checkedIn) $("#checkinSub").textContent = ways.length ? ways.join(", or ").replace(/^./, c => c.toUpperCase()) : "You're checked in automatically when you come through the door";
+    renderBoard(); renderOwner(); renderSetup();
+  }
+
+  $("#p-setup").addEventListener("click", e => {
+    const t = e.target.closest("[data-gtype]"), c = e.target.closest("[data-checkin]"), md = e.target.closest("[data-mod]"), s = e.target.closest("[data-sys]");
+    if (t) {
+      setup.type = t.dataset.gtype;
+      setup.mods = { ...GYM_TYPES[setup.type].mods };
+      if (!setup.mods.wallet) setup.checkin.delete("card");
+      if (setup.type === "floor") setup.checkin.add("card");
+      if (!setup.checkin.size) setup.checkin.add("poster");
+      toast(`Set up for: ${GYM_TYPES[setup.type].label}`);
+    } else if (c) {
+      const k = c.dataset.checkin;
+      if (setup.checkin.has(k)) {
+        if (setup.checkin.size === 1) { toast("Keep at least one way to check in"); return; }
+        setup.checkin.delete(k);
+      } else {
+        setup.checkin.add(k);
+        if (k === "card") setup.mods.wallet = true;
+      }
+    } else if (md) {
+      const k = md.dataset.mod;
+      setup.mods[k] = !setup.mods[k];
+      if (k === "wallet" && !setup.mods.wallet) { setup.checkin.delete("card"); if (!setup.checkin.size) setup.checkin.add("poster"); }
+    } else if (s) {
+      const k = s.dataset.sys;
+      setup.sys[k] = !setup.sys[k];
+      toast(setup.sys[k] ? "In the real app we connect this with you, using a key from your software account" : "Disconnected");
+    } else return;
+    applySetup();
   });
 
   // ---------- nudge sheet ----------
@@ -2004,7 +2194,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
   }
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
-    const sheets = ["#sheetWrap", "#walletWrap", "#clsWrap", "#postWrap", "#infoWrap"];
+    const sheets = ["#sheetWrap", "#walletWrap", "#clsWrap", "#postWrap", "#infoWrap", "#guestWrap"];
     const anyOpen = sheets.some(x => !$(x).hidden);
     sheets.forEach(x => { $(x).hidden = true; });
     if (!$("#success").hidden) { $("#successClose").click(); return; }
@@ -2023,7 +2213,7 @@ button.demo-pill { background: var(--surface); cursor: pointer; }
   drawCode($("#qr"), 21, [[9,1],[10,3],[8,5],[11,6],[9,8],[12,9],[8,10],[10,11],[13,12],[15,9],[17,10],[19,8],[16,12],[18,13],[9,14],[11,15],[13,16],[15,15],[17,16],[19,17],[9,18],[12,19],[14,18],[16,19],[18,20],[20,15],[3,9],[5,10],[1,11],[6,12]]);
   drawCode($("#passQr"), 25, scatter(25, 417));
   renderHome(); renderBoard(); renderHeat(); renderBadges(); renderStaticCharts(); renderOwner(); renderRisk();
-  renderClasses(); renderHomeClass(); renderOwnerClasses(); renderLearn();
+  renderClasses(); renderHomeClass(); renderOwnerClasses(); renderLearn(); renderSetup(); applySetup();
   decorate(document);
   const start = (location.hash || "").replace("#", "");
   go(VIEWS.includes(start) ? start : "home", false);
