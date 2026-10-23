@@ -1,0 +1,2592 @@
+<title>Tally Full Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a phone app. On wide screens it sits in a device frame beside a short pitch panel; on a phone it fills the screen. */
+:root {
+  --bg: #edefec;          /* chalk */
+  --surface: #ffffff;
+  --surface-2: #e2e5e1;
+  --ink: #14171c;
+  --muted: #5d6570;
+  --line: #d3d8d2;
+  --accent: #2346d8;      /* plate blue */
+  --accent-ink: #ffffff;
+  --accent-soft: #dfe5fb;
+  --good: #1d7f47;
+  --warn: #a96b10;
+  --bad: #c3352a;
+  --stage: #d9ddd7;
+  --bezel: #0c0d10;
+  --p-red: #d93a2b;
+  --p-blue: #2b54e0;
+  --p-yellow: #f0bf2c;
+  --p-green: #2e9a55;
+  --p-white: #f3f3ee;
+  --p-hub: #1b1e23;
+  --font-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1114; --surface: #181b20; --surface-2: #22262c; --ink: #eceeea; --muted: #9aa2ab;
+    --line: #2b3037; --accent: #6683ff; --accent-ink: #0a0f2b; --accent-soft: #1d2547;
+    --good: #4cc27c; --warn: #e3a948; --bad: #ff6b5e; --stage: #07080a; --bezel: #000000;
+    --p-white: #e9e9e3; --p-hub: #0f1114;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1114; --surface: #181b20; --surface-2: #22262c; --ink: #eceeea; --muted: #9aa2ab;
+  --line: #2b3037; --accent: #6683ff; --accent-ink: #0a0f2b; --accent-soft: #1d2547;
+  --good: #4cc27c; --warn: #e3a948; --bad: #ff6b5e; --stage: #07080a; --bezel: #000000;
+  --p-white: #e9e9e3; --p-hub: #0f1114;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+/* ---------- stage: phone fills the screen by default ---------- */
+.stage { height: 100%; }
+.pitch { display: none; }
+.device { height: 100%; }
+.screen { height: 100%; position: relative; overflow: hidden; background: var(--bg); }
+.statusbar { display: none; }
+
+@media (min-width: 900px) {
+  body { background: var(--stage); }
+  .stage {
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 420px) auto;
+    justify-content: center;
+    align-items: center;
+    gap: 72px;
+    padding-block: 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .pitch { display: grid; gap: 20px; align-content: center; }
+  .device {
+    width: 390px; height: 844px; padding: 12px; border-radius: 58px;
+    background: var(--bezel);
+    box-shadow: 0 0 0 2px #2a2d33, 0 40px 80px -30px rgba(0,0,0,.45);
+  }
+  .screen { border-radius: 46px; }
+  .statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 50px; padding: 14px 30px 0; font-weight: 600; font-size: 15px;
+    position: relative; z-index: 2; background: var(--bg);
+  }
+  .statusbar .island { position: absolute; left: 50%; top: 11px; width: 120px; height: 34px; margin-left: -60px; background: #000; border-radius: 20px; }
+  .app { height: calc(100% - 50px) !important; }
+}
+
+/* ---------- pitch panel ---------- */
+.wordmark { font-family: var(--font-display); font-weight: 900; font-size: 88px; line-height: .85; letter-spacing: .01em; text-transform: uppercase; display: flex; align-items: flex-end; gap: 14px; }
+.wordmark svg { width: 64px; height: 64px; margin-bottom: 6px; }
+.pitch h1 { margin: 0; font-size: 22px; line-height: 1.25; font-weight: 600; text-wrap: balance; max-width: 30ch; }
+.pitch p { margin: 0; color: var(--muted); max-width: 46ch; }
+.tour { display: grid; gap: 7px; }
+.tour button {
+  display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px;
+}
+.tour button[aria-current="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.tour b { display: block; font-weight: 600; }
+.tour span { color: var(--muted); font-size: 13px; }
+.tour i { font-style: normal; font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--accent); text-align: center; }
+.fine { font-size: 12px; color: var(--muted); }
+
+/* ---------- app shell ---------- */
+.app { height: 100%; display: flex; flex-direction: column; }
+.view {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 8px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: none;
+}
+.view::-webkit-scrollbar { display: none; }
+.view > * { flex-shrink: 0; }
+.view[hidden] { display: none !important; }
+
+.tabbar {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid var(--line); background: var(--surface);
+  padding-top: 6px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(6px, env(safe-area-inset-left, 0px));
+  padding-right: max(6px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 900px) { .tabbar { padding-bottom: 26px; } }
+.tab { background: none; border: 0; display: grid; justify-items: center; gap: 2px; padding: 6px 0; font-size: 11px; font-weight: 600; color: var(--muted); }
+.tab svg { width: 24px; height: 24px; }
+.tab[aria-selected="true"] { color: var(--accent); }
+
+/* ---------- shared pieces ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 6px; }
+.gymchip { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.gymlogo { width: 38px; height: 38px; border-radius: 10px; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: 17px; letter-spacing: .02em; flex: none; }
+.gymchip small { display: block; color: var(--muted); font-size: 12px; }
+.gymchip strong { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-pill { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 4px 9px; flex: none; }
+.h-display { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: .01em; line-height: .95; margin: 0; }
+.title { font-size: 40px; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.card { background: var(--surface); border-radius: 20px; padding: 16px; border: 1px solid var(--line); min-width: 0; }
+.stack { display: grid; gap: 12px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.muted { color: var(--muted); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border-radius: 12px; padding: 3px; }
+.seg button { border: 0; background: none; border-radius: 9px; padding: 8px 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.rule { font-size: 12.5px; color: var(--muted); margin: 0; }
+.pill { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 5px 10px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+.ghost { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 7px 10px; font-size: 12.5px; font-weight: 600; }
+.primary { border: 0; border-radius: 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 14px 18px; width: 100%; }
+.secondary { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); font-weight: 700; padding: 13px 18px; width: 100%; }
+.chip { justify-self: start; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.chip.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
+.chip.risk { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.chip.info { background: var(--accent-soft); color: var(--accent); }
+.up { color: var(--good); }
+.down { color: var(--bad); }
+.face { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; border: 2px solid var(--surface); margin-left: -8px; flex: none; }
+.face:first-child { margin-left: 0; }
+
+/* points split: consistency, strength, personal bests */
+.split { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-2); gap: 2px; }
+.split i { display: block; height: 100%; }
+.c-con { background: var(--p-blue); }
+.c-str { background: var(--p-red); }
+.c-pb { background: var(--p-yellow); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* ---------- home ---------- */
+.rankcard { background: var(--ink); color: var(--bg); border: 0; display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center; padding: 18px; }
+.rankcard .eyebrow { color: color-mix(in srgb, var(--bg) 65%, transparent); }
+.rankcard .h-display { font-size: 34px; }
+.bar { height: 8px; background: color-mix(in srgb, var(--bg) 18%, transparent); border-radius: 99px; overflow: hidden; margin-top: 10px; }
+.bar > span { display: block; height: 100%; background: var(--p-red); border-radius: 99px; transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.rankcard .small { font-size: 12.5px; margin-top: 6px; color: color-mix(in srgb, var(--bg) 70%, transparent); }
+
+.checkin {
+  border: 0; border-radius: 20px; background: var(--accent); color: var(--accent-ink);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; text-align: left;
+}
+.checkin strong { font-family: var(--font-display); font-weight: 800; font-size: 30px; text-transform: uppercase; line-height: 1; display: block; }
+.checkin span { font-size: 13px; opacity: .85; }
+.checkin svg { width: 44px; height: 44px; flex: none; }
+.checkin.done { background: var(--surface); color: var(--ink); border: 1px solid var(--line); cursor: default; }
+.checkin.done svg { color: var(--good); }
+
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pair .card { display: grid; gap: 8px; align-content: start; }
+.goal { display: flex; align-items: center; gap: 12px; }
+.goal svg { width: 62px; height: 62px; flex: none; }
+.bignum { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; }
+.tally { color: var(--ink); height: 34px; width: 100%; }
+.class-card { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; }
+.class-time { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; text-align: center; }
+.class-time small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 3px; }
+.team-faces { display: flex; }
+
+/* ---------- league ---------- */
+.board { list-style: none; margin: 0; padding: 0; display: grid; }
+.board li { display: grid; grid-template-columns: 26px 34px 1fr auto; gap: 4px 10px; align-items: center; padding: 11px 4px; border-bottom: 1px solid var(--line); }
+.board li:last-child { border-bottom: 0; }
+.board .pos { font-family: var(--font-display); font-weight: 800; font-size: 20px; text-align: center; color: var(--muted); }
+.board li.me { background: var(--accent-soft); border-radius: 12px; border-bottom-color: transparent; padding-inline: 8px; margin-inline: -4px; }
+.board li.me .pos { color: var(--accent); }
+.board .who { min-width: 0; }
+.board .who b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.board .who small { color: var(--muted); font-size: 12px; }
+.board .pts { text-align: right; font-weight: 600; }
+.board .pts small { display: block; font-size: 11px; color: var(--muted); font-family: var(--font-body); font-weight: 500; }
+.board .split { grid-column: 3 / 5; height: 5px; }
+.podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; align-items: end; }
+.podium div { display: grid; justify-items: center; gap: 6px; text-align: center; min-width: 0; }
+.podium .block { width: 100%; border-radius: 12px 12px 4px 4px; background: var(--surface-2); display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: 26px; color: var(--muted); }
+.podium b { font-size: 13px; }
+.podium small { font-size: 11.5px; color: var(--muted); }
+.mypts { display: grid; gap: 10px; }
+.mypts .split { height: 12px; }
+.ptsrow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ptsrow div { display: grid; gap: 2px; }
+.ptsrow b { font-family: var(--font-data); font-size: 15px; }
+.ptsrow small { font-size: 11.5px; color: var(--muted); }
+.howto { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.howto li { display: grid; grid-template-columns: 12px 1fr; gap: 10px; font-size: 13.5px; }
+.howto li i { width: 12px; height: 12px; border-radius: 4px; margin-top: 4px; }
+.howto b { font-weight: 600; }
+
+/* ---------- card ---------- */
+.pass {
+  border-radius: 22px; padding: 18px; color: #f4f5f1; position: relative; overflow: hidden;
+  background: #14171c; display: grid; gap: 16px;
+  box-shadow: 0 18px 40px -22px rgba(0,0,0,.6);
+}
+.pass::after { content: ""; position: absolute; right: -43px; top: -43px; width: 140px; height: 140px; border-radius: 50%; background: var(--p-blue); }
+.pass::before { content: ""; position: absolute; right: 18px; top: 18px; width: 18px; height: 18px; border-radius: 50%; background: #0c0e11; z-index: 1; box-shadow: 0 0 0 5px #9aa0a8, 0 0 0 11px #0c0e11; }
+.pass > * { position: relative; z-index: 2; }
+.pass .brand { display: flex; gap: 10px; align-items: center; padding-right: 64px; }
+.pass .brand .gymlogo { background: #f4f5f1; color: #14171c; }
+.pass .brand small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #aab1ba; font-weight: 700; }
+.pass .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.pass .fields small { display: block; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #aab1ba; font-weight: 700; }
+.pass .fields b { font-size: 15px; font-weight: 600; }
+.pass .code { background: #f4f5f1; border-radius: 14px; padding: 12px; display: grid; justify-items: center; gap: 6px; color: #14171c; }
+.pass .code svg { width: 150px; height: 150px; max-width: 100%; }
+.pass .code small { font-family: var(--font-data); font-size: 12px; }
+.info-list { display: grid; }
+.info-list > div { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.info-list > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.info-list svg { width: 22px; height: 22px; color: var(--accent); }
+.wallet-btn { display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 14px; background: #000; color: #fff; font-weight: 700; padding: 14px 18px; width: 100%; }
+.wallet-btn svg { width: 22px; height: 22px; }
+.wallet-btn.added { background: var(--surface); color: var(--good); border: 1px solid var(--line); }
+
+/* ---------- progress ---------- */
+.heat { display: grid; grid-template-columns: 22px repeat(12, minmax(0, 1fr)); gap: 4px; min-width: 0; }
+.heat span { aspect-ratio: 1; max-width: 100%; border-radius: 4px; background: var(--surface-2); }
+.heat span.l1 { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
+.heat span.l2 { background: var(--accent); }
+.heat span.today { outline: 2px solid var(--ink); outline-offset: 1px; }
+.heat em { font-style: normal; font-size: 10px; color: var(--muted); display: grid; align-items: center; }
+.pbs { display: grid; }
+.pbs > div { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.pbs > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.pbs b { font-weight: 600; }
+.pbs .val { text-align: right; font-weight: 600; font-size: 16px; }
+.pbs small { color: var(--muted); font-size: 12px; }
+.pbs .delta { text-align: right; font-size: 12px; }
+.pbs .total { background: var(--accent-soft); border-radius: 12px; padding: 12px; margin-top: 10px; border-bottom: 0; }
+.badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.badge { display: grid; justify-items: center; gap: 6px; text-align: center; font-size: 11.5px; font-weight: 600; }
+.badge svg { width: 58px; height: 58px; }
+.badge.locked { color: var(--muted); }
+.badge small { font-weight: 500; color: var(--muted); font-size: 11px; }
+
+/* ---------- owner ---------- */
+.owner-banner { background: var(--ink); color: var(--bg); border-radius: 14px; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; }
+.owner-banner svg { width: 18px; height: 18px; flex: none; }
+.owner-banner .ghost { color: var(--ink); }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
+.kpi .bignum { font-size: 30px; }
+.kpi small { font-size: 12px; color: var(--muted); }
+.kpi .chip { margin-top: 4px; }
+.hero-num { display: grid; gap: 4px; }
+.hero-num .bignum { font-size: 52px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.breakdown { display: grid; gap: 12px; }
+.bd { display: grid; gap: 6px; }
+.bd .row span { font-size: 13.5px; }
+.bd .row small { color: var(--muted); font-size: 12px; display: block; }
+.hbar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.hbar i { display: block; height: 100%; border-radius: 99px; }
+.freq { display: grid; gap: 9px; }
+.freq > div { display: grid; grid-template-columns: 74px 1fr 34px; gap: 10px; align-items: center; font-size: 13px; }
+.freq .hbar { height: 14px; border-radius: 5px; }
+.freq .hbar i { border-radius: 5px; }
+.freq b { text-align: right; font-family: var(--font-data); font-weight: 600; }
+.cur { display: inline-grid; grid-auto-flow: column; background: var(--surface-2); border-radius: 99px; padding: 2px; }
+.cur button { border: 0; background: none; border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.cur button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.passmark { display: grid; gap: 12px; }
+.pm { display: grid; gap: 6px; }
+.pm .row span { font-size: 13px; }
+.pm .track { height: 8px; border-radius: 99px; background: var(--surface-2); position: relative; }
+.pm .fill { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: var(--good); }
+.pm .target { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); border-radius: 2px; }
+.risk-list { display: grid; }
+.risk-list > div { display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.risk-list > div:last-child { border-bottom: 0; }
+.risk-list .face { width: 38px; height: 38px; font-size: 13px; margin: 0; border: 0; }
+.risk-list b { display: block; font-weight: 600; }
+.risk-list small { color: var(--muted); font-size: 12px; }
+.ownerpane[hidden] { display: none !important; }
+.ownerpane { display: grid; gap: 14px; }
+
+/* ---------- classes ---------- */
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.days button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 0 6px; display: grid; justify-items: center; gap: 2px; min-width: 0; }
+.days small { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.days b { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1; }
+.days i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); visibility: hidden; }
+.days i.on { visibility: visible; }
+.days button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.days button[aria-pressed="true"] small { color: inherit; opacity: .75; }
+.days button[aria-pressed="true"] i { background: var(--bg); }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.chips.scroll::-webkit-scrollbar { display: none; }
+.chips.scroll button { flex: none; }
+.daytitle { margin: 0; font-size: 17px; font-weight: 700; }
+.classlist { display: grid; gap: 10px; }
+.cls { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; text-align: left; width: 100%; }
+.cls.past { opacity: .55; }
+.cls .t { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1; }
+.cls .t small { display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 4px; }
+.cls .nm { min-width: 0; display: grid; gap: 3px; }
+.cls .nm b { font-weight: 600; font-size: 15px; }
+.cls .nm > span:not(.type):not(.spots) { font-size: 12.5px; color: var(--muted); }
+.type { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.type i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.new { font-style: normal; color: var(--accent); }
+.spots { display: block; height: 4px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin-top: 2px; max-width: 150px; }
+.spots i { display: block; height: 100%; background: var(--ink); border-radius: 99px; }
+.state { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 6px 11px; white-space: nowrap; border: 1px solid var(--line); background: var(--surface); }
+.state.open { color: var(--accent); border-color: var(--accent); }
+.state.booked { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.state.wait { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+.state.full, .state.done { color: var(--muted); }
+.state.live { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.bklist { display: grid; }
+.bklist button { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 9px 0; }
+.bklist button:last-child { border-bottom: 0; padding-bottom: 0; }
+.bklist b { font-weight: 600; grid-column: 1; }
+.bklist .chev { grid-row: 1 / 3; grid-column: 2; color: var(--muted); font-size: 20px; line-height: 1; }
+.detail-head { display: grid; gap: 6px; }
+.detail-head h3 { font-family: var(--font-display); font-size: 34px; text-transform: uppercase; font-weight: 800; line-height: .95; margin: 0; }
+.detail-head > span:last-child { color: var(--muted); font-size: 14px; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.facts div { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; display: grid; gap: 1px; min-width: 0; }
+.facts small { font-size: 11px; color: var(--muted); font-weight: 600; }
+.facts b { font-size: 14px; font-weight: 600; }
+.going { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.going .face { width: 28px; height: 28px; font-size: 10px; }
+.orow { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.orow:last-child { border-bottom: 0; padding-bottom: 0; }
+.orow b { font-weight: 600; }
+.orow small { display: block; color: var(--muted); font-size: 12px; }
+.orow .hbar { display: block; height: 5px; margin-top: 6px; }
+.form { display: grid; gap: 10px; }
+.form label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
+.form select, .form input { font: inherit; font-size: 15px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; width: 100%; min-width: 0; }
+.form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form .actions { margin-top: 4px; }
+
+/* ---------- tappable things and pushed pages ---------- */
+.tap { cursor: pointer; }
+.card.tap:hover, .pbs > div.tap:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+[role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
+button.demo-pill { background: var(--surface); cursor: pointer; }
+.page-head { display: flex; align-items: center; padding-top: 4px; }
+.back { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 15px; padding: 6px 6px 6px 0; }
+.back svg { width: 22px; height: 22px; }
+.page h2:focus { outline: none; }
+.page .h-display.big { font-size: 38px; }
+.lede { margin: 0; color: var(--muted); font-size: 14.5px; }
+.ident { display: flex; align-items: center; gap: 14px; }
+.ident > div { min-width: 0; display: grid; gap: 4px; }
+.statgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 3px; min-width: 0; align-content: start; }
+.stat small { font-size: 11.5px; color: var(--muted); }
+.stat b { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; }
+.stat span { font-size: 11.5px; color: var(--muted); }
+.sets { display: grid; }
+.sets > div { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.sets > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.sets b { font-weight: 600; }
+.sets small { display: block; color: var(--muted); font-size: 12px; }
+.sets .num { text-align: right; font-weight: 600; }
+.pbtag { font-family: var(--font-body); font-size: 10.5px; font-weight: 800; letter-spacing: .06em; color: var(--p-red) !important; }
+.rangebar { position: relative; height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--surface-2), color-mix(in srgb, var(--accent) 60%, var(--surface-2))); margin: 30px 0 8px; }
+.rangebar b { position: absolute; top: -7px; width: 4px; height: 24px; border-radius: 3px; background: var(--ink); transform: translateX(-2px); }
+.rangebar em { position: absolute; top: -28px; transform: translateX(-50%); font-style: normal; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.timeline > div { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; font-size: 14px; }
+.timeline i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); justify-self: center; }
+.ladder { display: grid; gap: 4px; }
+.ladder > div { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 6px 8px; border-radius: 14px; font-size: 14px; }
+.ladder > div.cur { background: var(--accent-soft); }
+.ladder > div.locked > svg { opacity: .4; }
+.ladder small { display: block; color: var(--muted); font-size: 12px; }
+.ladder .num { font-size: 12.5px; font-weight: 600; }
+.people { display: grid; }
+.people > div { display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.people > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.people .face { width: 38px; height: 38px; font-size: 13px; margin: 0; border: 0; }
+.people b { display: block; font-weight: 600; }
+.people small { color: var(--muted); font-size: 12px; }
+
+/* ---------- learn ---------- */
+.learn-hero { background: var(--ink); color: var(--bg); border: 0; display: grid; gap: 6px; text-align: left; width: 100%; border-radius: 20px; padding: 18px; }
+.learn-hero .eyebrow { color: color-mix(in srgb, var(--bg) 65%, transparent); }
+.learn-hero .h-display { font-size: 32px; }
+.learn-hero span { font-size: 13.5px; color: color-mix(in srgb, var(--bg) 78%, transparent); }
+.guides { display: grid; gap: 10px; }
+.guide { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; text-align: left; width: 100%; }
+.guide .ico { width: 52px; height: 52px; border-radius: 14px; background: var(--surface-2); display: grid; place-items: center; }
+.guide .ico svg { width: 36px; height: 36px; }
+.guide b { font-weight: 600; font-size: 15px; display: block; }
+.guide small { color: var(--muted); font-size: 12.5px; display: block; }
+.guide .done { color: var(--good); font-size: 12px; font-weight: 700; }
+.musc { display: flex; flex-wrap: wrap; gap: 6px; }
+.musc span { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--surface-2); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 14.5px; counter-increment: s; }
+.steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+.cues { display: flex; flex-wrap: wrap; gap: 8px; }
+.cues span { font-family: var(--font-display); font-weight: 800; font-size: 19px; text-transform: uppercase; letter-spacing: .02em; padding: 5px 12px; border: 2px solid var(--ink); border-radius: 10px; }
+.fixes { display: grid; gap: 10px; }
+.fixes > div { display: grid; gap: 2px; font-size: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.fixes > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.fixes b { color: var(--bad); font-weight: 600; }
+.tips { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
+.safety { background: color-mix(in srgb, var(--warn) 11%, var(--surface)); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius: 16px; padding: 12px 14px; font-size: 13.5px; display: grid; grid-template-columns: 20px 1fr; gap: 10px; }
+.safety svg { width: 20px; height: 20px; color: var(--warn); }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 8px 6px; }
+.figure svg { width: 100%; height: auto; display: block; }
+.timer { display: grid; justify-items: center; gap: 10px; }
+.timer svg { width: 150px; height: 150px; }
+.timer .side { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.routine { display: grid; }
+.routine > div { display: grid; grid-template-columns: 74px 1fr auto; gap: 10px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.routine > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.routine .num { font-size: 12.5px; color: var(--muted); }
+.routine .chev, .chev { color: var(--muted); font-size: 20px; line-height: 1; }
+
+/* ---------- home card strip, owner set up ---------- */
+.wallet-strip { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.mini-pass { width: 58px; height: 40px; border-radius: 8px; background: #14171c; position: relative; overflow: hidden; display: grid; align-items: end; padding: 4px 6px; }
+.mini-pass::after { content: ""; position: absolute; right: -12px; top: -12px; width: 30px; height: 30px; border-radius: 50%; background: var(--p-blue); }
+.mini-pass span { font-family: var(--font-display); font-weight: 900; font-size: 11px; color: #f4f5f1; position: relative; z-index: 1; }
+.wallet-strip b { display: block; font-weight: 600; }
+.wallet-strip .muted { font-size: 13px; display: block; }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 11px 12px; width: 100%; }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt .box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--line); display: grid; place-items: center; margin-top: 1px; background: var(--surface); }
+.opt[aria-pressed="true"] .box { background: var(--accent); border-color: var(--accent); }
+.opt .box svg { width: 14px; height: 14px; color: var(--accent-ink); visibility: hidden; }
+.opt[aria-pressed="true"] .box svg { visibility: visible; }
+.opt b { display: block; font-weight: 600; font-size: 14.5px; }
+.opt span span { display: block; font-size: 12.5px; color: var(--muted); }
+.opt em { display: block; font-style: normal; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.toggles { display: grid; }
+.toggle { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; width: 100%; }
+.toggle:last-child { border-bottom: 0; padding-bottom: 0; }
+.toggle b, .sys b { display: block; font-weight: 600; font-size: 14.5px; }
+.toggle small, .sys small { display: block; font-size: 12.5px; color: var(--muted); }
+.switch { width: 46px; height: 28px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); position: relative; transition: background .2s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.toggle[aria-checked="true"] .switch { background: var(--good); border-color: var(--good); }
+.toggle[aria-checked="true"] .switch::after { transform: translateX(18px); }
+.sys { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.sys:last-child { border-bottom: 0; padding-bottom: 0; }
+.sys button[aria-pressed="true"] { color: var(--good); border-color: var(--good); }
+.guest-card { display: grid; gap: 6px; background: var(--surface-2); border-radius: 16px; padding: 14px; }
+.guest-card b { font-size: 17px; }
+
+/* ---------- v2: week strip, log a lift, owner dashboard ---------- */
+.wdays { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+.wd { display: grid; justify-items: center; gap: 6px; }
+.wd small { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.wd i { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line); }
+.wd i svg { width: 16px; height: 16px; color: var(--accent-ink); }
+.wd.done i { background: var(--accent); border-color: var(--accent); }
+.wd.today i { border-color: var(--accent); }
+.wd.today small { color: var(--accent); }
+.wd.future i { border-style: dashed; }
+.wd.missed i { background: var(--surface-2); border-color: var(--surface-2); }
+textarea.message { width: 100%; border: 1px solid var(--line); font: inherit; font-size: 14.5px; color: var(--ink); resize: vertical; min-height: 120px; }
+.actions.three { grid-template-columns: 1fr 1fr 1.5fr; }
+.primary.small { width: auto; padding: 8px 14px; font-size: 13px; border-radius: 10px; }
+.qrow { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.qrow:last-child { border-bottom: 0; padding-bottom: 0; }
+.qrow .face { width: 38px; height: 38px; font-size: 13px; margin: 0; border: 0; }
+.qrow b { display: block; font-weight: 600; }
+.qrow small { display: block; color: var(--muted); font-size: 12.5px; }
+.qbtns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.todo { display: grid; gap: 8px; }
+.todo button { display: grid; gap: 2px; text-align: left; background: var(--surface-2); border: 0; border-radius: 12px; padding: 10px 12px; }
+.todo b { font-weight: 600; }
+.todo span { font-size: 12.5px; color: var(--muted); }
+.search { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; width: 220px; max-width: 100%; }
+.table-wrap { overflow-x: auto; }
+table.dt { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.dt th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.dt td { padding: 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.dt tr:last-child td { border-bottom: 0; }
+.dt .num { text-align: right; font-family: var(--font-data); }
+.dt .type { margin-right: 4px; }
+.dash { min-height: 100%; background: var(--bg); display: grid; grid-template-columns: 240px minmax(0, 1fr); }
+.dash-side { background: var(--surface); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.dash-brand { font-family: var(--font-display); font-weight: 900; font-size: 32px; text-transform: uppercase; display: flex; gap: 8px; align-items: center; padding: 0 8px; }
+.dash-brand svg { width: 30px; height: 30px; }
+.dash-gym { display: flex; gap: 10px; align-items: center; padding: 0 8px; }
+.dash-gym b { display: block; font-size: 14px; font-weight: 600; }
+.dash-gym small { display: block; font-size: 12px; color: var(--muted); }
+.dash-nav { display: grid; gap: 2px; }
+.dash-nav button { border: 0; background: none; text-align: left; padding: 9px 12px; border-radius: 10px; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 8px; white-space: nowrap; }
+.dash-nav button:hover { background: var(--surface-2); }
+.dash-nav button[aria-current="true"] { background: var(--accent-soft); color: var(--accent); }
+.dash-nav .count { font-size: 11px; background: var(--bad); color: #fff; border-radius: 99px; padding: 1px 7px; font-weight: 700; }
+.dash-back { margin-top: auto; font-size: 14px; }
+.dash-main { padding: 28px 32px 56px; display: grid; gap: 18px; align-content: start; min-width: 0; }
+.dash-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.dash-head h1 { margin: 2px 0 4px; font-family: var(--font-display); font-size: 48px; text-transform: uppercase; font-weight: 800; line-height: 1; text-wrap: balance; }
+.dash-head .muted { font-size: 13.5px; }
+.dash-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.dash .ownerpane { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); align-items: start; gap: 16px; }
+.dash .ownerpane > .wide, .dash .ownerpane > .kpis, .dash .ownerpane > .rule, .dash .ownerpane > .primary { grid-column: 1 / -1; }
+.dash .ownerpane > .primary { justify-self: start; width: auto; }
+.dash .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.dash .overlay { position: fixed; }
+.dash .sheet-wrap { align-items: center; justify-items: center; padding: 16px; }
+.dash .sheet { border-radius: 22px; width: 100%; max-width: 500px; padding-top: 18px; }
+.dash .grabber { display: none; }
+.dtoast { position: fixed; bottom: 28px; }
+@media (max-width: 900px) {
+  .dash { grid-template-columns: 1fr; }
+  .dash-side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding-block: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 12px; }
+  .dash-nav { display: flex; overflow-x: auto; scrollbar-width: none; }
+  .dash-nav button { flex: none; }
+  .dash-back { margin-top: 0; }
+  .dash-main { padding-block: 20px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .dash-head h1 { font-size: 38px; }
+  .dash .ownerpane { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- overlays ---------- */
+.overlay { position: absolute; inset: 0; z-index: 20; display: grid; }
+.overlay[hidden] { display: none !important; }
+.scanner { background: #07080a; color: #f2f3ef; place-items: center; text-align: center; padding: 24px; }
+.finder { width: 230px; height: 230px; position: relative; margin: 0 auto 24px; }
+.finder i { position: absolute; width: 40px; height: 40px; border-color: #fff; border-style: solid; }
+.finder i:nth-child(1) { top: 0; left: 0; border-width: 4px 0 0 4px; border-top-left-radius: 14px; }
+.finder i:nth-child(2) { top: 0; right: 0; border-width: 4px 4px 0 0; border-top-right-radius: 14px; }
+.finder i:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 4px 4px; border-bottom-left-radius: 14px; }
+.finder i:nth-child(4) { bottom: 0; right: 0; border-width: 0 4px 4px 0; border-bottom-right-radius: 14px; }
+.finder .qr { position: absolute; inset: 34px; opacity: .9; }
+.finder .beam { position: absolute; left: 18px; right: 18px; height: 3px; top: 20px; background: var(--p-blue); box-shadow: 0 0 18px 4px rgba(43,84,224,.7); border-radius: 3px; animation: beam 1.1s ease-in-out infinite alternate; }
+@keyframes beam { to { top: 206px; } }
+.scanner p { margin: 0; color: #b8bec6; font-size: 14px; }
+.scanner .h-display { font-size: 28px; margin-bottom: 6px; color: #fff; }
+
+.gate-art { width: 230px; height: 230px; margin: 0 auto 24px; }
+.gate-art .wave { fill: none; stroke: #6683ff; stroke-width: 3; stroke-linecap: round; opacity: 0; animation: wave 1.2s ease-out infinite; }
+.gate-art .wave:nth-of-type(2) { animation-delay: .2s; }
+.gate-art .wave:nth-of-type(3) { animation-delay: .4s; }
+@keyframes wave { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.gate-art .phone { animation: approach 1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes approach { from { transform: translateY(60px); } }
+.scanner .h-display.gate-ok { color: #4cc27c; }
+
+.success { background: var(--bg); place-items: center; padding: 28px 22px; text-align: center; align-content: center; gap: 18px; }
+.stamp { width: 168px; height: 168px; margin: 0 auto; animation: stamp .55s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes stamp { from { transform: scale(1.6) rotate(-14deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.success .h-display { font-size: 46px; }
+.gains { display: grid; gap: 8px; text-align: left; width: 100%; max-width: 320px; margin: 0 auto; }
+.gains div { display: flex; justify-content: space-between; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.gains b { font-family: var(--font-data); font-weight: 600; }
+.success .primary { max-width: 320px; margin: 0 auto; }
+
+.sheet-wrap { background: rgba(8,9,11,.45); align-items: end; }
+.sheet { background: var(--surface); border-radius: 22px 22px 0 0; padding: 10px 18px 26px; display: grid; gap: 12px; animation: rise .3s ease-out both; }
+@keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+.grabber { width: 40px; height: 5px; border-radius: 3px; background: var(--line); justify-self: center; }
+.sheet h3 { margin: 0; font-size: 18px; }
+.message { background: var(--surface-2); border-radius: 16px 16px 16px 4px; padding: 12px 14px; font-size: 14.5px; white-space: pre-line; user-select: text; }
+.sheet .note { font-size: 12.5px; color: var(--muted); margin: 0; }
+.sheet .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.wallet-stack { position: relative; height: 170px; margin: 4px 0; }
+.wallet-stack > div { position: absolute; left: 0; right: 0; height: 120px; border-radius: 16px; padding: 12px 14px; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.wallet-stack .w1 { top: 0; background: #4a5563; }
+.wallet-stack .w2 { top: 22px; background: #0f8a8a; }
+.wallet-stack .w3 { top: 48px; background: #14171c; display: flex; justify-content: space-between; align-items: flex-start; animation: slidein .6s cubic-bezier(.2,.9,.2,1) both; box-shadow: 0 -6px 16px -8px rgba(0,0,0,.5); }
+.wallet-stack .w3 span { color: #aab1ba; font-weight: 600; }
+@keyframes slidein { from { transform: translateY(70px); opacity: .2; } }
+
+.toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 18px; font-size: 13px; font-weight: 600; z-index: 30; width: max-content; max-width: calc(100% - 32px); text-align: center; }
+.sheet { max-height: 92%; overflow-y: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<div class="stage">
+  <section class="pitch" aria-label="About this demo">
+    <div class="wordmark" aria-label="Tally">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M10 8v48M22 8v48M34 8v48M46 8v48"/><path d="M4 46 56 16" stroke="var(--accent)"/></g></svg>
+      Tally
+    </div>
+    <h1>The gym game that rewards showing up, and ranks you against people your size.</h1>
+    <p>Members book classes, tap in with a card in their phone's wallet, keep weekly streaks and climb plate-colour ranks within their gender and weight class. Owners post classes and see money, footfall and who is drifting away.</p>
+    <div class="tour" id="tour">
+      <button data-go="home"><i>1</i><div><b>Member home</b><span>Check in, streak, rank, tonight's class</span></div></button>
+      <button data-go="classes"><i>2</i><div><b>Classes</b><span>The week's timetable, book a spot, waitlists</span></div></button>
+      <button data-go="learn"><i>3</i><div><b>Learn</b><span>How to lift properly, stretches with a timer</span></div></button>
+      <button data-go="league"><i>4</i><div><b>League</b><span>Weight classes; tap anyone for their stats</span></div></button>
+      <button data-go="progress"><i>5</i><div><b>Progress</b><span>Tap a lift for its history and class rank</span></div></button>
+      <button data-go="card"><i>6</i><div><b>Membership card</b><span>Wallet pass that opens the gate</span></div></button>
+      <button data-go="owner"><i>7</i><div><b>Owner dashboard</b><span>Full-screen, for the laptop at the front desk</span></div></button>
+    </div>
+    <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members, classes, money and rival gyms are made up. Try this: log a lift over 140 kg in Progress, then verify it in the owner dashboard under League.</p>
+  </section>
+
+  <div class="device">
+    <div class="screen" id="screen">
+      <div class="statusbar" aria-hidden="true"><span class="num">06:42</span><span class="island"></span><span>
+        <svg width="54" height="12" viewBox="0 0 54 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><rect x="27" y="1" width="22" height="10" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="29" y="3" width="15" height="6" rx="1.5"/><rect x="50" y="4" width="2" height="4" rx="1"/></svg>
+      </span></div>
+
+      <div class="app">
+        <!-- HOME -->
+        <main class="view" id="v-home" aria-label="Member home">
+          <div class="topbar">
+            <div class="gymchip"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Saltworks Barbell Club</small><strong>Morning, Josh</strong></div></div>
+            <button class="demo-pill" data-go="owner">Owner dashboard</button>
+          </div>
+
+          <div class="card rankcard" data-open="rank" aria-label="Your rank details">
+            <div id="rankPlate"></div>
+            <div>
+              <p class="eyebrow">Men · 83 kg class</p>
+              <h2 class="h-display" id="rankName">Blue Plate</h2>
+              <div class="bar"><span id="rankBar" style="width:0"></span></div>
+              <div class="small"><span class="num" id="rankPts">1,840</span> pts · <span class="num" id="rankToGo">160</span> to Red Plate · 3rd in class · season ends 30 Nov</div>
+            </div>
+          </div>
+
+          <button class="checkin" id="checkinBtn">
+            <div><strong id="checkinTitle">Check in</strong><span id="checkinSub">Scan the QR poster, or tap your card at the gate</span></div>
+            <svg id="checkinIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="8" width="3" height="3"/><rect x="8" y="13" width="3" height="3"/><path d="M13 13h3v3"/></svg>
+          </button>
+
+          <div class="card wallet-strip" data-go="card" id="homeWallet">
+            <span class="mini-pass" aria-hidden="true"><span>SBC</span></span>
+            <span><b>Your membership card</b><span class="muted" id="homeWalletSub">Add it to your phone's Wallet and tap in at the gate</span></span>
+            <span class="chev" aria-hidden="true">›</span>
+          </div>
+
+          <div class="pair">
+            <div class="card" data-go="progress">
+              <p class="eyebrow">This week</p>
+              <div class="goal">
+                <svg viewBox="0 0 62 62" aria-hidden="true"><circle cx="31" cy="31" r="26" fill="none" stroke="var(--surface-2)" stroke-width="7"/><circle id="goalRing" cx="31" cy="31" r="26" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 31 31)" stroke-dasharray="163.4" stroke-dashoffset="163.4" style="transition: stroke-dashoffset .8s ease"/></svg>
+                <div><div class="bignum"><span id="weekDone">2</span><span class="muted" style="font-size:22px">/3</span></div><small class="muted">sessions goal</small></div>
+              </div>
+            </div>
+            <div class="card" data-go="progress">
+              <p class="eyebrow">Weekly streak</p>
+              <div class="bignum"><span id="streakNum">11</span> <span class="muted" style="font-size:18px">weeks</span></div>
+              <svg class="tally" id="tally" aria-label="Streak shown as tally marks"></svg>
+            </div>
+          </div>
+
+          <div class="card weekcard" data-go="progress">
+            <div class="row"><p class="eyebrow">Your week</p><span class="muted" style="font-size:12px" id="weekNote"></span></div>
+            <div class="wdays" id="wdays"></div>
+          </div>
+
+          <button class="card class-card" id="homeClass" data-go="classes" style="text-align:left; width:100%"></button>
+
+          <div class="card" style="display:grid; gap:10px" data-open="team:1">
+            <div class="row"><p class="eyebrow">Your team this week</p><span class="pill">2nd of 14</span></div>
+            <div class="row">
+              <div><b>Team Tidal</b><div class="muted" style="font-size:13px"><span class="num" id="teamSessions">8</span> sessions · Team Anchor has 9</div></div>
+              <div class="team-faces"><span class="face" style="background:#2b54e0">JT</span><span class="face" style="background:#d93a2b">IR</span><span class="face" style="background:#2e9a55">FD</span></div>
+            </div>
+          </div>
+
+        </main>
+
+        <!-- CLASSES -->
+        <main class="view" id="v-classes" aria-label="Classes" hidden>
+          <div class="topbar"><h2 class="h-display title">Classes</h2><span class="demo-pill">23 to 29 Oct</span></div>
+          <div class="card" style="display:grid; gap:4px">
+            <p class="eyebrow">Your bookings</p>
+            <div class="bklist" id="myBookings"></div>
+          </div>
+          <div class="days" id="days" role="group" aria-label="Day"></div>
+          <div class="chips scroll" id="typeChips" role="group" aria-label="Class type">
+            <button data-type="all" aria-pressed="true">All</button>
+            <button data-type="strength" aria-pressed="false">Strength</button>
+            <button data-type="engine" aria-pressed="false">Conditioning</button>
+            <button data-type="yoga" aria-pressed="false">Yoga</button>
+            <button data-type="mobility" aria-pressed="false">Mobility</button>
+            <button data-type="boxing" aria-pressed="false">Boxing</button>
+            <button data-type="open" aria-pressed="false">Open gym</button>
+          </div>
+          <div class="row"><h3 class="daytitle" id="dayTitle">Today</h3><span class="muted" style="font-size:12.5px" id="dayCount"></span></div>
+          <div class="classlist" id="classList"></div>
+          <p class="rule">Free to cancel until 2 hours before. Cancel later or miss a booked class and you lose 10 points, so spots go to people who will use them.</p>
+        </main>
+
+        <!-- LEARN -->
+        <main class="view" id="v-learn" aria-label="Learn" hidden>
+          <div class="topbar"><h2 class="h-display title">Learn</h2><span class="demo-pill" id="learnCount">1 of 12 read</span></div>
+          <button class="learn-hero" data-open="guide:warmup">
+            <p class="eyebrow">Before tonight's Barbell Strength</p>
+            <h3 class="h-display">8-minute warm-up</h3>
+            <span>Six steps that get your hips, ankles and shoulders ready to squat.</span>
+          </button>
+          <div class="seg" role="group" aria-label="Learn section">
+            <button data-learn="lifts" aria-pressed="true">Lifting technique</button>
+            <button data-learn="stretch" aria-pressed="false">Stretches</button>
+          </div>
+          <div class="guides" id="guideList"></div>
+          <p class="rule">General guidance for healthy adults, not medical advice. Ask a coach to check your form, and stop if anything gives you sharp pain.</p>
+        </main>
+
+        <!-- LEAGUE -->
+        <main class="view" id="v-league" aria-label="League" hidden>
+          <div class="topbar"><h2 class="h-display title">League</h2><span class="demo-pill">October</span></div>
+          <div class="seg" role="group" aria-label="Leaderboard">
+            <button data-board="gym" aria-pressed="true">Rank</button>
+            <button data-board="team" aria-pressed="false">Teams</button>
+            <button data-board="city" aria-pressed="false">City league</button>
+          </div>
+          <div class="chips" id="divChips" role="group" aria-label="Division">
+            <button data-div="men83" aria-pressed="true">Men · 83 kg</button>
+            <button data-div="women63" aria-pressed="false">Women · 63 kg</button>
+            <button data-div="open" aria-pressed="false">Open</button>
+          </div>
+          <div class="card mypts" id="myPts" data-open="rank">
+            <div class="row"><p class="eyebrow">Your points this season</p><span class="num" style="font-weight:600" id="myTotal">1,840</span></div>
+            <div class="split" id="mySplit"></div>
+            <div class="ptsrow">
+              <div><b id="myCon">1,100</b><small>Consistency</small></div>
+              <div><b id="myStr">520</b><small>Strength for your class</small></div>
+              <div><b id="myPb">220</b><small>Personal bests</small></div>
+            </div>
+          </div>
+          <div class="card" id="podiumCard"><div class="podium" id="podium"></div></div>
+          <div class="card" style="padding-block:6px"><ol class="board" id="board"></ol></div>
+          <div class="legend" id="boardLegend"><span><i class="c-con"></i>Consistency</span><span><i class="c-str"></i>Strength</span><span><i class="c-pb"></i>Personal bests</span></div>
+          <p class="rule" id="boardNote"></p>
+          <div class="card stack" id="howCard">
+            <p class="eyebrow">How rank points work</p>
+            <ul class="howto">
+              <li><i class="c-con"></i><span><b>Consistency, about 60%.</b> 10 per session, 25 for hitting your weekly goal, 50 for every 4 weeks in a row.</span></li>
+              <li><i class="c-str"></i><span><b>Strength, about 30%.</b> Your squat, bench and deadlift total divided by body weight, scored only against people in your weight class.</span></li>
+              <li><i class="c-pb"></i><span><b>Personal bests, about 10%.</b> 40 each time you beat your own best, verified by a coach.</span></li>
+            </ul>
+            <p class="rule">Weight classes. Women: 57, 63, 72, 84 and 84+ kg. Men: 66, 74, 83, 93, 105 and 105+ kg. A coach does a weigh-in once a month. Anyone can pick Open instead, which ranks on consistency only.</p>
+          </div>
+        </main>
+
+        <!-- CARD -->
+        <main class="view" id="v-card" aria-label="Membership card" hidden>
+          <div class="topbar"><h2 class="h-display title">Card</h2><span class="demo-pill">Member</span></div>
+          <div class="seg meseg" role="group" aria-label="Me"><button data-go="progress" aria-pressed="false">Progress</button><button data-go="card" aria-pressed="true">Card</button></div>
+          <div class="pass" aria-label="Membership pass">
+            <div class="brand"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Membership</small><b>Saltworks Barbell Club</b></div></div>
+            <div class="fields">
+              <div><small>Member</small><b>Josh T.</b></div>
+              <div><small>Plan</small><b>Unlimited</b></div>
+              <div><small>Rank</small><b id="passRank">Blue Plate</b></div>
+              <div><small>Valid until</small><b>31 Dec 2026</b></div>
+            </div>
+            <div class="code">
+              <svg viewBox="0 0 25 25" id="passQr" aria-label="Member QR code" fill="#14171c"></svg>
+              <small>SBC-0417</small>
+            </div>
+          </div>
+          <button class="wallet-btn" id="walletBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/><path d="M6 6V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>
+            <span id="walletLabel">Add to Wallet</span>
+          </button>
+          <button class="secondary" id="gateBtn">Tap at the gate</button>
+          <button class="secondary" id="guestBtn">Send a friend a free guest pass</button>
+          <div class="card info-list">
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0"/><circle cx="12" cy="12" r="1.5"/></svg><span>Hold your phone near the reader at the gate. No plastic card to carry or lose.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.6 6.6l2.1 2.1M17.3 15.3l2.1 2.1M3 12h3M18 12h3"/></svg><span>Your card appears on your lock screen when you arrive at the gym.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Lost your phone? The gym switches the card off in one tap and sends a new one.</span></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Day-pass visitors get a card that stops working at midnight.</span></div>
+          </div>
+          <p class="rule">Every tap counts as a check-in for your streak and points, so you never have to remember to log a session.</p>
+        </main>
+
+        <!-- PROGRESS -->
+        <main class="view" id="v-progress" aria-label="Progress" hidden>
+          <div class="topbar"><h2 class="h-display title">Progress</h2><span class="demo-pill">12 weeks</span></div>
+          <div class="seg meseg" role="group" aria-label="Me"><button data-go="progress" aria-pressed="true">Progress</button><button data-go="card" aria-pressed="false">Card</button></div>
+          <div class="card" style="display:grid; gap:12px">
+            <div class="row"><p class="eyebrow">Attendance</p><span class="muted num" style="font-size:12.5px"><span id="sessTotal">47</span> sessions total</span></div>
+            <div class="heat" id="heat" aria-label="Attendance over the last 12 weeks"></div>
+            <div class="row muted" style="font-size:12px"><span>Aug</span><span>Sep</span><span>Oct</span></div>
+          </div>
+          <div class="card">
+            <div class="row" style="margin-bottom:4px"><p class="eyebrow">Lifts</p><span class="muted" style="font-size:12px">Tap a lift for its stats</span></div>
+            <div class="pbs" id="liftRows"></div>
+            <button class="secondary" id="logBtn" style="margin-top:12px">Log a lift</button>
+          </div>
+          <div class="card" style="display:grid; gap:14px">
+            <p class="eyebrow">Milestones</p>
+            <div class="badges" id="badges"></div>
+          </div>
+        </main>
+
+        <!-- pushed detail pages render here -->
+        <section class="view page" id="page" aria-label="Details" hidden></section>
+
+        <nav class="tabbar" role="tablist" aria-label="App sections">
+          <button class="tab" role="tab" data-go="home" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Home</button>
+          <button class="tab" role="tab" data-go="classes" data-tab="classes" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h3M8 17h6"/></svg>Classes</button>
+          <button class="tab" role="tab" data-go="league" data-tab="league" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>League</button>
+          <button class="tab" role="tab" data-go="learn" data-tab="learn" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M8 7.5h8M8 11h5"/></svg>Learn</button>
+          <button class="tab" role="tab" data-go="progress" data-tab="me" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Me</button>        </nav>
+      </div>
+
+      <!-- QR scanner -->
+      <div class="overlay scanner" id="scanner" hidden>
+        <div>
+          <div class="finder"><i></i><i></i><i></i><i></i>
+            <svg class="qr" viewBox="0 0 21 21" fill="#f2f3ef" aria-hidden="true" id="qr"></svg>
+            <span class="beam"></span>
+          </div>
+          <h3 class="h-display">Scanning</h3>
+          <p>Point your camera at the QR poster by the door</p>
+        </div>
+      </div>
+
+      <!-- gate tap -->
+      <div class="overlay scanner" id="gate" hidden>
+        <div>
+          <svg class="gate-art" viewBox="0 0 230 230" aria-hidden="true">
+            <rect x="65" y="132" width="100" height="78" rx="12" fill="#22262c" stroke="#3a3f47"/>
+            <circle cx="115" cy="171" r="14" fill="none" stroke="#6683ff" stroke-width="3"/>
+            <path class="wave" d="M92 118a32 32 0 0 1 46 0"/>
+            <path class="wave" d="M82 104a46 46 0 0 1 66 0"/>
+            <path class="wave" d="M72 90a60 60 0 0 1 86 0"/>
+            <g class="phone"><rect x="88" y="14" width="54" height="96" rx="11" fill="#14171c" stroke="#f2f3ef" stroke-width="2.5"/><rect x="95" y="26" width="40" height="26" rx="5" fill="#2b54e0"/><rect x="95" y="58" width="40" height="40" rx="5" fill="#f2f3ef"/></g>
+          </svg>
+          <h3 class="h-display" id="gateTitle">Hold near the reader</h3>
+          <p id="gateSub">Your Saltworks card is ready</p>
+        </div>
+      </div>
+
+      <!-- success -->
+      <div class="overlay success" id="success" hidden>
+        <svg class="stamp" id="stamp" viewBox="0 0 168 168" aria-hidden="true"></svg>
+        <div>
+          <p class="eyebrow" id="successHow">Checked in · <span class="num">06:42</span></p>
+          <h3 class="h-display">Week done</h3>
+        </div>
+        <div class="gains">
+          <div><span>Session</span><b>+10 pts</b></div>
+          <div><span>Weekly goal hit, 3 of 3</span><b>+25 pts</b></div>
+          <div><span>Streak</span><b>12 weeks</b></div>
+        </div>
+        <button class="primary" id="successClose">Nice. Back to home</button>
+      </div>
+
+      <!-- wallet sheet -->
+      <div class="overlay sheet-wrap" id="walletWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="walletTitle">
+          <span class="grabber"></span>
+          <h3 id="walletTitle">Add your card to Wallet</h3>
+          <div class="wallet-stack" aria-hidden="true">
+            <div class="w1">DEBIT CARD ···· 4821</div>
+            <div class="w2">LIBRARY CARD</div>
+            <div class="w3"><span style="color:#fff">SALTWORKS BARBELL CLUB</span><span>JOSH T.</span></div>
+          </div>
+          <p class="note">Your membership card sits next to your bank cards. It works at the gate even with no signal.</p>
+          <div class="actions">
+            <button class="secondary" id="walletCancel">Cancel</button>
+            <button class="primary" id="walletAdd">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- guest pass sheet -->
+      <div class="overlay sheet-wrap" id="guestWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="guestTitle">
+          <span class="grabber"></span>
+          <h3 id="guestTitle">Free guest pass</h3>
+          <div class="guest-card">
+            <p class="eyebrow">Saltworks Barbell Club · Guest</p>
+            <b>One free visit for a friend</b>
+            <span class="muted" style="font-size:13px">Any day this week. It works at the gate like your card and stops working at midnight.</span>
+          </div>
+          <p class="note">If your friend joins, you both get 100 points. You have 2 guest passes left this month.</p>
+          <div class="actions">
+            <button class="secondary" id="guestCancel">Cancel</button>
+            <button class="primary" id="guestSend">Send pass</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- info sheet (badges) -->
+      <div class="overlay sheet-wrap" id="infoWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-label="Details">
+          <span class="grabber"></span>
+          <div id="infoBody"></div>
+          <button class="secondary" id="infoClose">Close</button>
+        </div>
+      </div>
+
+      <!-- class detail sheet -->
+      <div class="overlay sheet-wrap" id="clsWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="clsTitle">
+          <span class="grabber"></span>
+          <div class="detail-head"><span class="type" id="clsType"></span><h3 id="clsTitle">Class</h3><span id="clsWhen"></span></div>
+          <div class="facts" id="clsFacts"></div>
+          <p id="clsDesc" style="margin:0; font-size:14px"></p>
+          <div class="going" id="clsGoing"></div>
+          <p class="note" id="clsNote"></p>
+          <div class="actions">
+            <button class="secondary" id="clsClose">Close</button>
+            <button class="primary" id="clsAct">Book</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- log a lift sheet -->
+      <div class="overlay sheet-wrap" id="liftWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="liftTitle">
+          <span class="grabber"></span>
+          <h3 id="liftTitle">Log a lift</h3>
+          <form class="form" id="liftForm" novalidate>
+            <label for="lEx">Exercise<select id="lEx"><option value="squat">Back squat</option><option value="bench">Bench press</option><option value="deadlift">Deadlift</option></select></label>
+            <div class="two">
+              <label for="lW">Weight (kg)<input id="lW" type="number" inputmode="decimal" step="2.5" min="20" max="400" value="142.5"></label>
+              <label for="lR">Reps<select id="lR"></select></label>
+            </div>
+            <p class="note" id="liftHint"></p>
+            <div class="actions">
+              <button type="button" class="secondary" id="liftCancel">Cancel</button>
+              <button type="submit" class="primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- OWNER DASHBOARD: full-width, for a laptop at the front desk -->
+<div class="dash" id="dash" hidden>
+  <aside class="dash-side">
+    <div class="dash-brand"><svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="currentColor" stroke-width="6" stroke-linecap="round"><path d="M10 8v48M22 8v48M34 8v48M46 8v48"/><path d="M4 46 56 16" stroke="var(--accent)"/></g></svg>Tally</div>
+    <div class="dash-gym"><div class="gymlogo" aria-hidden="true">SBC</div><div><b>Saltworks Barbell Club</b><small>Owner · demo data</small></div></div>
+    <nav class="dash-nav" aria-label="Dashboard sections">
+      <button data-pane="overview">Overview</button>
+      <button data-pane="members">Members</button>
+      <button data-pane="classes">Classes</button>
+      <button data-pane="league">League <span class="count" id="navQueue">2</span></button>
+      <button data-pane="messages">Messages <span class="count" id="navMsgs">3</span></button>
+      <button data-pane="money">Money</button>
+      <button data-pane="door">The door</button>
+      <button data-pane="pilot">Pilot</button>
+      <button data-pane="setup">Set up</button>
+    </nav>
+    <button class="secondary dash-back" data-go="home">Back to the member app</button>
+  </aside>
+  <main class="dash-main" aria-label="Owner dashboard">
+    <header class="dash-head">
+      <div><p class="eyebrow">Saltworks Barbell Club</p><h1 id="dashTitle">Overview</h1><span class="muted" id="dashRange">This week, 19 to 25 October, compared with last week · demo data</span></div>
+      <div class="dash-tools">
+        <div class="cur" role="group" aria-label="Week"><button data-week="this" aria-pressed="true">This week</button><button data-week="last" aria-pressed="false">Last week</button></div>
+        <div class="cur" role="group" aria-label="Currency"><button data-cur="gbp" aria-pressed="true">£</button><button data-cur="zar" aria-pressed="false">R</button></div>
+        <button class="ghost" id="exportBtn">Export</button>
+      </div>
+    </header>
+
+          <!-- overview -->
+          <div class="ownerpane" id="p-overview">
+            <div class="kpis wide" id="ovTiles"></div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Check-ins by day</p><span class="muted" style="font-size:12px" id="ovWeek">This week</span></div>
+              <svg id="ovChart" viewBox="0 0 330 170" role="img" aria-label="Check-ins by day"></svg>
+              <p class="rule" id="ovNote"></p>
+            </div>
+            <div class="card">
+              <div class="row" style="margin-bottom:2px"><p class="eyebrow">Drifting away</p><span class="muted" style="font-size:12px">No visit in 14+ days</span></div>
+              <div class="risk-list" id="riskList"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Waiting for you</p>
+              <div class="todo">
+                <button data-pane="league"><b id="todoQueue">2 personal bests to verify</b><span>Only coach-verified bests earn points</span></button>
+                <button data-pane="messages"><b id="todoMsgs">3 members to message</b><span>Drafts are ready, you send them</span></button>
+                <button data-pane="pilot"><b>Pilot week 5: on track</b><span>3 of 3 targets met so far</span></button>
+              </div>
+            </div>
+            <div class="card wide">
+              <div class="row" style="margin-bottom:6px"><p class="eyebrow">Classes coming up</p><button class="ghost" data-pane="classes">Full timetable</button></div>
+              <div class="table-wrap"><table class="dt" id="ovClasses"></table></div>
+            </div>
+          </div>
+
+          <!-- members -->
+          <div class="ownerpane" id="p-members" hidden>
+            <div class="card stack wide">
+              <div class="row" style="flex-wrap:wrap">
+                <div class="chips" id="memFilter" role="group" aria-label="Filter members">
+                  <button data-mf="all" aria-pressed="true">All</button>
+                  <button data-mf="drift" aria-pressed="false">Not in for 14+ days</button>
+                  <button data-mf="noopt" aria-pressed="false">Not opted in to messages</button>
+                </div>
+                <input class="search" id="memSearch" type="search" placeholder="Search by name" aria-label="Search members">
+              </div>
+              <div class="table-wrap"><table class="dt" id="memTable"></table></div>
+              <p class="rule" id="memNote"></p>
+            </div>
+          </div>
+
+          <!-- classes -->
+          <div class="ownerpane" id="p-classes" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Classes this week</small><span class="bignum num" id="oClassCount">39</span><span class="chip info">6 types</span></div>
+              <div class="kpi"><small>Spots booked</small><span class="bignum num" id="oFill">70%</span><span class="chip ok">of all spots</span></div>
+              <div class="kpi"><small>Booked but didn't come</small><span class="bignum num">6%</span><span class="chip ok">Was 11% before Tally</span></div>
+              <div class="kpi"><small>On waitlists</small><span class="bignum num" id="oWait">9</span><span class="chip risk">2 classes full</span></div>
+            </div>
+            <button class="primary" id="postBtn">Post a class</button>
+            <div class="card wide">
+              <div class="row" style="margin-bottom:6px"><p class="eyebrow">Timetable, next 7 days</p><span class="muted" style="font-size:12px">Waitlists and no-shows</span></div>
+              <div class="table-wrap"><table class="dt" id="weekTable"></table></div>
+            </div>
+            <div class="card">
+              <div class="row" style="margin-bottom:2px"><p class="eyebrow">Today's classes</p><span class="muted" style="font-size:12px">Friday 23 October</span></div>
+              <div id="oToday"></div>
+            </div>
+          </div>
+
+          <!-- league -->
+          <div class="ownerpane" id="p-league" hidden>
+            <div class="card stack wide">
+              <div class="row"><p class="eyebrow">Personal bests waiting for a coach</p><span class="muted" style="font-size:12px">Only verified bests earn points</span></div>
+              <div id="pbQueue"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Season</p>
+              <div class="statgrid">
+                <div class="stat"><small>Started</small><b>1 Sep</b><span>2026</span></div>
+                <div class="stat"><small>Ends</small><b>30 Nov</b><span>5 weeks to go</span></div>
+                <div class="stat"><small>Ranked</small><b>131</b><span>members</span></div>
+              </div>
+              <p class="rule">The top 3 in each weight class get a trophy plate for the wall. Points reset on 1 December; plates and badges stay.</p>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Weight classes</p>
+              <div class="table-wrap"><table class="dt" id="classTable"></table></div>
+              <p class="rule">Next coach weigh-in: Saturday 31 October, 09:00 to 11:00. Members choose a class or Open; body weight is only seen by coaches.</p>
+            </div>
+          </div>
+
+          <!-- messages -->
+          <div class="ownerpane" id="p-messages" hidden>
+            <div class="card stack">
+              <p class="eyebrow">Ready to send</p>
+              <div class="risk-list" id="msgDrafts"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Sent this month</p>
+              <div class="sets" id="msgHistory"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">The rules Tally follows</p>
+              <ul class="tips">
+                <li>Only members who said yes to messages ever get one.</li>
+                <li>Messages go from the gym's own WhatsApp, never from Tally.</li>
+                <li>Tally writes the draft; a person at the gym reads it and presses send.</li>
+                <li>Every member can switch messages off in the app at any time.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- money -->
+          <div class="ownerpane" id="p-money" hidden>
+            <div class="card hero-num">
+              <p class="eyebrow">Revenue this week</p>
+              <span class="bignum num" data-money="2794">£2,794</span>
+              <span class="chip ok">+6% on last week</span>
+            </div>
+            <div class="card breakdown">
+              <p class="eyebrow">Where it came from</p>
+              <div class="bd"><div class="row"><span>Memberships<small>142 members, average <span data-money="64.80" data-dp="2">£64.80</span> a month</small></span><b class="num" data-money="2124">£2,124</b></div><div class="hbar"><i class="c-con" style="width:76%"></i></div></div>
+              <div class="bd"><div class="row"><span>Day passes<small>38 passes at <span data-money="12">£12</span></small></span><b class="num" data-money="456">£456</b></div><div class="hbar"><i class="c-str" style="width:16%"></i></div></div>
+              <div class="bd"><div class="row"><span>Shop and extras<small>Shakes, chalk, T-shirts</small></span><b class="num" data-money="214">£214</b></div><div class="hbar"><i class="c-pb" style="width:8%"></i></div></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Weekly revenue</p><span class="muted" style="font-size:12px">Last 8 weeks</span></div>
+              <svg id="revChart" viewBox="0 0 330 170" role="img" aria-label="Weekly revenue for the last 8 weeks, rising from about 2,410 to 2,794 pounds"></svg>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><small>Projected October</small><span class="bignum num" data-money="12170">£12,170</span><span class="chip info">On pace</span></div>
+              <div class="kpi"><small>Day-pass visitors who joined</small><span class="bignum num">4</span><span class="chip ok"><span data-money="259">£259</span> a month added</span></div>
+            </div>
+            <p class="rule" id="curNote">Shown in pounds. Tap R to see rand at £1 = R21.72.</p>
+          </div>
+
+          <!-- door -->
+          <div class="ownerpane" id="p-door" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Taps at the gate</small><span class="bignum num">288</span><span class="chip ok">+9% on last week</span></div>
+              <div class="kpi"><small>Different people</small><span class="bignum num">127</span><span class="chip info">96 members, 31 day pass</span></div>
+              <div class="kpi"><small>Average a day</small><span class="bignum num">41</span><span class="chip info">Busiest: Monday</span></div>
+              <div class="kpi"><small>Average week, last 8</small><span class="bignum num">274</span><span class="chip info">taps a week</span></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Taps each day</p><span class="muted" style="font-size:12px">This week</span></div>
+              <svg id="dayChart" viewBox="0 0 330 170" role="img" aria-label="Taps each day this week: Monday 52, Tuesday 38, Wednesday 49, Thursday 35, Friday 47, Saturday 46, Sunday 21"></svg>
+            </div>
+            <div class="card breakdown">
+              <p class="eyebrow">Members and day passes</p>
+              <div class="split" style="height:14px"><i class="c-con" style="width:86.8%"></i><i class="c-str" style="width:13.2%"></i></div>
+              <div class="row" style="font-size:13px"><span><b class="num">250</b> member taps · 96 people</span><span><b class="num">38</b> day-pass taps · 31 people</span></div>
+            </div>
+            <div class="card stack">
+              <div class="row"><p class="eyebrow">Guest passes from members</p><span class="muted" style="font-size:12px">This month</span></div>
+              <div class="statgrid">
+                <div class="stat"><small>Sent</small><b id="guestSent">12</b><span>by members</span></div>
+                <div class="stat"><small>Visited</small><b>7</b><span>came in</span></div>
+                <div class="stat"><small>Joined</small><b>3</b><span>now members</span></div>
+              </div>
+              <p class="rule">Members invite friends from their card. When a guest joins, both of them get 100 points.</p>
+            </div>
+            <div class="card stack">
+              <div class="row"><p class="eyebrow">How often members came</p><span class="muted" style="font-size:12px">This week, 96 members</span></div>
+              <div class="freq" id="freq"></div>
+              <p class="rule">6 members tapped in twice on the same day. Both visits are counted here, but only one counts for points.</p>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Loyal members</p>
+              <div class="bd"><div class="row"><span>Came every week for the last 4 weeks</span><b class="num">61%</b></div><div class="hbar"><i class="c-con" style="width:61%"></i></div></div>
+              <div class="bd"><div class="row"><span>Members of 6+ months still coming weekly</span><b class="num">78%</b></div><div class="hbar"><i class="c-con" style="width:78%"></i></div></div>
+              <div class="bd"><div class="row"><span>Cancellations this month<small>Was 5 a month (3.5%) before Tally</small></span><b class="num">3 (2.1%)</b></div><div class="hbar"><i class="c-str" style="width:21%"></i></div></div>
+              <p class="rule">Bar scale for cancellations: 0% to 10% a month.</p>
+            </div>
+          </div>
+
+          <!-- pilot -->
+          <div class="ownerpane" id="p-pilot" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Active members</small><span class="bignum num">142</span><span class="chip ok">+6 this month</span></div>
+              <div class="kpi"><small>In this week</small><span class="bignum num">96</span><span class="chip ok">68% of members</span></div>
+              <div class="kpi"><small>Visits per member a week</small><span class="bignum num">2.6</span><span class="chip ok">+13% on baseline</span></div>
+              <div class="kpi"><small>Not in for 14+ days</small><span class="bignum num">9</span><span class="chip risk">Nudge them</span></div>
+            </div>
+            <div class="card chart">
+              <div class="row" style="margin-bottom:8px"><p class="eyebrow">Visits per member a week</p><span class="muted" style="font-size:12px">Before vs pilot</span></div>
+              <svg id="chart" viewBox="0 0 330 170" role="img" aria-label="Bar chart: about 2.3 visits per member a week before the pilot, rising to 2.7 during it"></svg>
+            </div>
+            <div class="card passmark">
+              <div class="row"><p class="eyebrow">Pilot pass mark</p><span class="chip ok">On track: 3 of 3</span></div>
+              <div class="pm"><div class="row"><span>Members who joined</span><span class="num">71% <span class="muted">/ 40%</span></span></div><div class="track"><span class="fill" style="width:71%"></span><span class="target" style="left:40%"></span></div></div>
+              <div class="pm"><div class="row"><span>Checked in this week</span><span class="num">54% <span class="muted">/ 25%</span></span></div><div class="track"><span class="fill" style="width:54%"></span><span class="target" style="left:25%"></span></div></div>
+              <div class="pm"><div class="row"><span>More visits than before</span><span class="num">+13% <span class="muted">/ +10%</span></span></div><div class="track"><span class="fill" style="width:65%"></span><span class="target" style="left:50%"></span></div></div>
+              <p class="rule">Targets agreed and signed before the pilot started. Bar scale for visits: 0% to +20%.</p>
+            </div>
+          </div>
+
+          <!-- set up -->
+          <div class="ownerpane" id="p-setup" hidden>
+            <div class="card stack">
+              <p class="eyebrow">What kind of gym is this?</p>
+              <div class="chips" id="gymType" role="group" aria-label="Gym type"></div>
+              <p class="rule" id="gymTypeNote"></p>
+            </div>
+            <div class="card stack">
+              <div class="row"><p class="eyebrow">How members check in</p><span class="muted" style="font-size:12px">Pick any</span></div>
+              <div class="opts" id="checkinOpts"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">What members see</p>
+              <div class="toggles" id="modToggles"></div>
+            </div>
+            <div class="card stack">
+              <p class="eyebrow">Systems you already use</p>
+              <div id="sysList"></div>
+              <p class="rule">Tally sits alongside your booking software and door system. Nothing gets replaced.</p>
+            </div>
+            <p class="rule">Changes here update the member app straight away. Try turning off class booking, then go back to the member app.</p>
+          </div>
+
+  </main>
+      <!-- nudge sheet -->
+      <div class="overlay sheet-wrap" id="sheetWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+          <span class="grabber"></span>
+          <h3 id="sheetTitle">Draft for Callum</h3>
+          <label for="sheetMsg" class="note">Draft, edit before sending</label><textarea class="message" id="sheetMsg" rows="5"></textarea>
+          <p class="note">Tally writes the draft. The gym sends it from its own WhatsApp, and only to members who said yes to messages.</p>
+          <div class="actions three">
+            <button class="secondary" id="sheetClose">Cancel</button>
+            <button class="secondary" id="sheetCopy">Copy</button>
+            <button class="primary" id="sheetSend">Open in WhatsApp</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- post a class sheet -->
+      <div class="overlay sheet-wrap" id="postWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="postTitle">
+          <span class="grabber"></span>
+          <h3 id="postTitle">Post a class</h3>
+          <form class="form" id="postForm" novalidate>
+            <label for="pType">Class<select id="pType"></select></label>
+            <div class="two">
+              <label for="pDay">Day<select id="pDay"></select></label>
+              <label for="pTime">Start<select id="pTime"></select></label>
+            </div>
+            <div class="two">
+              <label for="pLen">Length<select id="pLen"><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>60 min</option><option value="90">90 min</option></select></label>
+              <label for="pCap">Spots<input id="pCap" type="number" min="1" max="60" value="14" inputmode="numeric"></label>
+            </div>
+            <label for="pCoach">Coach<select id="pCoach"></select></label>
+            <p class="note">Members see it in Classes straight away and can book a spot.</p>
+            <div class="actions">
+              <button type="button" class="secondary" id="postCancel">Cancel</button>
+              <button type="submit" class="primary">Post class</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+  <div class="toast dtoast" id="dtoast" hidden></div>
+</div>
+
+<script>
+(function () {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const fmt = n => n.toLocaleString("en-GB");
+  const ZAR_PER_GBP = 21.72;
+
+  const PLATES = {
+    white:  { name: "White Plate",  kg: "5",  col: "var(--p-white)",  ink: "#1b1e23", min: 0 },
+    green:  { name: "Green Plate",  kg: "10", col: "var(--p-green)",  ink: "#ffffff", min: 500 },
+    yellow: { name: "Yellow Plate", kg: "15", col: "var(--p-yellow)", ink: "#1b1e23", min: 1000 },
+    blue:   { name: "Blue Plate",   kg: "20", col: "var(--p-blue)",   ink: "#ffffff", min: 1500 },
+    red:    { name: "Red Plate",    kg: "25", col: "var(--p-red)",    ink: "#ffffff", min: 2000 }
+  };
+
+  // A bumper plate: rim, face, hub and the kilo number (KG only on real plate weights)
+  function plate(key, size = 96, label) {
+    const p = PLATES[key];
+    const t = label || p.kg;
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true" style="max-width:100%">
+      <circle cx="50" cy="50" r="48" fill="${p.col}" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="15" fill="var(--p-hub)"/>
+      <circle cx="50" cy="50" r="9" fill="#9aa0a8"/>
+      <circle cx="50" cy="50" r="5.5" fill="var(--p-hub)"/>
+      <text x="50" y="29" text-anchor="middle" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="900" font-size="15" fill="${p.ink}">${t}</text>
+      ${label ? "" : `<text x="50" y="81" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="700" font-size="7.5" letter-spacing="1.2" fill="${p.ink}">KG</text>`}
+    </svg>`;
+  }
+
+  // ---------- state ----------
+  const state = { con: 1100, str: 520, pb: 220, week: 2, streak: 11, sessions: 47, team: 8, checkedIn: false, board: "gym", div: "men83", pane: "overview", cur: "gbp", wallet: false };
+  const total = () => state.con + state.str + state.pb;
+
+  function rankFor(pts) {
+    const keys = Object.keys(PLATES);
+    let cur = "white";
+    keys.forEach(k => { if (pts >= PLATES[k].min) cur = k; });
+    return { cur, next: keys[keys.indexOf(cur) + 1] };
+  }
+
+  function tally(n) {
+    const svg = $("#tally");
+    const gap = 6, groupGap = 12, h = 30;
+    let x = 2, out = "";
+    for (let i = 0; i < n; i++) {
+      if (i % 5 === 4) {
+        const gx = x - (gap * 4) - 2;
+        out += `<line x1="${gx}" y1="${h - 4}" x2="${x - 2}" y2="6" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/>`;
+        x += groupGap - gap;
+      } else {
+        out += `<line x1="${x}" y1="4" x2="${x}" y2="${h}" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>`;
+        x += gap;
+      }
+    }
+    svg.setAttribute("viewBox", `0 0 ${Math.max(x + 2, 60)} 34`);
+    svg.setAttribute("preserveAspectRatio", "xMinYMid meet");
+    svg.innerHTML = out;
+  }
+
+  function splitBar(c, s, p) {
+    const t = c + s + p;
+    return `<i class="c-con" style="width:${(c / t * 100).toFixed(1)}%"></i><i class="c-str" style="width:${(s / t * 100).toFixed(1)}%"></i><i class="c-pb" style="width:${(p / t * 100).toFixed(1)}%"></i>`;
+  }
+
+  function renderHome() {
+    const pts = total();
+    const { cur, next } = rankFor(pts);
+    $("#rankPlate").innerHTML = plate(cur, 96);
+    $("#rankName").textContent = PLATES[cur].name;
+    $("#passRank").textContent = PLATES[cur].name;
+    $("#rankPts").textContent = fmt(pts);
+    if (next) {
+      const span = PLATES[next].min - PLATES[cur].min;
+      const pct = ((pts - PLATES[cur].min) / span) * 100;
+      requestAnimationFrame(() => { $("#rankBar").style.width = pct.toFixed(1) + "%"; });
+      $("#rankToGo").textContent = fmt(PLATES[next].min - pts);
+    }
+    $("#weekDone").textContent = state.week;
+    const c = 163.4;
+    requestAnimationFrame(() => { $("#goalRing").style.strokeDashoffset = (c - c * Math.min(state.week / 3, 1)).toFixed(1); });
+    $("#streakNum").textContent = state.streak;
+    $("#teamSessions").textContent = state.team;
+    tally(state.streak);
+    renderWeek();
+    $("#sessTotal").textContent = state.sessions;
+    $("#myTotal").textContent = fmt(pts);
+    $("#myCon").textContent = fmt(state.con);
+    $("#myStr").textContent = fmt(state.str);
+    $("#myPb").textContent = fmt(state.pb);
+    $("#mySplit").innerHTML = splitBar(state.con, state.str, state.pb);
+    if (state.checkedIn) {
+      const btn = $("#checkinBtn");
+      btn.classList.add("done");
+      btn.setAttribute("aria-disabled", "true");
+      $("#checkinTitle").textContent = "You're in";
+      $("#checkinSub").textContent = "Checked in at 06:42 · see you Thursday";
+      $("#checkinIcon").innerHTML = '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.5L16 9.5"/>';
+    }
+  }
+
+  // ---------- league ----------
+  const FACE = ["#2b54e0", "#d93a2b", "#2e9a55", "#a8701a", "#6b4fd8", "#0f8a8a", "#c2477a", "#4a5563"];
+  const divisions = {
+    men83: {
+      note: "Men, 83 kg class, October. Points from showing up, strength for your size and beating your own bests.",
+      rows: [
+        { n: "Kabir S.", s: "82.4 kg · 13 sessions", c: 1240, st: 610, p: 240, d: 1 },
+        { n: "Ruan V.", s: "80.9 kg · 12 sessions", c: 1180, st: 590, p: 230, d: -1 },
+        { n: "Josh T. (you)", s: "81.6 kg · 11 sessions", me: true, d: 2 },
+        { n: "Sipho M.", s: "79.8 kg · 11 sessions", c: 1050, st: 560, p: 150, d: -1 },
+        { n: "Fraser D.", s: "82.7 kg · 12 sessions", c: 1120, st: 400, p: 180, d: 0 },
+        { n: "Callum F.", s: "77.5 kg · 8 sessions", c: 960, st: 520, p: 170, d: -2 },
+        { n: "Liam K.", s: "80.2 kg · 9 sessions", c: 900, st: 430, p: 120, d: 1 },
+        { n: "Rory B.", s: "75.1 kg · 7 sessions", c: 700, st: 380, p: 160, d: 0 }
+      ]
+    },
+    women63: {
+      note: "Women, 63 kg class, October. Same points rules as every class.",
+      rows: [
+        { n: "Isla R.", s: "62.1 kg · 13 sessions", c: 1300, st: 560, p: 280, d: 0 },
+        { n: "Aisha N.", s: "60.4 kg · 12 sessions", c: 1150, st: 480, p: 210, d: 2 },
+        { n: "Naledi K.", s: "61.8 kg · 11 sessions", c: 1080, st: 420, p: 190, d: -1 },
+        { n: "Lindiwe P.", s: "59.7 kg · 10 sessions", c: 980, st: 410, p: 160, d: -1 },
+        { n: "Ellie W.", s: "62.9 kg · 9 sessions", c: 900, st: 380, p: 150, d: 1 },
+        { n: "Zola M.", s: "58.3 kg · 8 sessions", c: 760, st: 300, p: 120, d: 0 }
+      ]
+    },
+    open: {
+      note: "Open ranks everyone on consistency only, with no gender or weight class. Anyone can choose it.",
+      rows: [
+        { n: "Isla R.", s: "13 sessions", c: 1300, st: 0, p: 0, d: 0 },
+        { n: "Kabir S.", s: "13 sessions", c: 1240, st: 0, p: 0, d: 1 },
+        { n: "Ruan V.", s: "12 sessions", c: 1180, st: 0, p: 0, d: -1 },
+        { n: "Aisha N.", s: "12 sessions", c: 1150, st: 0, p: 0, d: 2 },
+        { n: "Fraser D.", s: "12 sessions", c: 1120, st: 0, p: 0, d: 0 },
+        { n: "Josh T. (you)", s: "11 sessions", me: true, conOnly: true, d: 1 },
+        { n: "Naledi K.", s: "11 sessions", c: 1080, st: 0, p: 0, d: -2 },
+        { n: "Sipho M.", s: "11 sessions", c: 1050, st: 0, p: 0, d: 0 }
+      ]
+    }
+  };
+  const teams = {
+    unit: "sessions",
+    note: "Teams of three, mixed by gender and experience. Weekly reset every Monday at 00:00.",
+    rows: [
+      { n: "Team Anchor", s: "Kabir, Aisha, Ruan", v: 9, d: 0 },
+      { n: "Team Tidal (you)", s: "Josh, Isla, Fraser", v: 8, d: 1, me: true },
+      { n: "Team Brine", s: "Callum, Naledi, Ayo", v: 8, d: -1 },
+      { n: "Team Keel", s: "Sipho, Rory, Ellie", v: 7, d: 2 },
+      { n: "Team Jetty", s: "Ayesha, Liam, Zola", v: 6, d: 0 },
+      { n: "Team Breakwater", s: "Hamish, Lindiwe, Theo", v: 5, d: -2 }
+    ]
+  };
+  const city = {
+    unit: "visits",
+    note: "Gym against gym: average visits per member a week. All gyms here are made up.",
+    rows: [
+      { n: "Saltworks Barbell Club (you)", s: "142 members", v: 2.7, d: 1, me: true },
+      { n: "Northgate Strength", s: "118 members", v: 2.6, d: -1 },
+      { n: "Quarry Athletic", s: "201 members", v: 2.4, d: 0 },
+      { n: "Lowtide Fitness", s: "87 members", v: 2.2, d: 1 },
+      { n: "Ironbark Gym", s: "164 members", v: 2.0, d: -1 }
+    ]
+  };
+  const initials = n => n.replace(/\(.*\)/, "").replace(/^Team /, "").split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  const delta = d => d > 0 ? `<span class="up">▲ ${d}</span>` : d < 0 ? `<span class="down">▼ ${-d}</span>` : "no change";
+
+  function rowsFor() {
+    if (state.board === "team") return { unit: "sessions", note: teams.note, rows: teams.rows.map(r => ({ ...r })) };
+    if (state.board === "city") return { unit: "visits", note: city.note, rows: city.rows.map(r => ({ ...r })) };
+    const dv = divisions[state.div];
+    const rows = dv.rows.map(r => {
+      const x = { ...r };
+      if (r.me) { x.c = state.con; x.st = r.conOnly ? 0 : state.str; x.p = r.conOnly ? 0 : state.pb; }
+      x.v = x.c + x.st + x.p;
+      return x;
+    }).sort((a, b) => b.v - a.v);
+    return { unit: "pts", note: dv.note, rows, split: state.div !== "open" };
+  }
+
+  function renderBoard() {
+    const gym = state.board === "gym";
+    $$(".seg[aria-label='Leaderboard'] button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.board === state.board)));
+    $$("#divChips button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.div === state.div)));
+    $("#divChips").hidden = !gym || !setup.mods.strength;
+    $("#myPts").hidden = !gym || state.div !== "men83";
+    $("#howCard").hidden = !gym;
+    const b = rowsFor();
+    $("#boardLegend").hidden = !b.split;
+    const openFor = (r, i) => state.board === "team" ? `team:${i}` : state.board === "city" ? `gym:${i}` : r.me ? "rank" : `member:${r.n}`;
+    const val = v => b.unit === "visits" ? v.toFixed(1) : fmt(v);
+    const top = b.rows.slice(0, 3);
+    const order = [1, 0, 2], heights = [92, 118, 74], medal = ["blue", "red", "yellow"];
+    $("#podium").innerHTML = order.map((i, k) => {
+      const r = top[i];
+      return `<div data-open="${openFor(r, i)}">${plate(medal[k], 46, String(i + 1))}<b>${r.n.replace(" (you)", "")}</b><small class="num">${val(r.v)} ${b.unit}</small><span class="block" style="height:${heights[k]}px">${i + 1}</span></div>`;
+    }).join("");
+    $("#board").innerHTML = b.rows.map((r, i) => `
+      <li class="${r.me ? "me" : ""}" data-open="${openFor(r, i)}">
+        <span class="pos">${i + 1}</span>
+        <span class="face" style="background:${FACE[i % FACE.length]};width:34px;height:34px;margin:0;border:0">${initials(r.n)}</span>
+        <span class="who"><b>${r.n}</b><small>${b.split ? PLATES[rankFor(r.v).cur].name + " · " : ""}${r.s.replace(/^[\d.]+ kg · /, "")}</small></span>
+        <span class="pts num">${val(r.v)}<small>${delta(r.d)}</small></span>
+        ${b.split ? `<span class="split">${splitBar(r.c, r.st, r.p)}</span>` : ""}
+      </li>`).join("");
+    $("#boardNote").textContent = b.note;
+    decorate($("#v-league"));
+  }
+
+  // ---------- progress ----------
+  function renderHeat() {
+    const pattern = "1010100 1001010 0110100 1010010 1000100 1010100 0101010 1010101 1010100 0110010 1010100 1100000";
+    const weeks = pattern.split(" ");
+    const days = ["M", "T", "W", "T", "F", "S", "S"];
+    let html = "";
+    for (let d = 0; d < 7; d++) {
+      html += `<em>${d % 2 === 0 ? days[d] : ""}</em>`;
+      for (let w = 0; w < 12; w++) {
+        const on = weeks[w][d] === "1";
+        const isToday = w === 11 && d === 4;
+        const lvl = isToday && state.checkedIn ? "l2" : on ? (d === 5 ? "l1" : "l2") : "";
+        html += `<span class="${lvl}${isToday ? " today" : ""}"></span>`;
+      }
+    }
+    $("#heat").innerHTML = html;
+  }
+
+  function badgeItems() {
+    return [
+      { k: "green", t: "10", name: "10 sessions", sub: "12 Aug", got: true },
+      { k: "yellow", t: "25", name: "25 sessions", sub: "9 Sep", got: true },
+      { k: "blue", t: "50", name: "50 sessions", sub: `${state.sessions} of 50`, got: false },
+      { k: "red", t: "100", name: "100 sessions", sub: "Locked", got: false },
+      { k: "white", t: "↺", name: "Comeback", sub: "Back after 14 days", got: true },
+      { k: "blue", t: "PB", name: "First PB", sub: "Back squat", got: true },
+      { k: "green", t: "12", name: "12-week streak", sub: state.streak >= 12 ? "Today" : `${state.streak} of 12`, got: state.streak >= 12 },
+      { k: "red", t: "2×", name: "Double body weight", sub: "Deadlift", got: true }
+    ];
+  }
+  function renderBadges() {
+    $("#badges").innerHTML = badgeItems().map((b, i) => `
+      <div class="badge ${b.got ? "" : "locked"}" data-open="badge:${i}">
+        <span style="${b.got ? "" : "filter:grayscale(1);opacity:.35"}">${plate(b.k, 58, b.t)}</span>
+        ${b.name}<small>${b.sub}</small>
+      </div>`).join("");
+  }
+
+  // ---------- charts ----------
+  // Bars drawn to one scale; optional divider and labels under each bar
+  function bars(svg, data, o) {
+    const W = 330, H = 170, L = 34, R = 6, T = 14, B = o.labels ? 30 : 26;
+    const iw = W - L - R, ih = H - T - B, bw = iw / data.length;
+    const y = v => T + ih - (v / o.max) * ih;
+    let s = "";
+    o.ticks.forEach(t => {
+      s += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/>`;
+      s += `<text x="${L - 6}" y="${y(t) + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${o.tickFmt ? o.tickFmt(t) : t}</text>`;
+    });
+    data.forEach((v, i) => {
+      const hot = o.hot(i);
+      const x = L + i * bw + bw * 0.18;
+      s += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${(bw * 0.64).toFixed(1)}" height="${(y(0) - y(v)).toFixed(1)}" rx="3" fill="${hot ? "var(--accent)" : "var(--surface-2)"}" stroke="${hot ? "none" : "var(--line)"}"/>`;
+      if (o.labels) s += `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 12}" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="Figtree, sans-serif">${o.labels[i]}</text>`;
+    });
+    if (o.endLabel) {
+      const i = o.endIndex != null ? o.endIndex : data.length - 1;
+      s += `<text x="${L + i * bw + bw / 2}" y="${y(data[i]) - 6}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${o.endLabel}</text>`;
+    }
+    if (o.divider != null) {
+      const dx = L + o.divider * bw;
+      s += `<line x1="${dx}" x2="${dx}" y1="${T}" y2="${y(0)}" stroke="var(--ink)" stroke-dasharray="3 3" stroke-width="1"/>`;
+      o.under.forEach(u => { s += `<text x="${L + u.at * bw}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-weight="${u.bold ? 600 : 400}" fill="${u.bold ? "var(--accent)" : "var(--muted)"}" font-family="Figtree, sans-serif">${u.t}</text>`; });
+    }
+    svg.innerHTML = s;
+  }
+
+  const money = v => state.cur === "gbp"
+    ? "£" + v.toLocaleString("en-GB", { maximumFractionDigits: 0 })
+    : "R" + Math.round(v * ZAR_PER_GBP).toLocaleString("en-GB");
+
+  function renderOwner() {
+    $$(".dash-nav [data-pane]").forEach(b => b.setAttribute("aria-current", String(b.dataset.pane === state.pane)));
+    Object.keys(PANES).forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
+    $("#dashTitle").textContent = PANES[state.pane];
+    $$(".cur button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cur === state.cur)));
+    $$("[data-money]").forEach(el => {
+      const v = Number(el.dataset.money);
+      el.textContent = el.dataset.dp && state.cur === "gbp" ? "£" + v.toFixed(2) : money(v);
+    });
+    $("#curNote").textContent = state.cur === "gbp" ? "Shown in pounds. Tap R to see rand at £1 = R21.72." : "Shown in rand at £1 = R21.72. Tap £ for pounds.";
+    const rev = [2410, 2380, 2520, 2460, 2590, 2610, 2640, 2794];
+    const scale = state.cur === "gbp" ? 1 : ZAR_PER_GBP;
+    const revMax = state.cur === "gbp" ? 3000 : 65000;
+    const revTicks = state.cur === "gbp" ? [0, 1000, 2000, 3000] : [0, 20000, 40000, 60000];
+    bars($("#revChart"), rev.map(v => v * scale), {
+      max: revMax, ticks: revTicks, tickFmt: t => t === 0 ? "0" : (state.cur === "gbp" ? "£" : "R") + (t / 1000) + "k",
+      hot: i => i >= 3, divider: 3, endLabel: money(rev[7]),
+      under: [{ t: "Before", at: 1.5 }, { t: "Pilot, week 1 to 5", at: 5.5, bold: true }]
+    });
+  }
+
+  function renderStaticCharts() {
+    bars($("#chart"), [2.3, 2.2, 2.4, 2.3, 2.1, 2.3, 2.4, 2.4, 2.5, 2.6, 2.6, 2.7, 2.7], {
+      max: 3, ticks: [0, 1, 2, 3], hot: i => i >= 8, divider: 8, endLabel: "2.7",
+      under: [{ t: "8 weeks before", at: 4 }, { t: "Pilot, week 1 to 5", at: 10.5, bold: true }]
+    });
+    bars($("#dayChart"), [52, 38, 49, 35, 47, 46, 21], {
+      max: 60, ticks: [0, 20, 40, 60], hot: i => i === 0, endLabel: "52", endIndex: 0,
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    });
+    const freq = [["1 visit", 18], ["2 visits", 27], ["3 visits", 33], ["4 or more", 18]];
+    $("#freq").innerHTML = freq.map(([l, n]) => `<div><span>${l}</span><span class="hbar"><i class="c-con" style="width:${(n / 40 * 100).toFixed(1)}%"></i></span><b>${n}</b></div>`).join("");
+  }
+
+  const risk = [
+    { n: "Callum F.", d: 16, s: "Blue Plate · usually Mon, Wed, Fri at 06:00", cls: "06:00 Engine class tomorrow has 7 spots" },
+    { n: "Lindiwe P.", d: 15, s: "Blue Plate · usually Tue and Thu evenings", cls: "Barbell Strength at 17:30 tonight has 7 spots" },
+    { n: "Rory B.", d: 21, s: "Yellow Plate · joined 7 weeks ago", cls: "Saturday's 09:00 team workout is a good one to come back to" },
+    { n: "Ellie W.", opt: false, d: 14, s: "Yellow Plate · usually lunchtime", cls: "the 12:15 Express class on Thursday has space" }
+  ];
+  function renderRisk() {
+    $("#riskList").innerHTML = risk.map((r, i) => `
+      <div>
+        <span class="face" style="background:${FACE[(i + 3) % FACE.length]}">${initials(r.n)}</span>
+        <span><b>${r.n} <span class="down num" style="font-weight:600;font-size:12.5px">${r.d} days</span></b><small>${r.s}${r.opt === false ? " · not opted in to messages" : ""}</small></span>
+        ${r.opt === false ? '<button class="ghost" disabled title="Not opted in to messages">Can\'t message</button>' : r.sent ? '<button class="ghost" disabled>Sent</button>' : `<button class="ghost" data-nudge="${i}">Draft message</button>`}
+      </div>`).join("");
+  }
+
+  // ---------- classes ----------
+  const TYPES = {
+    strength: { label: "Strength", col: "var(--p-red)" },
+    engine: { label: "Conditioning", col: "var(--p-blue)" },
+    yoga: { label: "Yoga", col: "var(--p-green)" },
+    mobility: { label: "Mobility", col: "var(--p-yellow)" },
+    boxing: { label: "Boxing", col: "#8b5cf6" },
+    open: { label: "Open gym", col: "var(--muted)" }
+  };
+  const CLASSES = {
+    barbell: { name: "Barbell Strength", type: "strength", len: 60, cap: 16, coach: "Mia", level: "All levels", desc: "Squat, press and deadlift with a coach watching every set. Weights are scaled to you.", bring: "flat shoes" },
+    oly: { name: "Olympic Lifting", type: "strength", len: 60, cap: 10, coach: "Ross", level: "Some experience", desc: "Snatch and clean and jerk technique, built up from an empty bar.", bring: "flat shoes, wrist wraps if you have them" },
+    engine: { name: "Engine", type: "engine", len: 45, cap: 20, coach: "Sam", level: "All levels", desc: "Rowing, bike and running intervals. Hard work, simple moves, loud music.", bring: "water and a towel" },
+    express: { name: "Express", type: "engine", len: 30, cap: 20, coach: "Sam", level: "All levels", desc: "A 30-minute full-body session built for a lunch break.", bring: "water" },
+    team: { name: "Team Workout", type: "engine", len: 60, cap: 24, coach: "Mia", level: "All levels", desc: "Partner and team workouts. Your Tally team scores double points.", bring: "water" },
+    mobility: { name: "Mobility", type: "mobility", len: 45, cap: 14, coach: "Lebo", level: "All levels", desc: "Hips, shoulders and spine. Slow, guided and good for sore legs.", bring: "nothing, mats are provided" },
+    boxing: { name: "Boxing Fit", type: "boxing", len: 45, cap: 12, coach: "Kyle", level: "All levels", desc: "Pad work and bag rounds in pairs. No sparring.", bring: "hand wraps, gloves are provided" },
+    yoga: { name: "Yoga Flow", type: "yoga", len: 60, cap: 14, coach: "Anna", level: "All levels", desc: "A steady flow to stretch out the day's training.", bring: "nothing, mats are provided" },
+    yin: { name: "Yin Yoga", type: "yoga", len: 60, cap: 14, coach: "Anna", level: "All levels", desc: "Long, quiet holds to recover from the week.", bring: "nothing, mats are provided" },
+    open: { name: "Open Gym", type: "open", len: 120, cap: 30, coach: "Ross", level: "Members", desc: "Train your own programme. A coach is on the floor for questions.", bring: "your plan" }
+  };
+  const ROOM = { strength: "Platform room", engine: "Main floor", yoga: "Studio", mobility: "Studio", boxing: "Studio", open: "Main floor" };
+  const COACHES = ["Mia", "Sam", "Lebo", "Kyle", "Anna", "Ross"];
+  const MEMBERS = ["Isla", "Fraser", "Kabir", "Aisha", "Ruan", "Naledi", "Sipho", "Ellie", "Liam", "Zola", "Rory", "Lindiwe"];
+  const WEEKDAY = [["06:00", "engine"], ["07:00", "barbell"], ["09:30", "mobility"], ["12:15", "express"], ["17:30", "barbell"], ["18:30", "boxing"], ["19:30", "yoga"]];
+  const TUETHU = [["06:00", "engine"], ["07:00", "oly"], ["12:15", "express"], ["17:30", "barbell"], ["18:30", "yoga"], ["19:30", "engine"]];
+  const WEEK = [WEEKDAY, TUETHU, WEEKDAY, TUETHU, WEEKDAY,
+    [["08:00", "team"], ["09:30", "oly"], ["11:00", "yin"], ["12:00", "open"]],
+    [["09:00", "yin"], ["10:00", "open"]]]; // Monday first
+  const DNAME = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const DLONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const NOW = "06:42"; // demo clock, Friday 23 October 2026
+  const DAYS = Array.from({ length: 7 }, (_, i) => new Date(2026, 9, 23 + i));
+  const toMin = t => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+  const toTime = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+  const dayShort = i => i === 0 ? "Today" : i === 1 ? "Tomorrow" : `${DNAME[DAYS[i].getDay()]} ${DAYS[i].getDate()} Oct`;
+  const dayLong = i => `${i === 0 ? "Today, " : i === 1 ? "Tomorrow, " : ""}${DLONG[DAYS[i].getDay()]} ${DAYS[i].getDate()} October`;
+  const lenOf = c => c.len || CLASSES[c.key].len;
+  const coachOf = c => c.coach || CLASSES[c.key].coach;
+  const byWhen = (a, b) => a.di - b.di || toMin(a.t) - toMin(b.t);
+
+  const schedule = [];
+  DAYS.forEach((d, di) => {
+    WEEK[(d.getDay() + 6) % 7].forEach(([t, key], j) => {
+      const cap = CLASSES[key].cap;
+      const r = Math.abs(Math.sin((di + 1) * 31.7 + j * 7.3));
+      schedule.push({ id: `${di}-${t}`, di, t, key, cap, booked: Math.round(cap * (0.3 + r * 0.55)), mine: false, wait: false, isNew: false });
+    });
+  });
+  const find = id => schedule.find(c => c.id === id);
+  // Josh's existing bookings, and two classes that are already full
+  Object.assign(find("0-17:30"), { mine: true, booked: 9 });
+  Object.assign(find("1-08:00"), { mine: true, booked: 17 });
+  find("0-18:30").booked = find("0-18:30").cap;
+  find("3-17:30").booked = find("3-17:30").cap;
+
+  function status(c) {
+    const s = toMin(c.t), now = toMin(NOW);
+    if (c.di === 0 && s + lenOf(c) <= now) return "done";
+    if (c.di === 0 && s <= now) return "live";
+    if (c.mine) return "booked";
+    if (c.wait) return "wait";
+    if (c.booked >= c.cap) return "full";
+    return "open";
+  }
+  const STATE_LABEL = { done: "Finished", live: "On now", booked: "Booked", wait: "Waitlisted", full: "Full", open: "Book" };
+  const cstate = { day: 0, type: "all" };
+
+  function classRow(c) {
+    const k = CLASSES[c.key], st = status(c), ty = TYPES[k.type];
+    const left = c.cap - c.booked;
+    const spots = st === "full" || st === "wait" ? "Full · waitlist open" : st === "open" && left <= 3 ? `${left} spots left` : `${c.booked} of ${c.cap} booked`;
+    return `<button class="cls${st === "done" ? " past" : ""}" data-cls="${c.id}">
+      <span class="t">${c.t}<small>${lenOf(c)} min</small></span>
+      <span class="nm">
+        <span class="type"><i style="background:${ty.col}"></i>${ty.label}${c.isNew ? ' · <em class="new">New</em>' : ""}</span>
+        <b>${k.name}</b>
+        <span>Coach ${coachOf(c)} · ${ROOM[k.type]}</span>
+        <span class="spots"><i style="width:${Math.min(100, c.booked / c.cap * 100).toFixed(0)}%"></i></span>
+        <span>${spots}</span>
+      </span>
+      <span class="state ${st}">${STATE_LABEL[st]}</span>
+    </button>`;
+  }
+
+  function renderClasses() {
+    $("#days").innerHTML = DAYS.map((d, i) => `<button data-day="${i}" aria-pressed="${i === cstate.day}" aria-label="${dayLong(i)}"><small>${i === 0 ? "Today" : DNAME[d.getDay()]}</small><b>${d.getDate()}</b><i class="${schedule.some(c => c.di === i && (c.mine || c.wait)) ? "on" : ""}"></i></button>`).join("");
+    $$("#typeChips button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === cstate.type)));
+    const mine = schedule.filter(c => (c.mine || c.wait) && status(c) !== "done").sort(byWhen);
+    $("#myBookings").innerHTML = mine.length
+      ? mine.map(c => `<button data-cls="${c.id}"><span class="type"><i style="background:${TYPES[CLASSES[c.key].type].col}"></i>${dayShort(c.di)}${c.wait ? " · waitlist" : ""}</span><b>${c.t} ${CLASSES[c.key].name}</b><span class="chev" aria-hidden="true">›</span></button>`).join("")
+      : `<p class="rule">Nothing booked yet. Pick a class below to book a spot.</p>`;
+    const list = schedule.filter(c => c.di === cstate.day && (cstate.type === "all" || CLASSES[c.key].type === cstate.type)).sort(byWhen);
+    $("#dayTitle").textContent = dayLong(cstate.day);
+    $("#dayCount").textContent = `${list.length} ${list.length === 1 ? "class" : "classes"}`;
+    const when = cstate.day === 0 ? "today" : cstate.day === 1 ? "tomorrow" : `on ${DLONG[DAYS[cstate.day].getDay()]}`;
+    $("#classList").innerHTML = list.length ? list.map(classRow).join("")
+      : `<div class="card"><p class="rule">No ${TYPES[cstate.type].label.toLowerCase()} classes ${when}. Try another day or show all classes.</p></div>`;
+  }
+
+  function renderHomeClass() {
+    const today = schedule.filter(c => c.di === 0 && ["open", "booked", "full", "wait"].includes(status(c))).sort(byWhen);
+    const c = today.find(x => x.mine) || today[0];
+    if (!c) return;
+    const k = CLASSES[c.key];
+    $("#homeClass").innerHTML = `<span class="class-time">${c.t}<small>Today</small></span><span><b>${k.name}</b><span class="muted" style="display:block; font-size:13px">Coach ${coachOf(c)} · ${ROOM[k.type]} · ${c.booked} of ${c.cap} booked</span></span><span class="pill">${c.mine ? "Booked" : "Book"}</span>`;
+  }
+
+  function renderOwnerClasses() {
+    const real = schedule.filter(c => c.key !== "open");
+    const booked = real.reduce((s, c) => s + c.booked, 0), cap = real.reduce((s, c) => s + c.cap, 0);
+    $("#oClassCount").textContent = schedule.length;
+    $("#oFill").textContent = Math.round(booked / cap * 100) + "%";
+    $("#oWait").textContent = 9 + schedule.filter(c => c.wait).length;
+    $("#oToday").innerHTML = schedule.filter(c => c.di === 0).sort(byWhen).map(c => {
+      const k = CLASSES[c.key];
+      return `<div class="orow"><span class="num" style="font-weight:600">${c.t}</span><span><b>${k.name}</b><small>Coach ${coachOf(c)} · ${lenOf(c)} min${c.isNew ? " · just posted" : ""}</small><span class="hbar"><i style="width:${(c.booked / c.cap * 100).toFixed(0)}%; background:${TYPES[k.type].col}"></i></span></span><b class="num">${c.booked}/${c.cap}</b></div>`;
+    }).join("");
+  }
+
+  let openId = null;
+  function openClass(id) {
+    const c = find(id);
+    if (!c) return;
+    openId = id;
+    const k = CLASSES[c.key], ty = TYPES[k.type], st = status(c);
+    $("#clsType").innerHTML = `<i style="background:${ty.col}"></i>${ty.label} · ${k.level}`;
+    $("#clsTitle").textContent = k.name;
+    $("#clsWhen").textContent = `${dayLong(c.di)} · ${c.t} to ${toTime(toMin(c.t) + lenOf(c))}`;
+    const spots = st === "full" || st === "wait" ? "Full" : `${c.cap - c.booked} left`;
+    $("#clsFacts").innerHTML = [["Coach", coachOf(c)], ["Room", ROOM[k.type]], ["Spots", spots]].map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join("");
+    $("#clsDesc").textContent = k.desc;
+    const seed = toMin(c.t) + c.di * 7;
+    const names = [0, 1].map(n => MEMBERS[(seed + n * 5) % MEMBERS.length]);
+    const shown = c.mine ? ["You", names[0]] : names;
+    const others = Math.max(c.booked - shown.length, 0);
+    $("#clsGoing").innerHTML = c.booked
+      ? `<span class="team-faces">${shown.map((n, i) => `<span class="face" style="background:${FACE[(seed + i) % FACE.length]}">${n === "You" ? "JT" : n[0]}</span>`).join("")}</span><span>${shown.join(", ")}${others ? ` and ${others} others` : ""} going</span>`
+      : `<span>Be the first to book</span>`;
+    const pts = c.key === "team" ? 20 : 10;
+    $("#clsNote").textContent = `Bring ${k.bring}. Tapping in for this class earns ${pts} points. Free to cancel until ${toTime(toMin(c.t) - 120)}.`;
+    const act = $("#clsAct");
+    const labels = { open: "Book this class", booked: "Cancel booking", full: "Join waitlist", wait: "Leave waitlist", live: `Started at ${c.t}`, done: "Finished" };
+    act.textContent = labels[st];
+    act.disabled = st === "live" || st === "done";
+    act.style.opacity = act.disabled ? ".5" : "";
+    $("#clsWrap").hidden = false;
+    $("#clsClose").focus();
+  }
+
+  $("#clsAct").addEventListener("click", () => {
+    const c = find(openId);
+    if (!c) return;
+    const st = status(c);
+    if (st === "open") { c.mine = true; c.booked++; toast(`Booked. We'll remind you at ${toTime(toMin(c.t) - 60)}`); }
+    else if (st === "booked") { c.mine = false; c.booked--; toast("Booking cancelled. Your spot is free for someone else"); }
+    else if (st === "full") { c.wait = true; toast("You're 2nd on the waitlist. We'll message you if a spot opens"); }
+    else if (st === "wait") { c.wait = false; toast("You've left the waitlist"); }
+    else return;
+    $("#clsWrap").hidden = true;
+    renderClasses(); renderHomeClass(); renderOwnerClasses();
+  });
+  $("#clsClose").addEventListener("click", () => { $("#clsWrap").hidden = true; });
+  $("#clsWrap").addEventListener("click", e => { if (e.target.id === "clsWrap") $("#clsWrap").hidden = true; });
+  ["#classList", "#myBookings"].forEach(sel => $(sel).addEventListener("click", e => {
+    const b = e.target.closest("[data-cls]");
+    if (b) openClass(b.dataset.cls);
+  }));
+  $("#days").addEventListener("click", e => {
+    const b = e.target.closest("[data-day]");
+    if (b) { cstate.day = Number(b.dataset.day); renderClasses(); }
+  });
+  $("#typeChips").addEventListener("click", e => {
+    const b = e.target.closest("[data-type]");
+    if (b) { cstate.type = b.dataset.type; renderClasses(); }
+  });
+
+  // owner posts a class
+  $("#pType").innerHTML = Object.entries(CLASSES).map(([k, c]) => `<option value="${k}">${c.name}</option>`).join("");
+  $("#pType").value = "yoga";
+  $("#pDay").innerHTML = DAYS.map((d, i) => `<option value="${i}">${dayShort(i)}</option>`).join("");
+  $("#pDay").value = "1";
+  $("#pCoach").innerHTML = COACHES.map(c => `<option>${c}</option>`).join("");
+  $("#pCoach").value = "Anna";
+  $("#pTime").innerHTML = Array.from({ length: 63 }, (_, i) => toTime(5 * 60 + i * 15)).map(t => `<option>${t}</option>`).join("");
+  $("#pTime").value = "18:00";
+  $("#postBtn").addEventListener("click", () => { $("#postWrap").hidden = false; $("#pType").focus(); });
+  $("#postCancel").addEventListener("click", () => { $("#postWrap").hidden = true; });
+  $("#postWrap").addEventListener("click", e => { if (e.target.id === "postWrap") $("#postWrap").hidden = true; });
+  $("#postForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const t = $("#pTime").value, cap = parseInt($("#pCap").value, 10), di = Number($("#pDay").value);
+    if (!/^\d\d:\d\d$/.test(t)) { toast("Pick a start time"); return; }
+    if (!(cap >= 1 && cap <= 60)) { toast("Spots must be between 1 and 60"); return; }
+    if (di === 0 && toMin(t) <= toMin(NOW)) { toast(`That time has passed today. Pick a time after ${NOW}`); return; }
+    const key = $("#pType").value;
+    schedule.push({ id: `${di}-${t}-new${schedule.length}`, di, t, key, cap, booked: 0, mine: false, wait: false, isNew: true, coach: $("#pCoach").value, len: Number($("#pLen").value) });
+    $("#postWrap").hidden = true;
+    cstate.day = di; cstate.type = "all";
+    renderClasses(); renderOwnerClasses(); renderHomeClass(); renderDashExtras();
+    toast(`Posted ${CLASSES[key].name}, ${di === 0 ? "today" : di === 1 ? "tomorrow" : dayShort(di)} at ${t}. Members can book it now`);
+  });
+
+  // ---------- lifts: Josh's own numbers ----------
+  const BW = 81.6; // kg, private to Josh
+  const e1rm = (w, r) => r === 1 ? w : Math.round(w * (1 + r / 30) * 2) / 2; // Epley estimate
+  const kg = v => (v % 1 ? v.toFixed(1) : String(v));
+  const LIFTS = {
+    squat: { name: "Back squat", pb: 140, pbDate: "14 Oct", rank: 5, range: [1.2, 2.1],
+      history: [128, 129, 132.5, 131, 133, 135, 135, 137.5, 136, 138, 140, 137.5],
+      sessions: [["Tue 20 Oct", "5 × 3", 125, 3], ["Fri 16 Oct", "3 × 5", 117.5, 5], ["Wed 14 Oct", "1 × 1", 140, 1, true], ["Fri 9 Oct", "4 × 5", 115, 5]],
+      pbs: [["3 Aug", 125], ["28 Aug", 132.5], ["22 Sep", 137.5], ["14 Oct", 140]] },
+    bench: { name: "Bench press", pb: 100, pbDate: "2 Oct", rank: 6, range: [0.9, 1.6],
+      history: [92, 93, 94, 94, 95, 96, 96, 97.5, 98, 100, 99, 99],
+      sessions: [["Thu 22 Oct", "5 × 5", 85, 5], ["Mon 19 Oct", "4 × 3", 90, 3], ["Thu 15 Oct", "3 × 5", 85, 5], ["Fri 2 Oct", "1 × 1", 100, 1, true]],
+      pbs: [["10 Aug", 92.5], ["14 Sep", 95], ["2 Oct", 100]] },
+    deadlift: { name: "Deadlift", pb: 180, pbDate: "14 Oct", rank: 3, range: [1.6, 2.6],
+      history: [165, 166, 168, 170, 170, 172, 174, 175, 176, 178, 180, 176],
+      sessions: [["Mon 19 Oct", "3 × 3", 160, 3], ["Wed 14 Oct", "1 × 1", 180, 1, true], ["Mon 5 Oct", "3 × 5", 150, 5], ["Mon 28 Sep", "5 × 3", 155, 3]],
+      pbs: [["7 Aug", 170], ["9 Sep", 175], ["14 Oct", 180]] }
+  };
+  const ord = n => n + (n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th");
+
+  // Line chart drawn to one scale: weekly best estimated max
+  function lineChart(svg, data) {
+    const W = 330, H = 170, L = 38, R = 16, T = 18, B = 26;
+    const step = 5;
+    const lo = Math.floor((Math.min(...data) - 1) / step) * step, hi = Math.ceil((Math.max(...data) + 1) / step) * step;
+    const x = i => L + i * (W - L - R) / (data.length - 1);
+    const y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+    let s = "";
+    for (let t = lo; t <= hi; t += step) {
+      s += `<line x1="${L}" x2="${W - R}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="var(--line)"/>`;
+      s += `<text x="${L - 6}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${t}</text>`;
+    }
+    const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+    s += `<path d="M${pts[0]} L${pts.join(" L")} L${x(data.length - 1).toFixed(1)},${y(lo)} L${x(0).toFixed(1)},${y(lo)} Z" fill="var(--accent)" opacity=".12"/>`;
+    s += `<polyline points="${pts.join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    data.forEach((v, i) => { s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i === data.length - 1 ? 5 : 2.5}" fill="${i === data.length - 1 ? "var(--accent)" : "var(--surface)"}" stroke="var(--accent)" stroke-width="2"/>`; });
+    const iMax = data.indexOf(Math.max(...data));
+    s += `<text x="${x(iMax).toFixed(1)}" y="${(y(data[iMax]) - 10).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${kg(data[iMax])}</text>`;
+    [[0, "Aug"], [4, "Sep"], [8, "Oct"]].forEach(([i, t]) => { s += `<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="Figtree, sans-serif">${t}</text>`; });
+    svg.innerHTML = s;
+  }
+
+  // ---------- technique figures: side view, two key positions ----------
+  function pose(p, col) {
+    const seg = (a, b, w) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--ink)" stroke-width="${w}" stroke-linecap="round"/>`;
+    let s = p.extra || "";
+    if (p.bar) s += `<circle cx="${p.bar[0]}" cy="${p.bar[1]}" r="${p.r || 18}" fill="${col}"/><circle cx="${p.bar[0]}" cy="${p.bar[1]}" r="${(p.r || 18) * .82}" fill="none" stroke="rgba(0,0,0,.18)"/><circle cx="${p.bar[0]}" cy="${p.bar[1]}" r="4.5" fill="var(--p-hub)"/>`;
+    s += seg(p.ankle, p.toe, 5) + seg(p.ankle, p.knee, 6) + seg(p.knee, p.hip, 7) + seg(p.hip, p.sh, 8) + seg(p.sh, p.elbow, 5) + seg(p.elbow, p.hand, 5);
+    s += `<circle cx="${p.head[0]}" cy="${p.head[1]}" r="9" fill="var(--ink)"/>`;
+    return s;
+  }
+  const BENCH = `<rect x="18" y="115" width="86" height="7" rx="3" fill="var(--muted)" opacity=".55"/><line x1="36" y1="122" x2="36" y2="160" stroke="var(--muted)" stroke-width="4" opacity=".55"/><line x1="88" y1="122" x2="88" y2="160" stroke="var(--muted)" stroke-width="4" opacity=".55"/>`;
+  const FIG = {
+    squat: { dy: 0, la: "Standing", lb: "Bottom", alt: "Side view of a back squat, standing and at the bottom with hips just below the knees",
+      a: { toe: [92, 160], ankle: [76, 158], knee: [78, 122], hip: [75, 88], sh: [78, 48], elbow: [64, 58], hand: [72, 50], head: [83, 34], bar: [72, 51] },
+      b: { toe: [92, 160], ankle: [76, 158], knee: [96, 128], hip: [62, 131], sh: [90, 103], elbow: [76, 108], hand: [84, 99], head: [98, 90], bar: [84, 99] } },
+    deadlift: { dy: 0, la: "Start", lb: "Lockout", alt: "Side view of a deadlift at the start with the bar over mid-foot, and standing tall at lockout",
+      a: { toe: [92, 160], ankle: [76, 158], knee: [88, 126], hip: [58, 110], sh: [90, 86], elbow: [87, 114], hand: [84, 140], head: [99, 76], bar: [84, 142] },
+      b: { toe: [92, 160], ankle: [76, 158], knee: [77, 122], hip: [75, 88], sh: [76, 48], elbow: [77, 72], hand: [79, 96], head: [80, 34], bar: [80, 98] } },
+    bench: { dy: 0, la: "Arms locked", lb: "Bar on chest", alt: "Side view of a bench press with arms locked out, and with the bar touching the lower chest",
+      a: { extra: BENCH, toe: [138, 160], ankle: [124, 158], knee: [116, 124], hip: [86, 111], sh: [46, 109], elbow: [47, 84], hand: [47, 60], head: [31, 105], bar: [47, 58] },
+      b: { extra: BENCH, toe: [138, 160], ankle: [124, 158], knee: [116, 124], hip: [86, 111], sh: [46, 109], elbow: [39, 121], hand: [54, 99], head: [31, 105], bar: [54, 97] } },
+    press: { dy: 22, la: "Start", lb: "Lockout", alt: "Side view of an overhead press with the bar on the shoulders, and locked out overhead with the head through",
+      a: { toe: [92, 160], ankle: [76, 158], knee: [77, 122], hip: [75, 88], sh: [76, 50], elbow: [88, 62], hand: [85, 48], head: [70, 33], bar: [86, 46], r: 15 },
+      b: { toe: [92, 160], ankle: [76, 158], knee: [77, 122], hip: [75, 88], sh: [76, 50], elbow: [76, 25], hand: [76, 0], head: [84, 33], bar: [76, -2], r: 15 } }
+  };
+  function figure(key) {
+    const f = FIG[key];
+    if (!f) return "";
+    const floor = 160 + f.dy, h = floor + 22;
+    const panel = (p, dx, label) => `<g transform="translate(${dx} ${f.dy})">${pose(p, "var(--p-red)")}</g><text x="${dx + 80}" y="${h - 4}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--muted)" font-family="Figtree, sans-serif">${label}</text>`;
+    return `<div class="figure"><svg viewBox="0 0 320 ${h}" role="img" aria-label="${f.alt}"><line x1="8" x2="312" y1="${floor}" y2="${floor}" stroke="var(--line)" stroke-width="2"/>${panel(f.a, 0, f.la)}${panel(f.b, 160, f.lb)}<path d="M150 ${70 + f.dy} h14 m-5 -5 l5 5 -5 5" stroke="var(--muted)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+  }
+
+  // ---------- learn content ----------
+  const ICON_LIFT = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="12" width="6" height="16" rx="2" fill="var(--p-red)"/><rect x="31" y="12" width="6" height="16" rx="2" fill="var(--p-red)"/><rect x="9" y="16" width="3" height="8" rx="1" fill="var(--ink)"/><rect x="28" y="16" width="3" height="8" rx="1" fill="var(--ink)"/><rect x="12" y="19" width="16" height="2.5" rx="1" fill="var(--ink)"/></svg>`;
+  const ICON_STRETCH = `<svg viewBox="0 0 40 40" fill="none" stroke="var(--p-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="8" r="3.5" fill="var(--p-green)" stroke="none"/><path d="M23 13 19 23l9 3v8M19 23l-8 5-4 6M23 14l8 4M23 14l-9 2"/></svg>`;
+  const GUIDES = {
+    squat: { kind: "lift", lift: "squat", name: "Back squat", level: "Beginner friendly", mins: 4, muscles: ["Quads", "Glutes", "Adductors", "Core"],
+      setup: ["Set the bar in the rack at mid-chest height, and the safety arms just below the depth you squat to.", "Step under and rest the bar on the meaty part of your upper back, not your neck. Hands just outside your shoulders, squeeze the bar.", "Stand up to lift it off, then take two or three small steps back.", "Feet about shoulder width apart, toes turned out slightly."],
+      how: ["Take a big breath into your belly and brace your stomach, as if someone is about to poke it.", "Sit down between your heels. Let your knees travel forward and out, in line with your toes.", "Go down until your hip crease is level with or just below the top of your knee, or as deep as you can while keeping your back flat.", "Drive up through your whole foot. Chest and hips rise together.", "Breathe out at the top, then take a new breath and brace before the next rep."],
+      cues: ["Brace", "Knees out", "Chest up", "Whole foot"],
+      mistakes: [["Knees cave in", "Push your knees out over your toes on the way up. Drop the weight until you can."], ["Heels lift off the floor", "Sit back a little more, wear flat shoes and work on the calf stretch."], ["Hips shoot up first", "Lead with your chest out of the bottom, and slow the reps down."], ["Lower back rounds at the bottom", "Only squat as deep as you can keep your back flat. Depth comes with mobility."]],
+      safety: "Set the safety arms before you start, every time. If a rep fails, sit down onto the arms and step out from under the bar." },
+    deadlift: { kind: "lift", lift: "deadlift", name: "Deadlift", level: "Beginner friendly", mins: 4, muscles: ["Glutes", "Hamstrings", "Back", "Grip"],
+      setup: ["Stand with your feet hip width apart and the bar over the middle of your feet, about 3 cm from your shins.", "Hinge at the hips and grip the bar just outside your legs, arms straight.", "Bend your knees until your shins touch the bar. Chest up, back flat, shoulders just in front of the bar.", "Pull the slack out: tighten your arms and back until the bar clicks against the plates, before it leaves the floor."],
+      how: ["Breathe in and brace your stomach.", "Push the floor away with your legs. Keep the bar touching your legs all the way up.", "Hips and shoulders rise at the same rate. Once the bar passes your knees, push your hips forward.", "Stand tall and squeeze your glutes. Don't lean back.", "Lower it the same way: hips back first, bar sliding down your thighs, then bend your knees once it passes them."],
+      cues: ["Push the floor", "Bar close", "Proud chest", "Stand tall"],
+      mistakes: [["Your back rounds", "Lower the weight. Reset your start position on every rep and brace before you pull."], ["The bar drifts away from your legs", "Squeeze your armpits as if holding a newspaper there. The bar should brush up your shins."], ["Hips rise first and your legs straighten early", "Keep your chest up and think about pushing with your legs, not pulling with your back."], ["Leaning back at the top", "Finish by squeezing your glutes and standing straight. Your body should end in a straight line."]],
+      safety: "Reset between reps instead of bouncing the bar. Use chalk for grip. If your back position changes, the set is over." },
+    bench: { kind: "lift", lift: "bench", name: "Bench press", level: "Beginner friendly", mins: 3, muscles: ["Chest", "Shoulders", "Triceps"],
+      setup: ["Lie down with your eyes directly under the bar and your feet flat on the floor.", "Squeeze your shoulder blades together and down. Keep a small natural arch, with your bum on the bench.", "Grip a little wider than your shoulders, so your forearms are upright when the bar touches your chest. Wrap your thumbs around the bar.", "Lift the bar out with straight arms and move it over your shoulders."],
+      how: ["Breathe in and lower the bar under control to your lower chest.", "Keep your elbows tucked at about 45 to 70 degrees from your body, not flared out to the sides.", "Touch your chest lightly, without bouncing.", "Press up and slightly back so the bar finishes over your shoulders. Breathe out near the top."],
+      cues: ["Shoulders back", "Bend the bar", "Feet down", "Touch and press"],
+      mistakes: [["Elbows flare out wide", "Tuck them in a little as you lower. It's kinder on your shoulders."], ["Bouncing the bar off your chest", "Lower more slowly and pause for a moment on your chest."], ["Bum lifts off the bench", "Keep your glutes down and drive your feet into the floor instead."], ["Wrists bent back", "Hold the bar low in your palm, in line with your forearm."]],
+      safety: "Use a spotter or set the safety arms for any heavy set. Always wrap your thumbs around the bar: with a thumbless grip the bar can roll out of your hands." },
+    press: { kind: "lift", name: "Overhead press", level: "Some experience", mins: 3, muscles: ["Shoulders", "Triceps", "Upper back", "Core"],
+      setup: ["Set the bar at upper-chest height and grip just outside your shoulders.", "Step back with the bar resting on the front of your shoulders, elbows slightly in front of the bar.", "Feet hip width apart. Squeeze your glutes and brace your stomach."],
+      how: ["Move your head back slightly and press the bar straight up past your chin.", "Once the bar passes your forehead, push your head through so your ears are beside your arms.", "Lock your arms out with the bar over the middle of your feet.", "Lower it under control back to your shoulders."],
+      cues: ["Glutes tight", "Head through", "Straight up"],
+      mistakes: [["Leaning far back", "Squeeze your glutes and brace harder. Lower the weight if you still lean."], ["The bar travels forward", "Move your head out of the way so the bar can go straight up."], ["Ribs flare up", "Keep your stomach braced and ribs down, like a standing plank."]],
+      safety: "Start light. Pressing with your back leaning loads your lower back, so drop the weight before your form changes." },
+    hipflexor: { kind: "stretch", name: "Half-kneeling hip flexor stretch", area: ["Front of hip", "Thigh"], hold: 30, sides: true, when: "After a day of sitting, and after training.",
+      steps: ["Kneel on your right knee with your left foot flat in front, both knees bent at about 90 degrees. Put a pad under your knee.", "Squeeze your right glute and tuck your hips under slightly.", "Shift your weight forward gently until you feel a stretch at the front of your right hip.", "Hold and breathe slowly, then switch sides."],
+      tips: ["Keep your body upright", "Raise the arm on the kneeling side to feel it more"],
+      avoid: "Don't arch your lower back to go further. The stretch comes from tucking your hips, not leaning." },
+    hamstring: { kind: "stretch", name: "Lying hamstring stretch", area: ["Back of thigh"], hold: 30, sides: true, when: "After training, or any time your hamstrings feel tight.",
+      steps: ["Lie on your back and loop a band or towel around one foot.", "Keep the other leg flat on the floor.", "Raise the looped leg, keeping it nearly straight, until you feel a stretch behind your thigh.", "Hold, then switch sides."],
+      tips: ["A slight bend in the knee is fine", "Relax your shoulders and neck"],
+      avoid: "Stop at mild tension. If you feel pulling or tingling down the leg, ease off." },
+    ninety: { kind: "stretch", name: "90/90 hip switches", area: ["Hips", "Glutes"], reps: "8 slow switches", when: "Before squats and deadlifts.",
+      steps: ["Sit on the floor with both knees bent to 90 degrees, one leg in front of you and one out to the side.", "Sit tall with your hands on the floor behind you.", "Rotate both knees over to the other side so the legs swap roles.", "Move slowly and smoothly. That's one switch."],
+      tips: ["Only go as far as is comfortable", "Take your hands off the floor once it gets easier"],
+      avoid: "Don't force your knees down. Let them move as far as your hips allow." },
+    openbook: { kind: "stretch", name: "Open book", area: ["Upper back", "Chest"], reps: "8 each side", when: "Before bench and overhead press.",
+      steps: ["Lie on your side with your knees bent and stacked, arms straight out in front, palms together.", "Keep your knees together and on the floor.", "Open your top arm up and across to the other side, following your hand with your eyes.", "Pause for a breath, then bring it back. Swap sides after 8."],
+      tips: ["Put a cushion under your head", "Breathe out as you open"],
+      avoid: "If your knees lift, you're twisting from your lower back. Make the movement smaller." },
+    chest: { kind: "stretch", name: "Doorway chest stretch", area: ["Chest", "Front of shoulder"], hold: 30, sides: true, when: "After bench press, or after a day at a desk.",
+      steps: ["Stand in a doorway and put your forearm on the frame, elbow at shoulder height.", "Step forward with the leg on the same side.", "Turn your body gently away until you feel a stretch across your chest.", "Hold, then switch sides."],
+      tips: ["Move your elbow higher or lower to stretch different parts of the chest"],
+      avoid: "Ease off if you feel pinching at the front of your shoulder." },
+    calf: { kind: "stretch", name: "Wall calf stretch", area: ["Calves", "Ankles"], hold: 30, sides: true, when: "Before squats if your heels lift, and after running.",
+      steps: ["Face a wall with your hands on it.", "Step one foot back, keeping that leg straight and the heel flat.", "Lean into the wall until you feel a stretch in the back calf.", "Hold, then bend the back knee slightly to stretch lower down. Switch sides."],
+      tips: ["Point your back toes straight ahead"],
+      avoid: "Keep your heel down. If it lifts, step closer to the wall." },
+    lats: { kind: "stretch", name: "Child's pose side reach", area: ["Lats", "Shoulders", "Lower back"], hold: 30, sides: true, when: "After rows, pull-ups and deadlifts.",
+      steps: ["Kneel and sit back on your heels, then walk your hands forward and rest your forehead down.", "Walk both hands over to the right.", "Sink your hips back and breathe into the left side of your ribs.", "Hold, then walk your hands to the left."],
+      tips: ["Widen your knees if your hips feel tight"],
+      avoid: "Skip this one if kneeling hurts your knees." },
+    warmup: { kind: "routine", name: "8-minute warm-up", muscles: ["Hips", "Ankles", "Upper back"],
+      steps: [["2 min", "Easy row or bike", null], ["1 min", "90/90 hip switches, 8 slow reps", "ninety"], ["1 min", "Open book, 8 each side", "openbook"], ["1 min", "Wall calf stretch, 20 seconds each side", "calf"], ["1 min", "10 slow bodyweight squats", "squat"], ["2 min", "Empty bar: 2 sets of 5 of your first lift", null]],
+      note: "Before lifting, keep moving. Save long stretch holds for after training." }
+  };
+  const learnState = { tab: "lifts", read: new Set(["squat"]) };
+  function renderLearn() {
+    const kind = learnState.tab === "lifts" ? "lift" : "stretch";
+    $$("[data-learn]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.learn === learnState.tab)));
+    $("#guideList").innerHTML = Object.keys(GUIDES).filter(k => GUIDES[k].kind === kind).map(k => {
+      const g = GUIDES[k];
+      const sub = g.kind === "lift" ? `${g.level} · ${g.mins} min read` : `${g.area.join(", ")} · ${g.hold ? `${g.hold} s${g.sides ? " each side" : ""}` : g.reps}`;
+      return `<button class="guide" data-open="guide:${k}"><span class="ico">${g.kind === "lift" ? ICON_LIFT : ICON_STRETCH}</span><span style="min-width:0"><b>${g.name}</b><small>${sub}</small></span>${learnState.read.has(k) ? '<span class="done">Read</span>' : '<span class="chev" aria-hidden="true">›</span>'}</button>`;
+    }).join("");
+    $("#learnCount").textContent = `${learnState.read.size} of ${Object.keys(GUIDES).length} read`;
+  }
+  $$("[data-learn]").forEach(b => b.addEventListener("click", () => { learnState.tab = b.dataset.learn; renderLearn(); }));
+
+  // ---------- pushed pages ----------
+  const pageStack = [];
+  let currentView = "home";
+  let timer = null;
+  function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+  function decorate(root) {
+    root.querySelectorAll("[data-open]:not(button), [data-go]:not(button)").forEach(el => {
+      el.setAttribute("role", "button"); el.setAttribute("tabindex", "0"); el.classList.add("tap");
+    });
+  }
+  function showPage() {
+    stopTimer();
+    const res = pageStack[pageStack.length - 1]();
+    VIEWS.forEach(x => { $("#v-" + x).hidden = true; });
+    const pg = $("#page");
+    pg.innerHTML = `<div class="page-head"><button class="back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Back</button></div>` + res.html;
+    pg.hidden = false;
+    pg.scrollTop = 0;
+    decorate(pg);
+    if (res.after) res.after(pg);
+    const h = pg.querySelector("h2");
+    if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+  }
+  function openPage(fn) { pageStack.push(fn); showPage(); }
+  function closePages() { stopTimer(); pageStack.length = 0; $("#page").hidden = true; }
+  function back() {
+    pageStack.pop();
+    if (pageStack.length) showPage();
+    else { closePages(); $("#v-" + currentView).hidden = false; }
+  }
+  const splitCard = (c, s, p, title) => `<div class="card mypts"><div class="row"><p class="eyebrow">${title}</p><span class="num" style="font-weight:600">${fmt(c + s + p)}</span></div><div class="split">${splitBar(c, s, p)}</div><div class="ptsrow"><div><b>${fmt(c)}</b><small>Consistency</small></div><div><b>${fmt(s)}</b><small>Strength for class</small></div><div><b>${fmt(p)}</b><small>Personal bests</small></div></div></div>`;
+  const stat = (label, value, sub) => `<div class="stat"><small>${label}</small><b>${value}</b><span>${sub}</span></div>`;
+
+  function liftPage(key) {
+    if (key === "total") return totalPage();
+    const L = LIFTS[key];
+    const ratio = L.pb / BW, [lo, hi] = L.range;
+    const at = Math.max(4, Math.min(96, (ratio - lo) / (hi - lo) * 100));
+    return {
+      html: `<p class="eyebrow">Your lift · Men · 83 kg class</p><h2 class="h-display big">${L.name}</h2>
+        <div class="statgrid">${stat("Best lift", `${kg(L.pb)} kg`, L.pbDate + ", coach verified")}${stat("Body weight", `${ratio.toFixed(2)}×`, "your best ÷ 81.6 kg")}${stat("Class rank", ord(L.rank), "of 11 in your class")}</div>
+        <div class="card chart"><div class="row" style="margin-bottom:8px"><p class="eyebrow">Best estimated max each week</p><span class="muted" style="font-size:12px">kg, 12 weeks</span></div><svg id="liftChart" viewBox="0 0 330 170" role="img" aria-label="${L.name} estimated max each week over 12 weeks, between ${Math.min(...L.history)} and ${Math.max(...L.history)} kg"></svg></div>
+        <div class="card"><p class="eyebrow">Where you sit in your class</p><div class="rangebar"><b style="left:${at}%"></b><em style="left:${at}%">You ${ratio.toFixed(2)}×</em></div><div class="row muted" style="font-size:12px"><span>${lo}× body weight</span><span>${hi}×</span></div><p class="rule" style="margin-top:8px">Range of the 11 men in the 83 kg class who share their lifts.</p></div>
+        <div class="card"><p class="eyebrow">Recent sessions</p><div class="sets">${L.sessions.map(([d, sets, w, reps, pb]) => `<div><span><b>${sets} at ${kg(w)} kg</b><small>${d}</small></span><span class="num">${kg(e1rm(w, reps))} kg<small class="${pb === true ? "pbtag" : ""}">${pb === true ? "PB" : pb === "pending" ? "Awaiting coach" : "est. max"}</small></span></div>`).join("")}</div></div>
+        <div class="card"><p class="eyebrow">Personal bests</p><div class="timeline">${L.pbs.map(([d, w], i) => `<div><i style="${i === L.pbs.length - 1 ? "" : "opacity:.45"}"></i><span>${d}</span><b class="num">${kg(w)} kg</b></div>`).join("")}</div></div>
+        <button class="primary" data-log="${key}">Log a ${L.name.toLowerCase()}</button>
+        <button class="secondary" data-open="guide:${key}">How to ${L.name.toLowerCase()} properly</button>
+        <p class="rule">Estimated max uses the Epley formula: weight × (1 + reps ÷ 30). Only you and your coaches see your body weight.</p>`,
+      after: pg => lineChart($("#liftChart", pg), L.history)
+    };
+  }
+
+  function totalPage() {
+    const rows = Object.entries(LIFTS).map(([k, L]) => `<div data-open="lift:${k}"><span><b>${L.name}</b><small>${(L.pb / BW).toFixed(2)}× body weight</small></span><span class="num">${kg(L.pb)} kg <span class="chev" aria-hidden="true">›</span></span></div>`).join("");
+    return { html: `<p class="eyebrow">Strength score · Men · 83 kg class</p><h2 class="h-display big">Big three total</h2>
+      <div class="statgrid">${stat("Total", `${kg(bigThree())} kg`, "squat + bench + deadlift")}${stat("Body weight", `${(bigThree() / BW).toFixed(2)}×`, "total ÷ 81.6 kg")}${stat("Class rank", "4th", "of 11 in your class")}</div>
+      <div class="card stack"><div class="row"><p class="eyebrow">Strength points</p><span class="num" style="font-weight:600">${state.str} of 600</span></div><div class="hbar" style="height:12px"><i class="c-str" style="width:${(state.str / 600 * 100).toFixed(0)}%"></i></div><p class="rule">Your total ÷ body weight, compared with everyone in the 83 kg class. The strongest in the class for their size gets 600. Lighter lifters aren't punished for being lighter.</p></div>
+      <div class="card"><p class="eyebrow">Your lifts</p><div class="sets">${rows}</div></div>` };
+  }
+
+  function rankPage() {
+    const pts = total(), { cur, next } = rankFor(pts);
+    const ladder = Object.entries(PLATES).map(([k, p]) => {
+      const right = k === cur ? '<span class="pill">You</span>' : pts >= p.min ? '<span class="num up">Passed</span>' : `<span class="num">${fmt(p.min - pts)} to go</span>`;
+      return `<div class="${k === cur ? "cur" : pts < p.min ? "locked" : ""}">${plate(k, 40)}<span><b>${p.name}</b><small>From ${fmt(p.min)} points</small></span>${right}</div>`;
+    }).join("");
+    const need = next ? PLATES[next].min - pts : 0, weeks = Math.ceil(need / 55);
+    return { html: `<div class="ident">${plate(cur, 84)}<div><p class="eyebrow">Men · 83 kg class</p><h2 class="h-display big">${PLATES[cur].name}</h2><span class="muted">3rd of 8 in your class this season</span></div></div>
+      ${splitCard(state.con, state.str, state.pb, "Your points this season")}
+      ${next ? `<div class="card stack"><p class="eyebrow">Reaching ${PLATES[next].name}</p><p style="margin:0">${fmt(need)} points to go. That's about <b>${weeks} week${weeks > 1 ? "s" : ""}</b> at your goal of 3 sessions a week (55 points a week). A new personal best adds 40.</p></div>` : ""}
+      <div class="card"><p class="eyebrow" style="margin-bottom:6px">The plates</p><div class="ladder">${ladder}</div></div>
+      <button class="secondary" data-go="league">See the league</button>` };
+  }
+
+  function findMember(name) {
+    for (const k of ["men83", "women63"]) { const r = divisions[k].rows.find(x => x.n === name); if (r) return { r, div: k }; }
+    return null;
+  }
+  function memberPage(name) {
+    const m = findMember(name), r = m.r, first = name.split(" ")[0];
+    const pts = r.c + r.st + r.p, pk = rankFor(pts).cur;
+    const rows = divisions[m.div].rows.map(x => ({ ...x, v: x.me ? total() : x.c + x.st + x.p })).sort((a, b) => b.v - a.v);
+    const pos = rows.findIndex(x => x.n === name) + 1;
+    const seed = [...name].reduce((s, ch) => s + ch.charCodeAt(0), 0);
+    const sessions = (r.s.match(/(\d+) sessions/) || [0, 10])[1];
+    const team = teams.rows.find(t => t.s.split(", ").includes(first));
+    const priv = ["Callum F.", "Zola M."].includes(name);
+    const lifts = priv ? `<p class="rule">${first} keeps their lifts private.</p>`
+      : `<div class="sets">${[["Back squat", 1.25 + r.st / 1100], ["Bench press", 0.8 + r.st / 1500], ["Deadlift", 1.6 + r.st / 900]].map(([l, v]) => `<div><b>${l}</b><span class="num">${v.toFixed(2)}×</span></div>`).join("")}</div>`;
+    return { html: `<div class="ident">${plate(pk, 76)}<div><p class="eyebrow">${m.div === "men83" ? "Men · 83 kg class" : "Women · 63 kg class"}</p><h2 class="h-display big">${name}</h2><span class="muted">${PLATES[pk].name} · ${ord(pos)} of ${rows.length}</span></div></div>
+      ${splitCard(r.c, r.st, r.p, "Points this season")}
+      <div class="statgrid">${stat("This month", sessions, "sessions")}${stat("Streak", 3 + seed % 14, "weeks")}${stat("Team", team ? team.n.replace("Team ", "") : "None", team ? `${ord(teams.rows.indexOf(team) + 1)} this week` : "")}</div>
+      <div class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow">Lifts</p><span class="muted" style="font-size:12px">× body weight</span></div>${lifts}</div>
+      <p class="rule">Favourite class: ${["Barbell Strength", "Engine", "Yoga Flow", "Boxing Fit", "Olympic Lifting"][seed % 5]}. Members never see each other's body weight, only lifts as a multiple of it.</p>
+      <button class="primary" data-hi5="${first}">Send ${first} a high five</button>` };
+  }
+
+  function teamPage(i) {
+    const t = teams.rows[i], names = t.s.split(", ");
+    const split = [Math.ceil(t.v / 3) + 1, Math.ceil(t.v / 3), t.v - Math.ceil(t.v / 3) * 2 - 1].map(n => Math.max(n, 0));
+    const people = names.map((n, j) => {
+      const full = n === "Josh" ? null : Object.values(divisions).flatMap(d => d.rows).find(x => x.n.startsWith(n + " "));
+      const open = n === "Josh" ? ' data-open="rank"' : full ? ` data-open="member:${full.n}"` : "";
+      return `<div${open}><span class="face" style="background:${FACE[(i + j) % FACE.length]}">${n[0]}</span><span><b>${n === "Josh" ? "Josh T. (you)" : full ? full.n : n}</b><small>${full || n === "Josh" ? "Tap for stats" : "Another weight class"}</small></span><b class="num">${split[j]}</b></div>`;
+    }).join("");
+    return { html: `<p class="eyebrow">Team of three · this week</p><h2 class="h-display big">${t.n.replace(" (you)", "")}</h2>
+      <div class="statgrid">${stat("Sessions", t.v, "this week")}${stat("Position", ord(i + 1), "of 14 teams")}${stat("Team goal", 9, "3 each")}</div>
+      <div class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow">Members</p><span class="muted" style="font-size:12px">Sessions this week</span></div><div class="people">${people}</div></div>
+      <p class="rule">Teams mix genders and experience, and reset every Monday at 00:00. Team Workout on Saturday scores double for teams.</p>` };
+  }
+
+  function gymPage(i) {
+    const g = city.rows[i], me = city.rows[0];
+    const diff = (me.v - g.v).toFixed(1);
+    return { html: `<p class="eyebrow">City league · October</p><h2 class="h-display big">${g.n.replace(" (you)", "")}</h2>
+      <div class="statgrid">${stat("Visits", g.v.toFixed(1), "per member a week")}${stat("Members", g.s.split(" ")[0], "active")}${stat("Position", ord(i + 1), "of 5 gyms")}</div>
+      <div class="card stack"><p class="eyebrow">Visits per member a week</p>${city.rows.map(x => `<div class="bd"><div class="row"><span style="font-size:13.5px">${x.n.replace(" (you)", "")}</span><b class="num">${x.v.toFixed(1)}</b></div><div class="hbar"><i style="width:${(x.v / 3 * 100).toFixed(0)}%; background:${x === g ? "var(--accent)" : "var(--muted)"}"></i></div></div>`).join("")}<p class="rule">Bar scale: 0 to 3 visits.</p></div>
+      <p class="rule">${i === 0 ? "You're top of the league. The monthly winner gets a trophy plate for the wall." : `Saltworks is ${diff} visits per member ahead. Next league match: Saturday 31 October.`} All gyms here are made up for the demo.</p>` };
+  }
+
+  function guidePage(key) {
+    const g = GUIDES[key];
+    learnState.read.add(key); renderLearn();
+    const safetyBox = text => `<div class="safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg><span>${text}</span></div>`;
+    if (g.kind === "routine") {
+      return { html: `<p class="eyebrow">Warm-up</p><h2 class="h-display big">${g.name}</h2><div class="musc">${g.muscles.map(m => `<span>${m}</span>`).join("")}</div>
+        <div class="card"><div class="routine">${g.steps.map(([t, s, link]) => `<div${link ? ` data-open="guide:${link}"` : ""}><span class="num">${t}</span><span>${s}</span>${link ? '<span class="chev" aria-hidden="true">›</span>' : "<span></span>"}</div>`).join("")}</div></div>
+        <p class="rule">${g.note} Tap a step to see how to do it.</p>` };
+    }
+    if (g.kind === "lift") {
+      const L = g.lift && LIFTS[g.lift];
+      return { html: `<p class="eyebrow">Lifting technique · ${g.level}</p><h2 class="h-display big">${g.name}</h2><div class="musc">${g.muscles.map(m => `<span>${m}</span>`).join("")}</div>
+        ${figure(key)}
+        ${L ? `<div class="card row" data-open="lift:${g.lift}"><span><b>Your ${g.name.toLowerCase()}</b><span class="muted" style="display:block; font-size:13px">Best ${kg(L.pb)} kg · ${ord(L.rank)} in your class</span></span><span class="chev" aria-hidden="true">›</span></div>` : ""}
+        <div class="card stack"><p class="eyebrow">Set up</p><ol class="steps">${g.setup.map(s => `<li><span>${s}</span></li>`).join("")}</ol></div>
+        <div class="card stack"><p class="eyebrow">The lift</p><ol class="steps">${g.how.map(s => `<li><span>${s}</span></li>`).join("")}</ol></div>
+        <div class="card stack"><p class="eyebrow">Coach cues</p><div class="cues">${g.cues.map(c => `<span>${c}</span>`).join("")}</div></div>
+        <div class="card stack"><p class="eyebrow">Common mistakes</p><div class="fixes">${g.mistakes.map(([a, b]) => `<div><b>${a}</b><span>${b}</span></div>`).join("")}</div></div>
+        ${safetyBox(g.safety)}` };
+    }
+    return {
+      html: `<p class="eyebrow">Stretch</p><h2 class="h-display big">${g.name}</h2><div class="musc">${g.area.map(m => `<span>${m}</span>`).join("")}</div>
+        <p class="lede">${g.when}</p>
+        ${g.hold ? `<div class="card timer"><span class="side" id="tSide">${g.sides ? "Right side" : "Hold"}</span><svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="64" fill="none" stroke="var(--surface-2)" stroke-width="10"/><circle id="tRing" cx="75" cy="75" r="64" fill="none" stroke="var(--p-green)" stroke-width="10" stroke-linecap="round" transform="rotate(-90 75 75)" stroke-dasharray="402.1" stroke-dashoffset="0"/><text id="tNum" x="75" y="90" text-anchor="middle" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="800" font-size="48" fill="var(--ink)">${g.hold}</text></svg><button class="primary" id="tBtn" style="max-width:240px">Start ${g.hold} s hold</button></div>`
+          : `<div class="statgrid" style="grid-template-columns:1fr 1fr">${stat("Do", g.reps.split(" ")[0], g.reps.split(" ").slice(1).join(" "))}${stat("Pace", "Slow", "control every rep")}</div>`}
+        <div class="card stack"><p class="eyebrow">How to do it</p><ol class="steps">${g.steps.map(s => `<li><span>${s}</span></li>`).join("")}</ol></div>
+        <div class="card stack"><p class="eyebrow">Tips</p><ul class="tips">${g.tips.map(t => `<li>${t}</li>`).join("")}</ul></div>
+        ${safetyBox(g.avoid)}`,
+      after: pg => {
+        if (!g.hold) return;
+        let left = g.hold, side = 1, running = false;
+        const ring = $("#tRing", pg), num = $("#tNum", pg), btn = $("#tBtn", pg), lab = $("#tSide", pg);
+        const draw = () => { num.textContent = left; ring.style.strokeDashoffset = (402.1 * (1 - left / g.hold)).toFixed(1); };
+        btn.addEventListener("click", () => {
+          if (running) { stopTimer(); running = false; btn.textContent = "Resume"; return; }
+          if (left === 0) { left = g.hold; if (lab.textContent === "Done") lab.textContent = g.sides ? "Right side" : "Hold"; draw(); }
+          running = true; btn.textContent = "Pause";
+          timer = setInterval(() => {
+            left -= 1; draw();
+            if (left > 0) return;
+            stopTimer(); running = false;
+            if (g.sides && side === 1) { side = 2; lab.textContent = "Left side"; btn.textContent = "Start left side"; toast("Switch to your left side"); }
+            else { side = 1; lab.textContent = "Done"; btn.textContent = "Do it again"; toast(g.sides ? "Both sides done. Nice work" : "Done. Nice work"); }
+          }, 1000);
+        });
+      }
+    };
+  }
+
+  const BADGE_DESC = [
+    "Your first 10 check-ins at Saltworks.",
+    "25 sessions. This is where most people's habit sticks.",
+    "Check in 50 times.",
+    "100 sessions. The front desk has a Saltworks T-shirt waiting.",
+    "You came back after 14 days away. Coming back counts for more than never missing.",
+    "Your first coach-verified personal best: back squat, 3 Aug.",
+    "Hit your weekly goal 12 weeks in a row.",
+    "Deadlifted twice your body weight, coach verified on 14 Oct."
+  ];
+  function openBadge(i) {
+    const b = badgeItems()[i];
+    const extra = i === 2 && !b.got ? ` ${50 - state.sessions} to go.` : "";
+    $("#infoBody").innerHTML = `<div style="display:grid; justify-items:center; gap:8px; text-align:center; padding:6px 0 4px">${plate(b.k, 96, b.t)}<h3 style="margin:0; font-size:20px">${b.name}</h3><span class="chip ${b.got ? "ok" : "info"}">${b.got ? "Earned · " + b.sub : b.sub}</span><p style="margin:0; max-width:32ch">${BADGE_DESC[i]}${extra}</p></div>`;
+    $("#infoWrap").hidden = false;
+    $("#infoClose").focus();
+  }
+  $("#infoClose").addEventListener("click", () => { $("#infoWrap").hidden = true; });
+  $("#infoWrap").addEventListener("click", e => { if (e.target.id === "infoWrap") $("#infoWrap").hidden = true; });
+
+  function openKey(key) {
+    const [kind, arg] = [key.slice(0, key.indexOf(":") < 0 ? key.length : key.indexOf(":")), key.includes(":") ? key.slice(key.indexOf(":") + 1) : ""];
+    if (kind === "lift") openPage(() => liftPage(arg));
+    else if (kind === "guide") openPage(() => guidePage(arg));
+    else if (kind === "rank") openPage(rankPage);
+    else if (kind === "member") openPage(() => memberPage(arg));
+    else if (kind === "team") openPage(() => teamPage(Number(arg)));
+    else if (kind === "gym") openPage(() => gymPage(Number(arg)));
+    else if (kind === "badge") openBadge(Number(arg));
+  }
+  document.addEventListener("click", e => {
+    if (e.target.closest("[data-back]")) { back(); return; }
+    const h = e.target.closest("[data-hi5]");
+    if (h) { toast(`High five sent to ${h.dataset.hi5}`); return; }
+    const o = e.target.closest("[data-open]");
+    if (o) { openKey(o.dataset.open); return; }
+    const g = e.target.closest("[data-go]");
+    if (g) go(g.dataset.go);
+  });
+  document.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
+  });
+
+
+  // ---------- v2: your week strip ----------
+  function renderWeek() {
+    const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const done = [true, true, false, false, state.checkedIn, false, false];
+    $("#wdays").innerHTML = names.map((n, i) => {
+      const cls = done[i] ? "done" : i === 4 ? "today" : i > 4 ? "future" : "missed";
+      return `<span class="wd ${cls}"><small>${i === 4 ? "Today" : n}</small><i>${done[i] ? TICK : ""}</i></span>`;
+    }).join("");
+    $("#weekNote").textContent = `${state.week} of 3 done${state.week >= 3 ? ", goal hit" : ""}`;
+  }
+
+  // ---------- v2: log a lift, verified by a coach ----------
+  LIFTS.squat.gain = "+7.5 kg since Aug"; LIFTS.bench.gain = "+5 kg since Sep"; LIFTS.deadlift.gain = "+10 kg since Aug";
+  const bigThree = () => Object.values(LIFTS).reduce((sum, L) => sum + L.pb, 0);
+  function renderLifts() {
+    const rows = Object.entries(LIFTS).map(([k, L]) => `<div data-open="lift:${k}"><b>${L.name}</b><span class="val num">${kg(L.pb)} kg</span><small>${(L.pb / BW).toFixed(2)} × body weight</small>${L.pending ? `<span class="delta"><span class="chip info">${kg(L.pending)} kg awaiting coach</span></span>` : `<span class="delta up num">${L.gain}</span>`}</div>`).join("");
+    const t = bigThree();
+    $("#liftRows").innerHTML = rows + `<div class="total" data-open="lift:total"><b>Big three total</b><span class="val num">${kg(t)} kg</span><small>${(t / BW).toFixed(2)} × body weight · 4th of 11 in class</small><span class="delta num" style="color:var(--accent)">${state.str} strength pts</span></div>`;
+    decorate($("#liftRows"));
+  }
+  $("#lR").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("");
+  function liftHint() {
+    const L = LIFTS[$("#lEx").value];
+    $("#liftHint").textContent = `Your best: ${kg(L.pb)} kg for 1 rep${L.pending ? `, and ${kg(L.pending)} kg is waiting for a coach` : ""}. Beat it with a single rep and a coach verifies it before it counts.`;
+  }
+  function openLog(k) { if (k) $("#lEx").value = k; liftHint(); $("#liftWrap").hidden = false; $("#lW").focus(); }
+  $("#logBtn").addEventListener("click", () => openLog());
+  document.addEventListener("click", e => { const l = e.target.closest("[data-log]"); if (l) openLog(l.dataset.log); });
+  $("#lEx").addEventListener("change", liftHint);
+  $("#liftCancel").addEventListener("click", () => { $("#liftWrap").hidden = true; });
+  $("#liftWrap").addEventListener("click", e => { if (e.target.id === "liftWrap") $("#liftWrap").hidden = true; });
+  const queue = [
+    { who: "Ruan V.", lift: "Deadlift", w: 190, reps: 1, date: "Thu 22 Oct", note: "Coach Ross watched the lift" },
+    { who: "Isla R.", lift: "Back squat", w: 105, reps: 1, date: "Wed 21 Oct", note: "Video attached" }
+  ];
+  $("#liftForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const k = $("#lEx").value, w = parseFloat($("#lW").value), r = Number($("#lR").value), L = LIFTS[k];
+    if (!(w >= 20 && w <= 400)) { toast("Enter a weight between 20 and 400 kg"); return; }
+    if (Math.round(w * 2) !== w * 2) { toast("Use steps of 0.5 kg"); return; }
+    const isPB = r === 1 && w > L.pb && !(L.pending && w <= L.pending);
+    L.sessions.unshift(["Fri 23 Oct", `1 × ${r}`, w, r, isPB ? "pending" : false]);
+    const est = e1rm(w, r);
+    if (!isPB && est > L.history[L.history.length - 1]) L.history[L.history.length - 1] = est;
+    if (isPB) {
+      for (let i = queue.length - 1; i >= 0; i--) if (queue[i].mine && queue[i].key === k) queue.splice(i, 1);
+      L.pending = w;
+      queue.unshift({ who: "Josh T.", key: k, lift: L.name, w, reps: 1, date: "Fri 23 Oct", note: "Logged in the app just now", mine: true });
+    }
+    $("#liftWrap").hidden = true;
+    renderLifts(); renderQueue();
+    if (!$("#page").hidden) showPage();
+    toast(isPB ? "New best! It counts once a coach verifies it" : `Saved. Estimated max ${kg(est)} kg`);
+  });
+  function renderQueue() {
+    $("#pbQueue").innerHTML = queue.length ? queue.map((q, i) => `<div class="qrow"><span class="face" style="background:${FACE[(i + 2) % FACE.length]}">${initials(q.who)}</span><span><b>${q.who}${q.mine ? " (demo you)" : ""} · ${q.lift} ${kg(q.w)} kg × ${q.reps}</b><small>${q.date} · ${q.note}</small></span><span class="qbtns"><button class="ghost" data-verify="${i}">Send back</button><button class="primary small" data-verify="${i}" data-ok="1">Verify</button></span></div>`).join("")
+      : `<p class="rule">Nothing waiting. New bests appear here as members log them.</p>`;
+    $("#navQueue").textContent = queue.length; $("#navQueue").hidden = !queue.length;
+    $("#todoQueue").textContent = queue.length ? `${queue.length} personal best${queue.length > 1 ? "s" : ""} to verify` : "No bests to verify";
+  }
+  $("#dash").addEventListener("click", e => {
+    const b = e.target.closest("[data-verify]");
+    if (!b) return;
+    const q = queue.splice(Number(b.dataset.verify), 1)[0], ok = !!b.dataset.ok, first = q.who.split(" ")[0];
+    if (q.mine) {
+      const L = LIFTS[q.key];
+      L.sessions.forEach(x => { if (x[4] === "pending") x[4] = ok; });
+      if (ok) { L.pb = q.w; L.pbDate = "23 Oct"; L.pbs.push(["23 Oct", q.w]); L.gain = "New best, 23 Oct"; state.pb += 40; state.str += 10; }
+      delete L.pending;
+      renderHome(); renderLifts(); renderBoard();
+    }
+    renderQueue();
+    toast(ok ? `Verified. ${first} gets 40 points` : `Sent back to ${first} to retest with a coach watching`);
+  });
+
+  // ---------- v2: owner dashboard ----------
+  const PANES = { overview: "Overview", members: "Members", classes: "Classes", league: "League", messages: "Messages", money: "Money", door: "The door", pilot: "Pilot", setup: "Set up" };
+  let dashOpen = false, week = "this";
+  function openDash() {
+    dashOpen = true; closePages();
+    $(".stage").hidden = true; $("#dash").hidden = false;
+    renderOwner(); renderDashExtras(); window.scrollTo(0, 0);
+    try { history.replaceState(null, "", "#owner"); } catch (e) {}
+  }
+  function closeDash() {
+    if (!dashOpen) return;
+    dashOpen = false; $("#dash").hidden = true; $(".stage").hidden = false;
+  }
+  const WEEKS = {
+    this: { range: "This week, 19 to 25 October, compared with last week", days: [52, 38, 49, 35, 47, 46, 21],
+      tiles: [["Check-ins", "288", "+9% on last week", "ok"], ["Active members", "142", "+6 this month", "ok"], ["Class fill rate", null, "of all spots", "info"], ["Revenue", 2794, "+6% on last week", "ok"]] },
+    last: { range: "Last week, 12 to 18 October, compared with the week before", days: [48, 36, 44, 33, 45, 40, 18],
+      tiles: [["Check-ins", "264", "−2% on the week before", "risk"], ["Active members", "136", "+1 that week", "ok"], ["Class fill rate", "63%", "of all spots", "info"], ["Revenue", 2640, "+1% on the week before", "ok"]] }
+  };
+  const WAITS = { "0-18:30": 4, "3-17:30": 3 };
+  function classTable(list) {
+    return `<thead><tr><th>Class</th><th>When</th><th>Coach</th><th class="num">Booked</th><th class="num">Waitlist</th><th>No-shows</th></tr></thead><tbody>${list.map(c => {
+      const st = status(c), w = (WAITS[c.id] || 0) + (c.wait ? 1 : 0);
+      return `<tr><td><span class="type"><i style="background:${TYPES[CLASSES[c.key].type].col}"></i></span>${CLASSES[c.key].name}${c.isNew ? ' <em class="new">New</em>' : ""}</td><td>${dayShort(c.di)} ${c.t}</td><td>${coachOf(c)}</td><td class="num">${c.booked} / ${c.cap}</td><td class="num">${w}</td><td>${st === "done" ? "1" : st === "live" ? "Checking in" : "Not yet"}</td></tr>`;
+    }).join("")}</tbody>`;
+  }
+  function renderOverview() {
+    const W = WEEKS[week];
+    const real = schedule.filter(c => c.key !== "open");
+    const fill = Math.round(real.reduce((n, c) => n + c.booked, 0) / real.reduce((n, c) => n + c.cap, 0) * 100);
+    $("#ovTiles").innerHTML = W.tiles.map(([l, v, ch, kind]) => `<div class="kpi"><small>${l}</small><span class="bignum num">${l === "Revenue" ? money(v) : v === null ? fill + "%" : v}</span><span class="chip ${kind}">${ch}</span></div>`).join("");
+    bars($("#ovChart"), W.days, { max: 60, ticks: [0, 20, 40, 60], hot: i => i === 0, endLabel: String(W.days[0]), endIndex: 0, labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] });
+    $("#ovChart").setAttribute("aria-label", "Check-ins by day: " + W.days.join(", "));
+    $("#ovWeek").textContent = week === "this" ? "This week" : "Last week";
+    $("#ovNote").textContent = `${W.days.reduce((a, b) => a + b, 0)} check-ins. Monday is busiest and Sunday is the quiet day.`;
+    $("#dashRange").textContent = `${W.range} · demo data`;
+    $$("[data-week]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.week === week)));
+    $("#ovClasses").innerHTML = classTable(schedule.filter(c => c.di === 0).sort(byWhen));
+  }
+  $$("[data-week]").forEach(b => b.addEventListener("click", () => { week = b.dataset.week; renderOverview(); }));
+  $("#exportBtn").addEventListener("click", () => toast("In the real app this downloads the week as a spreadsheet"));
+  const OPT_OUT = ["Ellie W.", "Zola M."];
+  const LAST = { "Callum F.": 16, "Lindiwe P.": 15, "Rory B.": 21, "Ellie W.": 14 };
+  const mstate = { filter: "all", q: "" };
+  function memberRows() {
+    const rows = [];
+    [["men83", "Men 83 kg"], ["women63", "Women 63 kg"]].forEach(([k, label]) => divisions[k].rows.forEach(r => {
+      const pts = r.me ? total() : r.c + r.st + r.p;
+      const seed = [...r.n].reduce((a, ch) => a + ch.charCodeAt(0), 0);
+      const days = r.me ? (state.checkedIn ? 0 : 2) : (LAST[r.n] != null ? LAST[r.n] : seed % 4);
+      rows.push({ n: r.n.replace(" (you)", ""), div: label, plate: PLATES[rankFor(pts).cur].name, pts, days,
+        streak: r.me ? state.streak : days >= 14 ? 0 : 2 + seed % 12, plan: ["Unlimited", "3 a week", "Off-peak"][seed % 3], opt: !OPT_OUT.includes(r.n) });
+    }));
+    return rows.sort((a, b) => b.pts - a.pts);
+  }
+  function renderMembers() {
+    $$("[data-mf]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mf === mstate.filter)));
+    const all = memberRows();
+    const rows = all.filter(r => (mstate.filter === "all" || (mstate.filter === "drift" && r.days >= 14) || (mstate.filter === "noopt" && !r.opt)) && r.n.toLowerCase().includes(mstate.q));
+    const last = d => d === 0 ? "Today" : d === 1 ? "Yesterday" : `${d} days ago`;
+    $("#memTable").innerHTML = `<thead><tr><th>Member</th><th>Class</th><th>Plate</th><th class="num">Points</th><th>Last visit</th><th class="num">Streak</th><th>Plan</th><th>Messages</th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${r.n}</b></td><td>${r.div}</td><td>${r.plate}</td><td class="num">${fmt(r.pts)}</td><td>${r.days >= 14 ? `<span class="chip risk">${last(r.days)}</span>` : last(r.days)}</td><td class="num">${r.streak} wk</td><td>${r.plan}</td><td>${r.opt ? "Opted in" : '<span class="muted">Not opted in</span>'}</td></tr>`).join("") || '<tr><td colspan="8" class="muted">No members match. Clear the search or pick All.</td></tr>'}</tbody>`;
+    $("#memNote").textContent = `${rows.length} of ${all.length} shown. The demo lists league members only; the gym has 142.`;
+  }
+  $("#memFilter").addEventListener("click", e => { const b = e.target.closest("[data-mf]"); if (b) { mstate.filter = b.dataset.mf; renderMembers(); } });
+  $("#memSearch").addEventListener("input", e => { mstate.q = e.target.value.trim().toLowerCase(); renderMembers(); });
+  const sentLog = [["Aisha N.", "Welcome back after 2 weeks away", "Tue 20 Oct", "Came back on Wed"], ["Liam K.", "Well done on reaching Yellow Plate", "Thu 15 Oct", "Replied"], ["Naledi K.", "Comeback badge earned", "Mon 12 Oct", "Replied"]];
+  function renderMessages() {
+    const ready = risk.map((r, i) => ({ r, i })).filter(x => x.r.opt !== false && !x.r.sent);
+    $("#msgDrafts").innerHTML = ready.length ? ready.map(({ r, i }) => `<div><span class="face" style="background:${FACE[(i + 3) % FACE.length]}">${initials(r.n)}</span><span><b>${r.n}</b><small>No visit for ${r.d} days</small></span><button class="ghost" data-nudge="${i}">Draft message</button></div>`).join("")
+      : `<p class="rule">Nothing to send. Members who drift away appear here.</p>`;
+    $("#msgHistory").innerHTML = sentLog.map(([n, what, when, result]) => `<div><span><b>${n}</b><small>${what} · ${when}</small></span><span class="chip ${/Came|Replied/.test(result) ? "ok" : "info"}">${result}</span></div>`).join("");
+    $("#navMsgs").textContent = ready.length; $("#navMsgs").hidden = !ready.length;
+    $("#todoMsgs").textContent = ready.length ? `${ready.length} member${ready.length > 1 ? "s" : ""} to message` : "No messages waiting";
+  }
+  $("#sheetSend").addEventListener("click", () => {
+    const r = risk[current];
+    r.sent = true;
+    sentLog.unshift([r.n, "We've missed you", "Fri 23 Oct", "Sent just now"]);
+    $("#sheetWrap").hidden = true;
+    renderRisk(); renderMessages();
+    toast("In the real app this opens WhatsApp with the message ready to send");
+  });
+  function renderDashExtras() {
+    renderOverview(); renderMembers(); renderQueue(); renderMessages();
+    $("#weekTable").innerHTML = classTable(schedule.filter(c => c.di <= 2).sort(byWhen));
+    const wc = [["Women 57 kg", 7], ["Women 63 kg", 6], ["Women 72 kg", 9], ["Women 84 kg", 5], ["Women 84+ kg", 3], ["Men 66 kg", 6], ["Men 74 kg", 10], ["Men 83 kg", 11], ["Men 93 kg", 12], ["Men 105 kg", 8], ["Men 105+ kg", 4], ["Open (consistency only)", 50]];
+    $("#classTable").innerHTML = `<thead><tr><th>Class</th><th class="num">Members</th></tr></thead><tbody>${wc.map(([c, n]) => `<tr><td>${c}</td><td class="num">${n}</td></tr>`).join("")}</tbody>`;
+  }
+
+  // ---------- navigation ----------
+  const VIEWS = ["home", "classes", "learn", "league", "card", "progress"];
+  const TAB_OF = { card: "me", progress: "me" };
+  function go(v, push = true) {
+    if (v === "owner") { openDash(); return; }
+    closeDash();
+    if (!VIEWS.includes(v)) v = "home";
+    closePages(); currentView = v;
+    VIEWS.forEach(x => { $("#v-" + x).hidden = x !== v; });
+    $$(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === (TAB_OF[v] || v))));
+    $$(".meseg button").forEach(t => t.setAttribute("aria-pressed", String(t.dataset.go === v)));
+    $$("#tour button").forEach(t => t.setAttribute("aria-current", String(t.dataset.go === v)));
+    $("#v-" + v).scrollTop = 0;
+    if (push) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
+    decorate($("#v-" + v));
+  }
+  $$("[data-board]").forEach(b => b.addEventListener("click", () => { state.board = b.dataset.board; renderBoard(); }));
+  $$("[data-div]").forEach(b => b.addEventListener("click", () => { state.div = b.dataset.div; renderBoard(); }));
+  $("#dash").addEventListener("click", e => {
+    const b = e.target.closest("[data-pane]");
+    if (!b) return;
+    state.pane = b.dataset.pane; renderOwner(); renderDashExtras(); window.scrollTo(0, 0);
+  });
+  $$("[data-cur]").forEach(b => b.addEventListener("click", () => { state.cur = b.dataset.cur; renderOwner(); renderDashExtras(); }));
+
+  // ---------- check-in ----------
+  function drawCode(el, size, dots) {
+    let s = "";
+    const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="${el.id === "qr" ? "#07080a" : "#f4f5f1"}"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
+    s += finder(0, 0) + finder(size - 7, 0) + finder(0, size - 7);
+    dots.forEach(([x, y]) => { s += `<rect x="${x}" y="${y}" width="1" height="1"/>`; });
+    el.innerHTML = s;
+  }
+  function scatter(size, seed) {
+    // Fixed pseudo-random fill so the code looks the same every load
+    const out = [];
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const inFinder = (x < 8 && y < 8) || (x > size - 9 && y < 8) || (x < 8 && y > size - 9);
+      const r = Math.abs(Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453) % 1;
+      if (!inFinder && r < 0.46) out.push([x, y]);
+    }
+    return out;
+  }
+
+  function stamp() {
+    $("#stamp").innerHTML = `
+      <g transform="translate(84 84)">
+        <circle r="80" fill="var(--p-blue)"/>
+        <circle r="70" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-dasharray="4 5"/>
+        <circle r="26" fill="var(--p-hub)"/>
+        <circle r="15" fill="#9aa0a8"/>
+        <circle r="9" fill="var(--p-hub)"/>
+        <text y="-40" text-anchor="middle" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="900" font-size="26" fill="#fff">+35</text>
+        <text y="58" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="700" font-size="11" letter-spacing="2" fill="#fff">POINTS</text>
+      </g>`;
+  }
+
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function complete(how) {
+    state.checkedIn = true;
+    state.con += 35; state.week = 3; state.streak = 12; state.sessions += 1; state.team += 1;
+    stamp();
+    $("#successHow").innerHTML = `${how} · <span class="num">06:42</span>`;
+    $("#success").hidden = false;
+    $("#successClose").focus();
+  }
+  $("#checkinBtn").addEventListener("click", () => {
+    if (state.checkedIn) return;
+    $("#scanner").hidden = false;
+    setTimeout(() => { $("#scanner").hidden = true; complete("Checked in with QR"); }, reduce ? 300 : 1700);
+  });
+  $("#gateBtn").addEventListener("click", () => {
+    $("#gateTitle").textContent = "Hold near the reader";
+    $("#gateTitle").classList.remove("gate-ok");
+    $("#gateSub").textContent = "Your Saltworks card is ready";
+    $("#gate").hidden = false;
+    setTimeout(() => {
+      $("#gateTitle").textContent = "Gate open";
+      $("#gateTitle").classList.add("gate-ok");
+      $("#gateSub").textContent = state.checkedIn ? "Welcome back, Josh. Already counted today." : "Welcome in, Josh";
+      setTimeout(() => {
+        $("#gate").hidden = true;
+        if (!state.checkedIn) complete("Tapped in at the gate");
+        else toast("Second visit today: counted once for points");
+      }, reduce ? 200 : 900);
+    }, reduce ? 300 : 1500);
+  });
+  $("#successClose").addEventListener("click", () => {
+    $("#success").hidden = true;
+    renderHome(); renderHeat(); renderBadges(); renderBoard();
+    go("home");
+    toast("Team Tidal is level with Team Anchor");
+  });
+
+  // ---------- wallet ----------
+  $("#walletBtn").addEventListener("click", () => {
+    if (state.wallet) { toast("Already in your Wallet"); return; }
+    $("#walletWrap").hidden = false;
+    $("#walletAdd").focus();
+  });
+  $("#walletCancel").addEventListener("click", () => { $("#walletWrap").hidden = true; });
+  $("#walletWrap").addEventListener("click", e => { if (e.target.id === "walletWrap") $("#walletWrap").hidden = true; });
+  $("#walletAdd").addEventListener("click", () => {
+    state.wallet = true;
+    $("#walletWrap").hidden = true;
+    $("#walletBtn").classList.add("added");
+    $("#walletLabel").textContent = "In your Wallet";
+    $("#homeWalletSub").textContent = "In your Wallet. Hold your phone to the reader at the gate";
+    toast("Added. Try Tap at the gate");
+  });
+
+  // ---------- guest pass ----------
+  let guestsSent = 12;
+  $("#guestBtn").addEventListener("click", () => { $("#guestWrap").hidden = false; $("#guestSend").focus(); });
+  $("#guestCancel").addEventListener("click", () => { $("#guestWrap").hidden = true; });
+  $("#guestWrap").addEventListener("click", e => { if (e.target.id === "guestWrap") $("#guestWrap").hidden = true; });
+  $("#guestSend").addEventListener("click", () => {
+    $("#guestWrap").hidden = true;
+    guestsSent += 1;
+    $("#guestSent").textContent = guestsSent;
+    toast("Pass ready. The real app opens WhatsApp so you can send it");
+  });
+
+  // ---------- owner set up: fit Tally to any type of gym ----------
+  const GYM_TYPES = {
+    box: { label: "Class gym or box", note: "Classes, teams and strength ranks are all on. Members check in with the poster or their card.", mods: { classes: true, strength: true, teams: true, city: true, wallet: true, learn: true } },
+    floor: { label: "Open-floor gym", note: "No class timetable. Members tap their card at the gate and rank on attendance and strength.", mods: { classes: false, strength: true, teams: true, city: true, wallet: true, learn: true } },
+    studio: { label: "Yoga or pilates studio", note: "Classes on, strength ranks off, so everyone ranks on consistency only.", mods: { classes: true, strength: false, teams: true, city: false, wallet: true, learn: true } },
+    pt: { label: "Personal training studio", note: "Small and personal: no timetable, teams or city league. Clients rank on consistency and their own lifts.", mods: { classes: false, strength: true, teams: false, city: false, wallet: false, learn: true } }
+  };
+  const CHECKINS = {
+    poster: { t: "QR poster at the door", d: "Members scan a printed poster with the app.", need: "Needs a printed poster. Works in any gym." },
+    desk: { t: "Code on a front-desk tablet", d: "The code changes every hour, so it only works inside the building.", need: "Needs any tablet or spare phone." },
+    card: { t: "Wallet card at the desk or gate", d: "Members show the card in their phone's Wallet app.", need: "Needs a QR scanner at reception, or a gate that reads QR codes." },
+    door: { t: "Your existing door system", d: "Every door entry counts as a check-in automatically.", need: "Needs a door or turnstile system that can share entries." }
+  };
+  const MODS = {
+    classes: ["Class booking", "Timetable, bookings and waitlists"],
+    strength: ["Strength ranks by weight class", "Off: everyone ranks on consistency only"],
+    teams: ["Teams of three", "Weekly team leaderboard"],
+    city: ["City league", "Compete with other gyms on visits per member"],
+    wallet: ["Membership card in Wallet", "The card in the phone's Wallet app"],
+    learn: ["Learn guides", "Lifting technique and stretches"]
+  };
+  const setup = { type: "box", checkin: new Set(["poster", "card"]), mods: { ...GYM_TYPES.box.mods }, sys: { booking: false, door: false } };
+  const TICK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`;
+
+  function renderSetup() {
+    $("#gymType").innerHTML = Object.entries(GYM_TYPES).map(([k, g]) => `<button data-gtype="${k}" aria-pressed="${k === setup.type}">${g.label}</button>`).join("");
+    $("#gymTypeNote").textContent = GYM_TYPES[setup.type].note;
+    $("#checkinOpts").innerHTML = Object.entries(CHECKINS).map(([k, c]) => `<button class="opt" data-checkin="${k}" aria-pressed="${setup.checkin.has(k)}"><span class="box">${TICK}</span><span><b>${c.t}</b><span>${c.d}</span><em>${c.need}</em></span></button>`).join("");
+    $("#modToggles").innerHTML = Object.entries(MODS).map(([k, [t, d]]) => `<button class="toggle" role="switch" data-mod="${k}" aria-checked="${setup.mods[k]}"><span><b>${t}</b><small>${d}</small></span><span class="switch" aria-hidden="true"></span></button>`).join("");
+    const sys = [["booking", "Booking and billing software", "Tally reads members, bookings and payments from it, so staff never enter anything twice."], ["door", "Door or turnstile system", "Door entries count as check-ins, and frozen memberships stop earning points."]];
+    $("#sysList").innerHTML = sys.map(([k, t, d]) => `<div class="sys"><span><b>${t}</b><small>${d}</small></span><button class="ghost" data-sys="${k}" aria-pressed="${setup.sys[k]}">${setup.sys[k] ? "Connected" : "Connect"}</button></div>`).join("");
+  }
+
+  function applySetup() {
+    const m = setup.mods;
+    const show = (sel, on) => $$(sel).forEach(el => { el.hidden = !on; });
+    show('.tab[data-tab="classes"], #tour [data-go="classes"], #homeClass, [data-pane="classes"]', m.classes);
+    show('.tab[data-tab="learn"], #tour [data-go="learn"]', m.learn);
+    show('[data-board="team"], #v-home [data-open="team:1"]', m.teams);
+    show('[data-board="city"]', m.city);
+    show('#homeWallet, .meseg, #tour [data-go="card"]', m.wallet);
+    if ((state.board === "team" && !m.teams) || (state.board === "city" && !m.city)) state.board = "gym";
+    if (!m.strength) state.div = "open";
+    else if (state.div === "open") state.div = "men83";
+    if (state.pane === "classes" && !m.classes) state.pane = "setup";
+    $(".rankcard .eyebrow").textContent = m.strength ? "Men · 83 kg class" : "Open division · consistency";
+    const tabs = $$(".tab").filter(t => !t.hidden).length;
+    $(".tabbar").style.gridTemplateColumns = `repeat(${tabs}, 1fr)`;
+    const ways = [];
+    if (setup.checkin.has("poster")) ways.push("scan the QR poster");
+    if (setup.checkin.has("desk")) ways.push("scan the code at the front desk");
+    if (setup.checkin.has("card") && m.wallet) ways.push("tap your card at the gate");
+    if (!state.checkedIn) $("#checkinSub").textContent = ways.length ? ways.join(", or ").replace(/^./, c => c.toUpperCase()) : "You're checked in automatically when you come through the door";
+    renderBoard(); renderOwner(); renderSetup();
+  }
+
+  $("#p-setup").addEventListener("click", e => {
+    const t = e.target.closest("[data-gtype]"), c = e.target.closest("[data-checkin]"), md = e.target.closest("[data-mod]"), s = e.target.closest("[data-sys]");
+    if (t) {
+      setup.type = t.dataset.gtype;
+      setup.mods = { ...GYM_TYPES[setup.type].mods };
+      if (!setup.mods.wallet) setup.checkin.delete("card");
+      if (setup.type === "floor") setup.checkin.add("card");
+      if (!setup.checkin.size) setup.checkin.add("poster");
+      toast(`Set up for: ${GYM_TYPES[setup.type].label}`);
+    } else if (c) {
+      const k = c.dataset.checkin;
+      if (setup.checkin.has(k)) {
+        if (setup.checkin.size === 1) { toast("Keep at least one way to check in"); return; }
+        setup.checkin.delete(k);
+      } else {
+        setup.checkin.add(k);
+        if (k === "card") setup.mods.wallet = true;
+      }
+    } else if (md) {
+      const k = md.dataset.mod;
+      setup.mods[k] = !setup.mods[k];
+      if (k === "wallet" && !setup.mods.wallet) { setup.checkin.delete("card"); if (!setup.checkin.size) setup.checkin.add("poster"); }
+    } else if (s) {
+      const k = s.dataset.sys;
+      setup.sys[k] = !setup.sys[k];
+      toast(setup.sys[k] ? "In the real app we connect this with you, using a key from your software account" : "Disconnected");
+    } else return;
+    applySetup();
+  });
+
+  // ---------- nudge sheet ----------
+  let current = 0;
+  function msgFor(r) {
+    const first = r.n.split(" ")[0];
+    return `Hi ${first}, we've missed you at Saltworks! It's been ${r.d} days. Your ${r.s.split(" · ")[0]} rank is safe, and ${r.cls}. Want me to save you a spot?\n\nCoach Mia`;
+  }
+  $("#dash").addEventListener("click", e => {
+    const b = e.target.closest("[data-nudge]");
+    if (!b) return;
+    current = Number(b.dataset.nudge);
+    const r = risk[current];
+    $("#sheetTitle").textContent = `Draft for ${r.n.split(" ")[0]}`;
+    $("#sheetMsg").value = msgFor(r);
+    $("#sheetTitle").textContent = `Message to ${r.n}`;
+    $("#sheetWrap").hidden = false;
+    $("#sheetCopy").focus();
+  });
+  $("#sheetClose").addEventListener("click", () => { $("#sheetWrap").hidden = true; });
+  $("#sheetWrap").addEventListener("click", e => { if (e.target.id === "sheetWrap") $("#sheetWrap").hidden = true; });
+  $("#sheetCopy").addEventListener("click", () => {
+    const text = $("#sheetMsg").value;
+    const done = () => { $("#sheetWrap").hidden = true; toast("Copied. Paste it into the gym's WhatsApp"); };
+    try {
+      navigator.clipboard.writeText(text).then(done, () => { selectMsg(); toast("Select and copy the message"); });
+    } catch (e) { selectMsg(); toast("Select and copy the message"); }
+  });
+  function selectMsg() {
+    $("#sheetMsg").focus(); $("#sheetMsg").select();
+  }
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    const sheets = ["#sheetWrap", "#walletWrap", "#clsWrap", "#postWrap", "#infoWrap", "#guestWrap", "#liftWrap"];
+    const anyOpen = sheets.some(x => !$(x).hidden);
+    sheets.forEach(x => { $(x).hidden = true; });
+    if (!$("#success").hidden) { $("#successClose").click(); return; }
+    if (!anyOpen && !$("#page").hidden) back();
+  });
+
+  let toastTimer;
+  function toast(t) {
+    const el = dashOpen ? $("#dtoast") : $("#toast");
+    el.textContent = t; el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 2600);
+  }
+
+  // ---------- boot ----------
+  drawCode($("#qr"), 21, [[9,1],[10,3],[8,5],[11,6],[9,8],[12,9],[8,10],[10,11],[13,12],[15,9],[17,10],[19,8],[16,12],[18,13],[9,14],[11,15],[13,16],[15,15],[17,16],[19,17],[9,18],[12,19],[14,18],[16,19],[18,20],[20,15],[3,9],[5,10],[1,11],[6,12]]);
+  drawCode($("#passQr"), 25, scatter(25, 417));
+  renderHome(); renderBoard(); renderHeat(); renderBadges(); renderStaticCharts(); renderOwner(); renderRisk();
+  renderClasses(); renderHomeClass(); renderOwnerClasses(); renderLearn(); renderSetup(); applySetup();
+  renderLifts(); renderDashExtras();
+  decorate(document);
+  const start = (location.hash || "").replace("#", "");
+  go(start === "owner" || VIEWS.includes(start) ? start : "home", false);
+})();
+</script>
