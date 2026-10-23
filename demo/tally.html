@@ -329,6 +329,64 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .ownerpane[hidden] { display: none !important; }
 .ownerpane { display: grid; gap: 14px; }
 
+/* ---------- classes ---------- */
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.days button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 0 6px; display: grid; justify-items: center; gap: 2px; min-width: 0; }
+.days small { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.days b { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1; }
+.days i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); visibility: hidden; }
+.days i.on { visibility: visible; }
+.days button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.days button[aria-pressed="true"] small { color: inherit; opacity: .75; }
+.days button[aria-pressed="true"] i { background: var(--bg); }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.chips.scroll::-webkit-scrollbar { display: none; }
+.chips.scroll button { flex: none; }
+.daytitle { margin: 0; font-size: 17px; font-weight: 700; }
+.classlist { display: grid; gap: 10px; }
+.cls { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; text-align: left; width: 100%; }
+.cls.past { opacity: .55; }
+.cls .t { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1; }
+.cls .t small { display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 4px; }
+.cls .nm { min-width: 0; display: grid; gap: 3px; }
+.cls .nm b { font-weight: 600; font-size: 15px; }
+.cls .nm > span:not(.type):not(.spots) { font-size: 12.5px; color: var(--muted); }
+.type { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.type i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.new { font-style: normal; color: var(--accent); }
+.spots { display: block; height: 4px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin-top: 2px; max-width: 150px; }
+.spots i { display: block; height: 100%; background: var(--ink); border-radius: 99px; }
+.state { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 6px 11px; white-space: nowrap; border: 1px solid var(--line); background: var(--surface); }
+.state.open { color: var(--accent); border-color: var(--accent); }
+.state.booked { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.state.wait { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+.state.full, .state.done { color: var(--muted); }
+.state.live { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.bklist { display: grid; }
+.bklist button { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 9px 0; }
+.bklist button:last-child { border-bottom: 0; padding-bottom: 0; }
+.bklist b { font-weight: 600; grid-column: 1; }
+.bklist .chev { grid-row: 1 / 3; grid-column: 2; color: var(--muted); font-size: 20px; line-height: 1; }
+.detail-head { display: grid; gap: 6px; }
+.detail-head h3 { font-family: var(--font-display); font-size: 34px; text-transform: uppercase; font-weight: 800; line-height: .95; margin: 0; }
+.detail-head > span:last-child { color: var(--muted); font-size: 14px; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.facts div { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; display: grid; gap: 1px; min-width: 0; }
+.facts small { font-size: 11px; color: var(--muted); font-weight: 600; }
+.facts b { font-size: 14px; font-weight: 600; }
+.going { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.going .face { width: 28px; height: 28px; font-size: 10px; }
+.orow { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.orow:last-child { border-bottom: 0; padding-bottom: 0; }
+.orow b { font-weight: 600; }
+.orow small { display: block; color: var(--muted); font-size: 12px; }
+.orow .hbar { display: block; height: 5px; margin-top: 6px; }
+.form { display: grid; gap: 10px; }
+.form label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
+.form select, .form input { font: inherit; font-size: 15px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; width: 100%; min-width: 0; }
+.form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form .actions { margin-top: 4px; }
+
 /* ---------- overlays ---------- */
 .overlay { position: absolute; inset: 0; z-index: 20; display: grid; }
 .overlay[hidden] { display: none !important; }
@@ -379,7 +437,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .wallet-stack .w3 span { color: #aab1ba; font-weight: 600; }
 @keyframes slidein { from { transform: translateY(70px); opacity: .2; } }
 
-.toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; z-index: 30; white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
+.toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 18px; font-size: 13px; font-weight: 600; z-index: 30; width: max-content; max-width: calc(100% - 32px); text-align: center; }
+.sheet { max-height: 92%; overflow-y: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -393,15 +452,16 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       Tally
     </div>
     <h1>The gym game that rewards showing up, and ranks you against people your size.</h1>
-    <p>Members tap in with a card in their phone's wallet, keep weekly streaks and climb plate-colour ranks within their gender and weight class. Owners see money, footfall and who is drifting away.</p>
+    <p>Members book classes, tap in with a card in their phone's wallet, keep weekly streaks and climb plate-colour ranks within their gender and weight class. Owners post classes and see money, footfall and who is drifting away.</p>
     <div class="tour" id="tour">
       <button data-go="home"><i>1</i><div><b>Member home</b><span>Check in, streak, rank, tonight's class</span></div></button>
-      <button data-go="league"><i>2</i><div><b>League</b><span>Weight classes, women's and men's boards, teams</span></div></button>
-      <button data-go="card"><i>3</i><div><b>Membership card</b><span>Wallet pass that opens the gate</span></div></button>
-      <button data-go="progress"><i>4</i><div><b>Progress</b><span>Attendance, lifts, milestones</span></div></button>
-      <button data-go="owner"><i>5</i><div><b>Owner view</b><span>Revenue, people through the door, pilot results</span></div></button>
+      <button data-go="classes"><i>2</i><div><b>Classes</b><span>The week's timetable, book a spot, waitlists</span></div></button>
+      <button data-go="league"><i>3</i><div><b>League</b><span>Weight classes, women's and men's boards, teams</span></div></button>
+      <button data-go="card"><i>4</i><div><b>Membership card</b><span>Wallet pass that opens the gate</span></div></button>
+      <button data-go="progress"><i>5</i><div><b>Progress</b><span>Attendance, lifts, milestones</span></div></button>
+      <button data-go="owner"><i>6</i><div><b>Owner view</b><span>Revenue, the door, classes, pilot results</span></div></button>
     </div>
-    <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members, money and rival gyms are made up. Try "Check in" or "Tap at the gate" on the phone.</p>
+    <p class="fine">Demo by Josh and Cam. Saltworks Barbell Club, its members, classes, money and rival gyms are made up. Try booking a class, "Check in" or "Tap at the gate".</p>
   </section>
 
   <div class="device">
@@ -448,11 +508,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
             </div>
           </div>
 
-          <div class="card class-card">
-            <div class="class-time">17:30<small>Today</small></div>
-            <div><b>Barbell Strength</b><div class="muted" style="font-size:13px">Coach Mia · Main floor · 9 of 16 booked</div></div>
-            <span class="pill">Booked</span>
-          </div>
+          <button class="card class-card" id="homeClass" data-go="classes" style="text-align:left; width:100%"></button>
 
           <div class="card" style="display:grid; gap:10px">
             <div class="row"><p class="eyebrow">Your team this week</p><span class="pill">2nd of 14</span></div>
@@ -461,6 +517,28 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
               <div class="team-faces"><span class="face" style="background:#2b54e0">JT</span><span class="face" style="background:#d93a2b">IR</span><span class="face" style="background:#2e9a55">FD</span></div>
             </div>
           </div>
+        </main>
+
+        <!-- CLASSES -->
+        <main class="view" id="v-classes" aria-label="Classes" hidden>
+          <div class="topbar"><h2 class="h-display title">Classes</h2><span class="demo-pill">23 to 29 Oct</span></div>
+          <div class="card" style="display:grid; gap:4px">
+            <p class="eyebrow">Your bookings</p>
+            <div class="bklist" id="myBookings"></div>
+          </div>
+          <div class="days" id="days" role="group" aria-label="Day"></div>
+          <div class="chips scroll" id="typeChips" role="group" aria-label="Class type">
+            <button data-type="all" aria-pressed="true">All</button>
+            <button data-type="strength" aria-pressed="false">Strength</button>
+            <button data-type="engine" aria-pressed="false">Conditioning</button>
+            <button data-type="yoga" aria-pressed="false">Yoga</button>
+            <button data-type="mobility" aria-pressed="false">Mobility</button>
+            <button data-type="boxing" aria-pressed="false">Boxing</button>
+            <button data-type="open" aria-pressed="false">Open gym</button>
+          </div>
+          <div class="row"><h3 class="daytitle" id="dayTitle">Today</h3><span class="muted" style="font-size:12.5px" id="dayCount"></span></div>
+          <div class="classlist" id="classList"></div>
+          <p class="rule">Free to cancel until 2 hours before. Cancel later or miss a booked class and you lose 10 points, so spots go to people who will use them.</p>
         </main>
 
         <!-- LEAGUE -->
@@ -503,6 +581,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         <!-- CARD -->
         <main class="view" id="v-card" aria-label="Membership card" hidden>
           <div class="topbar"><h2 class="h-display title">Card</h2><span class="demo-pill">Member</span></div>
+          <div class="seg meseg" role="group" aria-label="Me"><button data-go="progress" aria-pressed="false">Progress</button><button data-go="card" aria-pressed="true">Card</button></div>
           <div class="pass" aria-label="Membership pass">
             <div class="brand"><div class="gymlogo" aria-hidden="true">SBC</div><div><small>Membership</small><b>Saltworks Barbell Club</b></div></div>
             <div class="fields">
@@ -533,6 +612,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         <!-- PROGRESS -->
         <main class="view" id="v-progress" aria-label="Progress" hidden>
           <div class="topbar"><h2 class="h-display title">Progress</h2><span class="demo-pill">12 weeks</span></div>
+          <div class="seg meseg" role="group" aria-label="Me"><button data-go="progress" aria-pressed="true">Progress</button><button data-go="card" aria-pressed="false">Card</button></div>
           <div class="card" style="display:grid; gap:12px">
             <div class="row"><p class="eyebrow">Attendance</p><span class="muted num" style="font-size:12.5px"><span id="sessTotal">47</span> sessions total</span></div>
             <div class="heat" id="heat" aria-label="Attendance over the last 12 weeks"></div>
@@ -562,6 +642,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
           <div class="seg" role="group" aria-label="Owner section">
             <button data-pane="money" aria-pressed="true">Money</button>
             <button data-pane="door" aria-pressed="false">The door</button>
+            <button data-pane="classes" aria-pressed="false">Classes</button>
             <button data-pane="pilot" aria-pressed="false">Pilot</button>
           </div>
 
@@ -620,6 +701,21 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
             </div>
           </div>
 
+          <!-- classes -->
+          <div class="ownerpane" id="p-classes" hidden>
+            <div class="kpis">
+              <div class="kpi"><small>Classes this week</small><span class="bignum num" id="oClassCount">39</span><span class="chip info">6 types</span></div>
+              <div class="kpi"><small>Spots booked</small><span class="bignum num" id="oFill">70%</span><span class="chip ok">of all spots</span></div>
+              <div class="kpi"><small>Booked but didn't come</small><span class="bignum num">6%</span><span class="chip ok">Was 11% before Tally</span></div>
+              <div class="kpi"><small>On waitlists</small><span class="bignum num" id="oWait">9</span><span class="chip risk">2 classes full</span></div>
+            </div>
+            <button class="primary" id="postBtn">Post a class</button>
+            <div class="card">
+              <div class="row" style="margin-bottom:2px"><p class="eyebrow">Today's classes</p><span class="muted" style="font-size:12px">Friday 23 October</span></div>
+              <div id="oToday"></div>
+            </div>
+          </div>
+
           <!-- pilot -->
           <div class="ownerpane" id="p-pilot" hidden>
             <div class="kpis">
@@ -647,11 +743,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         </main>
 
         <nav class="tabbar" role="tablist" aria-label="App sections">
-          <button class="tab" role="tab" data-go="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Home</button>
-          <button class="tab" role="tab" data-go="league" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>League</button>
-          <button class="tab" role="tab" data-go="card" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/></svg>Card</button>
-          <button class="tab" role="tab" data-go="progress" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</button>
-          <button class="tab" role="tab" data-go="owner" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15l3-3 3 2 4-5"/></svg>Owner</button>
+          <button class="tab" role="tab" data-go="home" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Home</button>
+          <button class="tab" role="tab" data-go="classes" data-tab="classes" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h3M8 17h6"/></svg>Classes</button>
+          <button class="tab" role="tab" data-go="league" data-tab="league" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>League</button>
+          <button class="tab" role="tab" data-go="progress" data-tab="me" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Me</button>
+          <button class="tab" role="tab" data-go="owner" data-tab="owner" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15l3-3 3 2 4-5"/></svg>Owner</button>
         </nav>
       </div>
 
@@ -727,6 +823,47 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
             <button class="secondary" id="walletCancel">Cancel</button>
             <button class="primary" id="walletAdd">Add</button>
           </div>
+        </div>
+      </div>
+
+      <!-- class detail sheet -->
+      <div class="overlay sheet-wrap" id="clsWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="clsTitle">
+          <span class="grabber"></span>
+          <div class="detail-head"><span class="type" id="clsType"></span><h3 id="clsTitle">Class</h3><span id="clsWhen"></span></div>
+          <div class="facts" id="clsFacts"></div>
+          <p id="clsDesc" style="margin:0; font-size:14px"></p>
+          <div class="going" id="clsGoing"></div>
+          <p class="note" id="clsNote"></p>
+          <div class="actions">
+            <button class="secondary" id="clsClose">Close</button>
+            <button class="primary" id="clsAct">Book</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- post a class sheet -->
+      <div class="overlay sheet-wrap" id="postWrap" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="postTitle">
+          <span class="grabber"></span>
+          <h3 id="postTitle">Post a class</h3>
+          <form class="form" id="postForm" novalidate>
+            <label for="pType">Class<select id="pType"></select></label>
+            <div class="two">
+              <label for="pDay">Day<select id="pDay"></select></label>
+              <label for="pTime">Start<select id="pTime"></select></label>
+            </div>
+            <div class="two">
+              <label for="pLen">Length<select id="pLen"><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>60 min</option><option value="90">90 min</option></select></label>
+              <label for="pCap">Spots<input id="pCap" type="number" min="1" max="60" value="14" inputmode="numeric"></label>
+            </div>
+            <label for="pCoach">Coach<select id="pCoach"></select></label>
+            <p class="note">Members see it in Classes straight away and can book a spot.</p>
+            <div class="actions">
+              <button type="button" class="secondary" id="postCancel">Cancel</button>
+              <button type="submit" class="primary">Post class</button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -1013,7 +1150,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
   function renderOwner() {
     $$(".seg[aria-label='Owner section'] button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pane === state.pane)));
-    ["money", "door", "pilot"].forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
+    ["money", "door", "classes", "pilot"].forEach(p => { $("#p-" + p).hidden = p !== state.pane; });
     $$(".cur button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cur === state.cur)));
     $$("[data-money]").forEach(el => {
       const v = Number(el.dataset.money);
@@ -1059,12 +1196,217 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       </div>`).join("");
   }
 
+  // ---------- classes ----------
+  const TYPES = {
+    strength: { label: "Strength", col: "var(--p-red)" },
+    engine: { label: "Conditioning", col: "var(--p-blue)" },
+    yoga: { label: "Yoga", col: "var(--p-green)" },
+    mobility: { label: "Mobility", col: "var(--p-yellow)" },
+    boxing: { label: "Boxing", col: "#8b5cf6" },
+    open: { label: "Open gym", col: "var(--muted)" }
+  };
+  const CLASSES = {
+    barbell: { name: "Barbell Strength", type: "strength", len: 60, cap: 16, coach: "Mia", level: "All levels", desc: "Squat, press and deadlift with a coach watching every set. Weights are scaled to you.", bring: "flat shoes" },
+    oly: { name: "Olympic Lifting", type: "strength", len: 60, cap: 10, coach: "Ross", level: "Some experience", desc: "Snatch and clean and jerk technique, built up from an empty bar.", bring: "flat shoes, wrist wraps if you have them" },
+    engine: { name: "Engine", type: "engine", len: 45, cap: 20, coach: "Sam", level: "All levels", desc: "Rowing, bike and running intervals. Hard work, simple moves, loud music.", bring: "water and a towel" },
+    express: { name: "Express", type: "engine", len: 30, cap: 20, coach: "Sam", level: "All levels", desc: "A 30-minute full-body session built for a lunch break.", bring: "water" },
+    team: { name: "Team Workout", type: "engine", len: 60, cap: 24, coach: "Mia", level: "All levels", desc: "Partner and team workouts. Your Tally team scores double points.", bring: "water" },
+    mobility: { name: "Mobility", type: "mobility", len: 45, cap: 14, coach: "Lebo", level: "All levels", desc: "Hips, shoulders and spine. Slow, guided and good for sore legs.", bring: "nothing, mats are provided" },
+    boxing: { name: "Boxing Fit", type: "boxing", len: 45, cap: 12, coach: "Kyle", level: "All levels", desc: "Pad work and bag rounds in pairs. No sparring.", bring: "hand wraps, gloves are provided" },
+    yoga: { name: "Yoga Flow", type: "yoga", len: 60, cap: 14, coach: "Anna", level: "All levels", desc: "A steady flow to stretch out the day's training.", bring: "nothing, mats are provided" },
+    yin: { name: "Yin Yoga", type: "yoga", len: 60, cap: 14, coach: "Anna", level: "All levels", desc: "Long, quiet holds to recover from the week.", bring: "nothing, mats are provided" },
+    open: { name: "Open Gym", type: "open", len: 120, cap: 30, coach: "Ross", level: "Members", desc: "Train your own programme. A coach is on the floor for questions.", bring: "your plan" }
+  };
+  const ROOM = { strength: "Platform room", engine: "Main floor", yoga: "Studio", mobility: "Studio", boxing: "Studio", open: "Main floor" };
+  const COACHES = ["Mia", "Sam", "Lebo", "Kyle", "Anna", "Ross"];
+  const MEMBERS = ["Isla", "Fraser", "Kabir", "Aisha", "Ruan", "Naledi", "Sipho", "Ellie", "Liam", "Zola", "Rory", "Lindiwe"];
+  const WEEKDAY = [["06:00", "engine"], ["07:00", "barbell"], ["09:30", "mobility"], ["12:15", "express"], ["17:30", "barbell"], ["18:30", "boxing"], ["19:30", "yoga"]];
+  const TUETHU = [["06:00", "engine"], ["07:00", "oly"], ["12:15", "express"], ["17:30", "barbell"], ["18:30", "yoga"], ["19:30", "engine"]];
+  const WEEK = [WEEKDAY, TUETHU, WEEKDAY, TUETHU, WEEKDAY,
+    [["08:00", "team"], ["09:30", "oly"], ["11:00", "yin"], ["12:00", "open"]],
+    [["09:00", "yin"], ["10:00", "open"]]]; // Monday first
+  const DNAME = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const DLONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const NOW = "06:42"; // demo clock, Friday 23 October 2026
+  const DAYS = Array.from({ length: 7 }, (_, i) => new Date(2026, 9, 23 + i));
+  const toMin = t => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+  const toTime = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+  const dayShort = i => i === 0 ? "Today" : i === 1 ? "Tomorrow" : `${DNAME[DAYS[i].getDay()]} ${DAYS[i].getDate()} Oct`;
+  const dayLong = i => `${i === 0 ? "Today, " : i === 1 ? "Tomorrow, " : ""}${DLONG[DAYS[i].getDay()]} ${DAYS[i].getDate()} October`;
+  const lenOf = c => c.len || CLASSES[c.key].len;
+  const coachOf = c => c.coach || CLASSES[c.key].coach;
+  const byWhen = (a, b) => a.di - b.di || toMin(a.t) - toMin(b.t);
+
+  const schedule = [];
+  DAYS.forEach((d, di) => {
+    WEEK[(d.getDay() + 6) % 7].forEach(([t, key], j) => {
+      const cap = CLASSES[key].cap;
+      const r = Math.abs(Math.sin((di + 1) * 31.7 + j * 7.3));
+      schedule.push({ id: `${di}-${t}`, di, t, key, cap, booked: Math.round(cap * (0.3 + r * 0.55)), mine: false, wait: false, isNew: false });
+    });
+  });
+  const find = id => schedule.find(c => c.id === id);
+  // Josh's existing bookings, and two classes that are already full
+  Object.assign(find("0-17:30"), { mine: true, booked: 9 });
+  Object.assign(find("1-08:00"), { mine: true, booked: 17 });
+  find("0-18:30").booked = find("0-18:30").cap;
+  find("3-17:30").booked = find("3-17:30").cap;
+
+  function status(c) {
+    const s = toMin(c.t), now = toMin(NOW);
+    if (c.di === 0 && s + lenOf(c) <= now) return "done";
+    if (c.di === 0 && s <= now) return "live";
+    if (c.mine) return "booked";
+    if (c.wait) return "wait";
+    if (c.booked >= c.cap) return "full";
+    return "open";
+  }
+  const STATE_LABEL = { done: "Finished", live: "On now", booked: "Booked", wait: "Waitlisted", full: "Full", open: "Book" };
+  const cstate = { day: 0, type: "all" };
+
+  function classRow(c) {
+    const k = CLASSES[c.key], st = status(c), ty = TYPES[k.type];
+    const left = c.cap - c.booked;
+    const spots = st === "full" || st === "wait" ? "Full · waitlist open" : st === "open" && left <= 3 ? `${left} spots left` : `${c.booked} of ${c.cap} booked`;
+    return `<button class="cls${st === "done" ? " past" : ""}" data-cls="${c.id}">
+      <span class="t">${c.t}<small>${lenOf(c)} min</small></span>
+      <span class="nm">
+        <span class="type"><i style="background:${ty.col}"></i>${ty.label}${c.isNew ? ' · <em class="new">New</em>' : ""}</span>
+        <b>${k.name}</b>
+        <span>Coach ${coachOf(c)} · ${ROOM[k.type]}</span>
+        <span class="spots"><i style="width:${Math.min(100, c.booked / c.cap * 100).toFixed(0)}%"></i></span>
+        <span>${spots}</span>
+      </span>
+      <span class="state ${st}">${STATE_LABEL[st]}</span>
+    </button>`;
+  }
+
+  function renderClasses() {
+    $("#days").innerHTML = DAYS.map((d, i) => `<button data-day="${i}" aria-pressed="${i === cstate.day}" aria-label="${dayLong(i)}"><small>${i === 0 ? "Today" : DNAME[d.getDay()]}</small><b>${d.getDate()}</b><i class="${schedule.some(c => c.di === i && (c.mine || c.wait)) ? "on" : ""}"></i></button>`).join("");
+    $$("#typeChips button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === cstate.type)));
+    const mine = schedule.filter(c => (c.mine || c.wait) && status(c) !== "done").sort(byWhen);
+    $("#myBookings").innerHTML = mine.length
+      ? mine.map(c => `<button data-cls="${c.id}"><span class="type"><i style="background:${TYPES[CLASSES[c.key].type].col}"></i>${dayShort(c.di)}${c.wait ? " · waitlist" : ""}</span><b>${c.t} ${CLASSES[c.key].name}</b><span class="chev" aria-hidden="true">›</span></button>`).join("")
+      : `<p class="rule">Nothing booked yet. Pick a class below to book a spot.</p>`;
+    const list = schedule.filter(c => c.di === cstate.day && (cstate.type === "all" || CLASSES[c.key].type === cstate.type)).sort(byWhen);
+    $("#dayTitle").textContent = dayLong(cstate.day);
+    $("#dayCount").textContent = `${list.length} ${list.length === 1 ? "class" : "classes"}`;
+    const when = cstate.day === 0 ? "today" : cstate.day === 1 ? "tomorrow" : `on ${DLONG[DAYS[cstate.day].getDay()]}`;
+    $("#classList").innerHTML = list.length ? list.map(classRow).join("")
+      : `<div class="card"><p class="rule">No ${TYPES[cstate.type].label.toLowerCase()} classes ${when}. Try another day or show all classes.</p></div>`;
+  }
+
+  function renderHomeClass() {
+    const today = schedule.filter(c => c.di === 0 && ["open", "booked", "full", "wait"].includes(status(c))).sort(byWhen);
+    const c = today.find(x => x.mine) || today[0];
+    if (!c) return;
+    const k = CLASSES[c.key];
+    $("#homeClass").innerHTML = `<span class="class-time">${c.t}<small>Today</small></span><span><b>${k.name}</b><span class="muted" style="display:block; font-size:13px">Coach ${coachOf(c)} · ${ROOM[k.type]} · ${c.booked} of ${c.cap} booked</span></span><span class="pill">${c.mine ? "Booked" : "Book"}</span>`;
+  }
+
+  function renderOwnerClasses() {
+    const real = schedule.filter(c => c.key !== "open");
+    const booked = real.reduce((s, c) => s + c.booked, 0), cap = real.reduce((s, c) => s + c.cap, 0);
+    $("#oClassCount").textContent = schedule.length;
+    $("#oFill").textContent = Math.round(booked / cap * 100) + "%";
+    $("#oWait").textContent = 9 + schedule.filter(c => c.wait).length;
+    $("#oToday").innerHTML = schedule.filter(c => c.di === 0).sort(byWhen).map(c => {
+      const k = CLASSES[c.key];
+      return `<div class="orow"><span class="num" style="font-weight:600">${c.t}</span><span><b>${k.name}</b><small>Coach ${coachOf(c)} · ${lenOf(c)} min${c.isNew ? " · just posted" : ""}</small><span class="hbar"><i style="width:${(c.booked / c.cap * 100).toFixed(0)}%; background:${TYPES[k.type].col}"></i></span></span><b class="num">${c.booked}/${c.cap}</b></div>`;
+    }).join("");
+  }
+
+  let openId = null;
+  function openClass(id) {
+    const c = find(id);
+    if (!c) return;
+    openId = id;
+    const k = CLASSES[c.key], ty = TYPES[k.type], st = status(c);
+    $("#clsType").innerHTML = `<i style="background:${ty.col}"></i>${ty.label} · ${k.level}`;
+    $("#clsTitle").textContent = k.name;
+    $("#clsWhen").textContent = `${dayLong(c.di)} · ${c.t} to ${toTime(toMin(c.t) + lenOf(c))}`;
+    const spots = st === "full" || st === "wait" ? "Full" : `${c.cap - c.booked} left`;
+    $("#clsFacts").innerHTML = [["Coach", coachOf(c)], ["Room", ROOM[k.type]], ["Spots", spots]].map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join("");
+    $("#clsDesc").textContent = k.desc;
+    const seed = toMin(c.t) + c.di * 7;
+    const names = [0, 1].map(n => MEMBERS[(seed + n * 5) % MEMBERS.length]);
+    const shown = c.mine ? ["You", names[0]] : names;
+    const others = Math.max(c.booked - shown.length, 0);
+    $("#clsGoing").innerHTML = c.booked
+      ? `<span class="team-faces">${shown.map((n, i) => `<span class="face" style="background:${FACE[(seed + i) % FACE.length]}">${n === "You" ? "JT" : n[0]}</span>`).join("")}</span><span>${shown.join(", ")}${others ? ` and ${others} others` : ""} going</span>`
+      : `<span>Be the first to book</span>`;
+    const pts = c.key === "team" ? 20 : 10;
+    $("#clsNote").textContent = `Bring ${k.bring}. Tapping in for this class earns ${pts} points. Free to cancel until ${toTime(toMin(c.t) - 120)}.`;
+    const act = $("#clsAct");
+    const labels = { open: "Book this class", booked: "Cancel booking", full: "Join waitlist", wait: "Leave waitlist", live: `Started at ${c.t}`, done: "Finished" };
+    act.textContent = labels[st];
+    act.disabled = st === "live" || st === "done";
+    act.style.opacity = act.disabled ? ".5" : "";
+    $("#clsWrap").hidden = false;
+    $("#clsClose").focus();
+  }
+
+  $("#clsAct").addEventListener("click", () => {
+    const c = find(openId);
+    if (!c) return;
+    const st = status(c);
+    if (st === "open") { c.mine = true; c.booked++; toast(`Booked. We'll remind you at ${toTime(toMin(c.t) - 60)}`); }
+    else if (st === "booked") { c.mine = false; c.booked--; toast("Booking cancelled. Your spot is free for someone else"); }
+    else if (st === "full") { c.wait = true; toast("You're 2nd on the waitlist. We'll message you if a spot opens"); }
+    else if (st === "wait") { c.wait = false; toast("You've left the waitlist"); }
+    else return;
+    $("#clsWrap").hidden = true;
+    renderClasses(); renderHomeClass(); renderOwnerClasses();
+  });
+  $("#clsClose").addEventListener("click", () => { $("#clsWrap").hidden = true; });
+  $("#clsWrap").addEventListener("click", e => { if (e.target.id === "clsWrap") $("#clsWrap").hidden = true; });
+  ["#classList", "#myBookings"].forEach(sel => $(sel).addEventListener("click", e => {
+    const b = e.target.closest("[data-cls]");
+    if (b) openClass(b.dataset.cls);
+  }));
+  $("#days").addEventListener("click", e => {
+    const b = e.target.closest("[data-day]");
+    if (b) { cstate.day = Number(b.dataset.day); renderClasses(); }
+  });
+  $("#typeChips").addEventListener("click", e => {
+    const b = e.target.closest("[data-type]");
+    if (b) { cstate.type = b.dataset.type; renderClasses(); }
+  });
+
+  // owner posts a class
+  $("#pType").innerHTML = Object.entries(CLASSES).map(([k, c]) => `<option value="${k}">${c.name}</option>`).join("");
+  $("#pType").value = "yoga";
+  $("#pDay").innerHTML = DAYS.map((d, i) => `<option value="${i}">${dayShort(i)}</option>`).join("");
+  $("#pDay").value = "1";
+  $("#pCoach").innerHTML = COACHES.map(c => `<option>${c}</option>`).join("");
+  $("#pCoach").value = "Anna";
+  $("#pTime").innerHTML = Array.from({ length: 63 }, (_, i) => toTime(5 * 60 + i * 15)).map(t => `<option>${t}</option>`).join("");
+  $("#pTime").value = "18:00";
+  $("#postBtn").addEventListener("click", () => { $("#postWrap").hidden = false; $("#pType").focus(); });
+  $("#postCancel").addEventListener("click", () => { $("#postWrap").hidden = true; });
+  $("#postWrap").addEventListener("click", e => { if (e.target.id === "postWrap") $("#postWrap").hidden = true; });
+  $("#postForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const t = $("#pTime").value, cap = parseInt($("#pCap").value, 10), di = Number($("#pDay").value);
+    if (!/^\d\d:\d\d$/.test(t)) { toast("Pick a start time"); return; }
+    if (!(cap >= 1 && cap <= 60)) { toast("Spots must be between 1 and 60"); return; }
+    if (di === 0 && toMin(t) <= toMin(NOW)) { toast(`That time has passed today. Pick a time after ${NOW}`); return; }
+    const key = $("#pType").value;
+    schedule.push({ id: `${di}-${t}-new${schedule.length}`, di, t, key, cap, booked: 0, mine: false, wait: false, isNew: true, coach: $("#pCoach").value, len: Number($("#pLen").value) });
+    $("#postWrap").hidden = true;
+    cstate.day = di; cstate.type = "all";
+    renderClasses(); renderOwnerClasses(); renderHomeClass();
+    toast(`Posted ${CLASSES[key].name}, ${di === 0 ? "today" : di === 1 ? "tomorrow" : dayShort(di)} at ${t}. Members can book it now`);
+  });
+
   // ---------- navigation ----------
-  const VIEWS = ["home", "league", "card", "progress", "owner"];
+  const VIEWS = ["home", "classes", "league", "card", "progress", "owner"];
+  const TAB_OF = { card: "me", progress: "me" };
   function go(v, push = true) {
     if (!VIEWS.includes(v)) v = "home";
     VIEWS.forEach(x => { $("#v-" + x).hidden = x !== v; });
-    $$(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.go === v)));
+    $$(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === (TAB_OF[v] || v))));
+    $$(".meseg button").forEach(t => t.setAttribute("aria-pressed", String(t.dataset.go === v)));
     $$("#tour button").forEach(t => t.setAttribute("aria-current", String(t.dataset.go === v)));
     $("#v-" + v).scrollTop = 0;
     if (push) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
@@ -1191,7 +1533,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   }
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
-    $("#sheetWrap").hidden = true; $("#walletWrap").hidden = true;
+    ["#sheetWrap", "#walletWrap", "#clsWrap", "#postWrap"].forEach(s => { $(s).hidden = true; });
     if (!$("#success").hidden) $("#successClose").click();
   });
 
@@ -1207,6 +1549,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   drawCode($("#qr"), 21, [[9,1],[10,3],[8,5],[11,6],[9,8],[12,9],[8,10],[10,11],[13,12],[15,9],[17,10],[19,8],[16,12],[18,13],[9,14],[11,15],[13,16],[15,15],[17,16],[19,17],[9,18],[12,19],[14,18],[16,19],[18,20],[20,15],[3,9],[5,10],[1,11],[6,12]]);
   drawCode($("#passQr"), 25, scatter(25, 417));
   renderHome(); renderBoard(); renderHeat(); renderBadges(); renderStaticCharts(); renderOwner(); renderRisk();
+  renderClasses(); renderHomeClass(); renderOwnerClasses();
   const start = (location.hash || "").replace("#", "");
   go(VIEWS.includes(start) ? start : "home", false);
 })();
